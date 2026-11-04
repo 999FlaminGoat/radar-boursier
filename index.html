@@ -4,6 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
+<meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f141b" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Radar">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,"Segoe UI",sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Radar Boursier</title>
@@ -298,6 +307,59 @@ tbody tr{transition:background-color .15s}
 .btn{transition:border-color .15s,transform .1s,background-color .15s}
 .btn:active{transform:scale(.97)}
 .plan td,.plan th{white-space:nowrap}
+
+/* ---------- téléphone ---------- */
+.tabbar{display:none}
+.brand-ico{display:none}
+@media (max-width:760px){
+  html{-webkit-text-size-adjust:100%}
+  body{-webkit-tap-highlight-color:transparent}
+  .barin{gap:6px;padding-block:6px}
+  .brand{flex:1;display:inline-flex!important;align-items:center;min-width:0}
+  .brand-ico{display:inline;font-size:20px}
+  .brand-txt{display:none}
+  .toc,#tocBtn{display:none}
+  .topbar .btn{min-width:38px;height:38px;padding:0 8px;display:inline-flex;align-items:center;justify-content:center;font-size:16px}
+  .topbar #langBtn{font-size:13px;font-weight:700}
+  .privsw{height:38px;padding:4px 10px 4px 4px;font-size:12.5px}
+  .popmenu{right:0;left:auto}
+  .wrap{gap:22px;padding-top:14px;padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+  .part h2{font-size:23px}
+  .sh p{font-size:13px}
+  /* barre d'onglets en bas, comme une appli */
+  .tabbar{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;position:fixed;left:0;right:0;bottom:0;z-index:35;
+    background:color-mix(in srgb,var(--surface) 88%,transparent);-webkit-backdrop-filter:saturate(1.6) blur(14px);backdrop-filter:saturate(1.6) blur(14px);
+    border-top:1px solid var(--line);padding:6px max(6px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-left,0px))}
+  .tabbar a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;border-radius:10px;color:var(--muted);text-decoration:none;min-width:0}
+  .tabbar a span{font-size:20px;line-height:1.1;transition:transform .2s}
+  .tabbar a b{font-size:10.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .tabbar a.on{color:var(--accent);background:var(--accent-soft)}
+  .tabbar a.on span{transform:scale(1.12)}
+  .anchor,.part{scroll-margin-top:64px}
+  /* listes de cartes qu'on fait glisser du doigt */
+  #opps,#discList{display:flex;grid-template-columns:none;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;
+    margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:2px max(16px,env(safe-area-inset-left,0px)) 10px;scroll-padding-inline:16px;
+    -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scrollbar-width:none}
+  #opps::-webkit-scrollbar,#discList::-webkit-scrollbar{display:none}
+  #opps>*,#discList>*{flex:0 0 86%;scroll-snap-align:start;max-width:360px}
+  #opps>.empty,#discList>.empty{flex-basis:100%;max-width:none}
+  .swipehint{display:block;font-size:12px;color:var(--muted);margin:-4px 0 6px}
+  /* tableaux : première colonne figée */
+  .tw table th:first-child,.tw table td:first-child{position:sticky;left:0;z-index:1;background:var(--surface);box-shadow:1px 0 0 var(--line)}
+  .tw{-webkit-overflow-scrolling:touch}
+  /* fiche d'un titre : plein écran */
+  .drawer{width:100%;border-left:0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-top:0;overscroll-behavior:contain}
+  .drawer:not([hidden]){animation:sheetUp .3s cubic-bezier(.2,.7,.2,1)}
+  .drawer .dh{position:sticky;top:0;z-index:3;background:var(--bg);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:calc(10px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line)}
+  .drawer .dh::before{content:"";position:absolute;left:50%;top:calc(4px + env(safe-area-inset-top,0px));width:36px;height:4px;border-radius:2px;background:var(--line);transform:translateX(-50%)}
+  .close{width:40px;height:40px}
+  /* champs : 16 px pour éviter le zoom automatique de Safari */
+  input,select,textarea{font-size:16px!important}
+  .btn,button{touch-action:manipulation}
+  canvas{touch-action:pan-y}
+}
+@media (min-width:761px){.swipehint{display:none}}
+@keyframes sheetUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 
 </style>
@@ -305,7 +367,7 @@ tbody tr{transition:background-color .15s}
 <body>
 <nav class="topbar" id="bar" aria-label="Navigation">
   <div class="barin">
-    <a class="brand" href="#top" data-go="top">Radar Boursier</a>
+    <a class="brand" href="#top" data-go="top"><span class="brand-ico">📡</span><span class="brand-txt"> Radar Boursier</span></a>
     <div class="toc" id="toc">
       <a href="#aujourdhui" data-go="aujourdhui">Aujourd'hui</a>
       <a href="#portefeuille" data-go="portefeuille" class="priv">Mon portefeuille</a>
@@ -417,11 +479,13 @@ tbody tr{transition:background-color .15s}
       <h3>⭐ Meilleures occasions à l'étude</h3>
       <p>Titres de ta liste de surveillance que tu ne détiens pas encore, classés par score. Le score combine la qualité (modèles Buffett, Burry, Duckett, Fink, Jensen de ton fichier), la valorisation, l'écart avec le sommet, le risque, l'avis des analystes et ce dont ton portefeuille manque.</p>
     </div>
+    <span class="swipehint">👉 Glisse pour voir les autres titres</span>
     <div class="cards" id="opps"><div class="empty">Chargement des titres…</div></div>
   </section>
 
   <section class="anchor" id="decouvertes">
     <div class="sh"><h3>🆕 Découvertes de la semaine</h3><p>Chaque lundi, le Radar passe en revue les quelque 560 entreprises du S&P 500 et du TSX 60 que tu ne suis pas encore. Il garde celles dont le score est le meilleur.</p></div>
+    <span class="swipehint">👉 Glisse pour voir les autres découvertes</span>
     <div class="disc-grid" id="discList"><div class="empty">Les découvertes apparaissent après le prochain balayage du lundi.</div></div>
   </section>
 
@@ -491,6 +555,13 @@ tbody tr{transition:background-color .15s}
   <p class="disc">Outil d'aide à la réflexion, pas un conseil financier. Les scores sont calculés à partir de règles simples et de données publiques qui peuvent comporter des erreurs ou des délais. Vérifie toujours avant d'acheter ou de vendre.</p>
 </div>
 
+<nav class="tabbar" id="tabbar" aria-label="Sections">
+  <a href="#aujourdhui" data-go="aujourdhui"><span>📅</span><b data-fr="Aujourd'hui" data-en="Today">Aujourd'hui</b></a>
+  <a href="#portefeuille" data-go="portefeuille" class="priv"><span>💼</span><b data-fr="Portefeuille" data-en="Portfolio">Portefeuille</b></a>
+  <a href="#occasions" data-go="occasions"><span>🔭</span><b data-fr="Occasions" data-en="Ideas">Occasions</b></a>
+  <a href="#investisseurs" data-go="investisseurs"><span>🏛️</span><b data-fr="Investisseurs" data-en="Investors">Investisseurs</b></a>
+  <a href="#titres" data-go="titres"><span>📋</span><b data-fr="Titres" data-en="Stocks">Titres</b></a>
+</nav>
 <div class="scrim" id="scrim" hidden></div>
 <aside class="drawer" id="drawer" hidden aria-modal="true" role="dialog" aria-labelledby="dName"></aside>
 
@@ -1095,6 +1166,11 @@ function upsert(id, cfg) {
 }
 
 /* ---------- detail drawer ---------- */
+(() => {
+  let y0 = null, x0 = null;
+  document.addEventListener('touchstart', e => { const d = e.target.closest('#drawer'); if (!d || d.scrollTop > 0 || innerWidth > 760) { y0 = null; return; } y0 = e.touches[0].clientY; x0 = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', e => { if (y0 == null) return; const t = e.changedTouches[0]; if (t.clientY - y0 > 110 && Math.abs(t.clientX - x0) < 60) closeDrawer(); y0 = null; }, { passive: true });
+})();
 function openDrawer(t) { state.open = t; renderDrawer(t, true); }
 function closeDrawer() { state.open = null; state.form = false; render(); $('#drawer').hidden = true; $('#scrim').hidden = true; ['cPrice', 'cSnow', 'cWater', 'cFin'].forEach(k => { if (charts[k]) { charts[k].destroy(); delete charts[k]; } }); }
 let aiCtl = null;
@@ -1561,7 +1637,8 @@ document.addEventListener('click', e => { if (!e.target.closest('.pop')) toggleP
 (() => { let p = ''; try { p = localStorage.getItem('radar-pal') || ''; } catch (e) {} if (p) document.documentElement.setAttribute('data-pal', p); document.querySelectorAll('#palMenu [data-pal]').forEach(b => b.setAttribute('aria-checked', (b.dataset.pal || '') === p)); })();
 /* language of analyses and news */
 state.lang = (() => { try { return localStorage.getItem('radar-lang') || 'fr'; } catch (e) { return 'fr'; } })();
-function setLang(l) { state.lang = l; try { localStorage.setItem('radar-lang', l); } catch (e) {} $('#langBtn').textContent = l.toUpperCase(); $('#langBtn').title = l === 'fr' ? 'Analyses en français (cliquer pour l\'anglais)' : 'Analyses in English (click for French)'; if (typeof applyStores === 'function' && Store.uni) applyStores(); }
+function setLang(l) { state.lang = l; try { localStorage.setItem('radar-lang', l); } catch (e) {} $('#langBtn').textContent = l.toUpperCase(); $('#langBtn').title = l === 'fr' ? 'Analyses en français (cliquer pour l\'anglais)' : 'Analyses in English (click for French)'; document.querySelectorAll('#tabbar b').forEach(b => b.textContent = b.dataset[l] || b.textContent); if (typeof applyStores === 'function' && Store.uni) applyStores(); }
+document.querySelectorAll('#tabbar b').forEach(b => b.textContent = b.dataset[state.lang] || b.textContent);
 $('#langBtn').onclick = () => setLang(state.lang === 'fr' ? 'en' : 'fr');
 $('#langBtn').textContent = state.lang.toUpperCase();
 
@@ -1589,7 +1666,7 @@ document.addEventListener('click', e => {
 });
 const parts = ['aujourdhui', 'portefeuille', 'occasions', 'investisseurs', 'titres'];
 const spy = new IntersectionObserver(es => {
-  es.forEach(en => { if (en.isIntersecting) document.querySelectorAll('#toc a').forEach(x => x.classList.toggle('on', x.dataset.go === en.target.id)); });
+  es.forEach(en => { if (en.isIntersecting) document.querySelectorAll('#toc a, #tabbar a').forEach(x => x.classList.toggle('on', x.dataset.go === en.target.id)); });
 }, { rootMargin: '-80px 0px -70% 0px' });
 parts.forEach(id => { const el = document.getElementById(id); if (el) spy.observe(el); });
 
@@ -1835,7 +1912,7 @@ function showOffline(msg) { $('#status').innerHTML = `<span class="dot"></span><
 /* ---------- verrou, réglages ---------- */
 function updateLockUi() {
   const b = $('#lockBtn'); if (!b) return;
-  b.textContent = state.unlocked ? '🔓' : '🔒 Déverrouiller';
+  b.innerHTML = state.unlocked ? '🔓' : '🔒<span class="hide-sm"> Déverrouiller</span>';
   b.title = state.unlocked ? 'Tes données personnelles sont déverrouillées sur cet appareil' : 'Entre ton mot de passe pour voir ton portefeuille';
 }
 function openPanel(html) { state.form = true; state.open = null; const d = $('#drawer'); d.dataset.t = ''; d.innerHTML = html; d.hidden = false; $('#scrim').hidden = false; $('#xClose').onclick = closeDrawer; }

@@ -282,7 +282,7 @@ def fetch_quick(sym: str):
 
 
 # ---------------------------------------------------------------- SEC 13F (grands investisseurs)
-UA = "RadarBoursier/1.0 personal-portfolio-tool (github.com/999FlaminGoat/radar-boursier)"
+UA = "RadarBoursier 999FlaminGoat@users.noreply.github.com"
 CIKS = {"berkshire": ("0001067983", "BERKSHIRE"), "pershing": ("0001336528", "PERSHING"), "duquesne": ("0001536411", "DUQUESNE"),
         "ark": ("0001697748", "ARK INVEST"), "appaloosa": ("0001656456", "APPALOOSA")}
 NAME_MAP = {"APPLE": "AAPL", "ALPHABET": "GOOGL", "AMAZON COM": "AMZN", "MICROSOFT": "MSFT", "META PLATFORMS": "META", "NVIDIA": "NVDA",

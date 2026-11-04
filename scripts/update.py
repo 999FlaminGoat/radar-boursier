@@ -20,6 +20,7 @@ import re
 import sys
 import time
 import traceback
+import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -312,16 +313,26 @@ NAME_MAP = {"APPLE": "AAPL", "ALPHABET": "GOOGL", "AMAZON COM": "AMZN", "MICROSO
             "CRISPR": "CRSP", "TEMPUS AI": "TEM", "TERADYNE": "TER", "ROKU": "ROKU", "LENNAR": "LEN", "CAPITAL ONE": "COF", "NUCOR": "NUE"}
 
 
+def _get(url, timeout):
+    # la SEC limite le débit : pause entre les requêtes et nouvel essai en cas de refus
+    for attempt in range(3):
+        try:
+            time.sleep(1.2)
+            req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept-Encoding": "identity"})
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return r.read().decode("utf-8", "replace")
+        except urllib.error.HTTPError as e:
+            if e.code not in (403, 429) or attempt == 2:
+                raise
+            time.sleep(10 * (attempt + 1))
+
+
 def http_json(url):
-    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept-Encoding": "identity"})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read().decode("utf-8"))
+    return json.loads(_get(url, 30))
 
 
 def http_text(url):
-    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept-Encoding": "identity"})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        return r.read().decode("utf-8", "replace")
+    return _get(url, 60)
 
 
 def norm(s):

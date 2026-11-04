@@ -56,7 +56,11 @@ def num(x, nd=None):
         return None
 
 
+ALIAS = {"GRA.V": "GRA.TO"}  # NanoXplore est passée de la Bourse de croissance au TSX
+
+
 def ysym(t: str) -> str:
+    t = ALIAS.get(t, t)
     return t.replace(".B", "-B") if t.endswith(".B") else t
 
 
@@ -171,7 +175,7 @@ def news_of(y) -> list:
             title = c.get("title")
             when = c.get("pubDate") or c.get("displayTime")
             if not when and n.get("providerPublishTime"):
-                when = dt.datetime.utcfromtimestamp(n["providerPublishTime"]).isoformat()
+                when = dt.datetime.fromtimestamp(n["providerPublishTime"], dt.timezone.utc).isoformat()
             if title:
                 out.append({"d": (when or "")[:10], "t": title, "lang": "en"})
             if len(out) >= 3:
@@ -240,7 +244,7 @@ def fetch_one(t: str, prev: dict, want_fin: bool) -> dict | None:
             out["divAnnual"] = num(info.get("dividendRate"), 4)
         if info.get("exDividendDate"):
             try:
-                out.setdefault("lastDiv", {})["exDate"] = ds(dt.datetime.utcfromtimestamp(int(info["exDividendDate"])))
+                out.setdefault("lastDiv", {})["exDate"] = ds(dt.datetime.fromtimestamp(int(info["exDividendDate"]), dt.timezone.utc))
             except Exception:
                 pass
         if info.get("longBusinessSummary"):
@@ -392,7 +396,7 @@ def update_investors(universe):
             upd = {"holdings": hold, "moves": moves or ["Peu de changements parmi les plus grosses positions."], "filed": r["filingDate"][k0],
                    "period": f"Trimestre terminé le {rep}" if rep else "Dernière déclaration", "aum": total, "positions": len(agg),
                    "options": [{"t": to_ticker(o["n"], universe) or o["n"].title()[:12], "type": o["type"], "v": o["v"]} for o in sorted(opts, key=lambda o: -o["v"])[:4]] or (inv or {}).get("options"),
-                   "source": "Déclaration 13F, SEC EDGAR (mise à jour automatique)", "updatedAt": dt.datetime.utcnow().isoformat() + "Z"}
+                   "source": "Déclaration 13F, SEC EDGAR (mise à jour automatique)", "updatedAt": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
             if inv:
                 inv.update(upd)
             log("  13F mis à jour:", iid, r["filingDate"][k0])
@@ -442,7 +446,7 @@ def apply_private(priv, market, fx):
                 p["avg"] = round(p["avg"] / ratio, 6)
             after = {"qty": sum(p["qty"] for p in ps), "avg": before["avg"] / ratio}
             rev = ratio < 1
-            priv["splits"].append({"t": t, "date": d, "ratio": round(1 / ratio if rev else ratio, 4), "reverse": rev, "before": before, "after": after, "appliedAt": dt.datetime.utcnow().isoformat() + "Z"})
+            priv["splits"].append({"t": t, "date": d, "ratio": round(1 / ratio if rev else ratio, 4), "reverse": rev, "before": before, "after": after, "appliedAt": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")})
             n_sp += 1
         # dividendes réinvestis : traités 14 jours après la date ex-dividende (date de versement estimée)
         for d, amt in m.get("divEvents", []):
@@ -474,7 +478,7 @@ def apply_private(priv, market, fx):
                 priv["dividends"].append({"t": t, "account": p["account"], "exDate": d, "payDate": pay, "amountPerShare": amt, "gross": round(gross, 4),
                                           "withholding": w, "net": round(net, 4), "cur": p.get("cur"), "price": price, "shares": round(sh, 6),
                                           "netCAD": round(net * (fx if p.get("cur") == "USD" else 1), 4), "estimated": True,
-                                          "createdAt": dt.datetime.utcnow().isoformat() + "Z"})
+                                          "createdAt": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")})
                 done_div.add(key)
                 n_div += 1
     # point d'historique du portefeuille (valeur CAD)
@@ -486,7 +490,7 @@ def apply_private(priv, market, fx):
     hist = priv.setdefault("history", [])
     d = TODAY.isoformat()
     hist[:] = [h for h in hist if h.get("d") != d] + [{"d": d, "wallet": round(total, 2), "auto": True}]
-    priv["lastRun"] = dt.datetime.utcnow().isoformat() + "Z"
+    priv["lastRun"] = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     return n_div, n_sp, total
 
 
@@ -515,7 +519,7 @@ def main():
                     for k in ("fin", "finHist", "finAt"):
                         if k in old:
                             m[k] = old[k]
-                m["updatedAt"] = dt.datetime.utcnow().isoformat() + "Z"
+                m["updatedAt"] = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
                 out[t] = m
                 break
             except Exception as e:
@@ -545,7 +549,7 @@ def main():
         for d, r in m.get("splitEvents", []):
             if d > SINCE:
                 pub_splits.append({"t": t, "date": d, "ratio": round(1 / r if r < 1 else r, 4), "reverse": r < 1})
-    market = {"generatedAt": dt.datetime.utcnow().isoformat() + "Z", "fx": {"USDCAD": round(fx, 5), "asOf": TODAY.isoformat()},
+    market = {"generatedAt": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "fx": {"USDCAD": round(fx, 5), "asOf": TODAY.isoformat()},
               "day": {"date": day, "indices": indices}, "splits": pub_splits, "fails": fails, "stocks": out}
 
     # données privées

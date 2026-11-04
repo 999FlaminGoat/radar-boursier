@@ -10,6 +10,10 @@ on:
         description: "Symboles à mettre à jour (vide = tous)"
         required: false
         default: ""
+      force13f:
+        description: "Relire tout de suite les déclarations 13F (oui/non)"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -33,6 +37,7 @@ jobs:
       - name: Mettre à jour les données
         env:
           RADAR_PASSWORD: ${{ secrets.RADAR_PASSWORD }}
+          FORCE_13F: ${{ github.event.inputs.force13f }}
         run: python scripts/update.py ${{ github.event.inputs.symbols }}
       - name: Enregistrer les changements
         run: |

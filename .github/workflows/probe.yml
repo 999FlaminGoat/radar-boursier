@@ -1,0 +1,12 @@
+name: Sonde sources 13F
+on: workflow_dispatch
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36"
+          for u in "https://www.dataroma.com/m/holdings.php?m=BRK" "https://www.dataroma.com/m/holdings.php?m=psc" "https://13f.info/manager/0001067983-berkshire-hathaway-inc" "https://data.sec.gov/submissions/CIK0001067983.json" "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies" "https://en.wikipedia.org/wiki/S%26P/TSX_60" "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=fr&dt=t&q=Hello%20world"; do
+            code=$(curl -s -A "$UA" -o /tmp/o -w "%{http_code}" "$u"); echo "$code $(wc -c </tmp/o) $u"; head -c 300 /tmp/o | tr '\n' ' '; echo; echo ----
+          done
+          curl -s -A "$UA" "https://www.dataroma.com/m/managers.php" | grep -o 'holdings.php?m=[A-Za-z0-9]*">[^<]*' | head -80

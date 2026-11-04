@@ -328,7 +328,10 @@ def index_members():
             cols = [c for c in tb.columns if str(c).lower() in ("symbol", "ticker")]
             if cols:
                 for _, r in tb.iterrows():
-                    sym = str(r[cols[0]]).strip().replace(".", "-") + ".TO"
+                    raw = str(r[cols[0]]).strip()
+                    if not raw or raw.lower() == "nan":
+                        continue
+                    sym = raw.replace(".", "-") + ".TO"
                     out[sym] = {"name": r.get("Company") or r.get("Name"), "idx": "TSX 60"}
                 break
     except Exception as e:

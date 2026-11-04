@@ -642,7 +642,16 @@ def main():
     notify_priv = {}
     if pw and pfile.exists():
         try:
-            priv = decrypt(jload(pfile, {}), pw)
+            import unicodedata
+            blob = jload(pfile, {})
+            last = None
+            for cand in dict.fromkeys([pw, pw.strip(), unicodedata.normalize("NFC", pw.strip()), unicodedata.normalize("NFD", pw.strip())]):
+                try:
+                    priv = decrypt(blob, cand); pw = cand; last = None; break
+                except Exception as e2:
+                    last = e2
+            if last is not None:
+                raise ValueError("le mot de passe du secret ne correspond pas à celui du coffre")
             n_div, n_sp, total = apply_private(priv, market, fx)
             notify_priv = priv.pop("_notify", {})
             jdump(pfile, encrypt(priv, pw))

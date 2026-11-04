@@ -195,6 +195,7 @@ input[type=number],input[type=date],input[type=text],input[type=password]{font:i
 .fv .z1{background:var(--good-soft)} .fv .z2{background:var(--warn-soft)} .fv .z3{background:var(--bad-soft)}
 .fv .mk{position:absolute;top:0;bottom:0;width:2px;background:var(--ink)}
 .fv .mk b{position:absolute;top:4px;left:6px;white-space:nowrap;font-family:var(--f-mono);font-size:12px;font-weight:600}
+.fv .mk.flip b{left:auto;right:6px}
 .fv .mk.fair{background:var(--accent)} .fv .mk.fair b{top:auto;bottom:4px;color:var(--accent)}
 .fvl{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted)}
 .ratios{display:flex;flex-wrap:wrap;gap:8px}
@@ -255,6 +256,22 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .alert b{color:var(--ink)}
 .alert .row{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;cursor:pointer}
 .est{font-size:10px;color:var(--muted);margin-left:2px}
+/* top bar: compact controls so the section links stay visible */
+.barin{gap:8px}
+.toc{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);padding-right:24px}
+.btn.icon{width:36px;height:34px;padding:0;display:inline-grid;place-items:center;font-size:15px}
+.pop{position:relative}
+.popmenu{position:absolute;right:0;top:calc(100% + 6px);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:2px;min-width:200px;box-shadow:0 10px 30px rgba(0,0,0,.18);z-index:40}
+.popmenu button{display:flex;align-items:center;gap:10px;border:0;background:transparent;color:var(--ink);padding:7px 8px;border-radius:7px;text-align:left;font-size:13.5px}
+.popmenu button:hover,.popmenu button[aria-checked="true"]{background:var(--accent-soft)}
+.sw{width:22px;height:14px;border-radius:4px;border:1px solid var(--line);flex:none}
+.sw-classique{background:linear-gradient(90deg,#eef1f5 50%,#1f4fd1 50%)}.sw-nuit{background:linear-gradient(90deg,#16181c 50%,#4cc38a 50%)}.sw-ocean{background:linear-gradient(90deg,#eef5f6 50%,#0e7c86 50%)}
+.sw-foret{background:linear-gradient(90deg,#eff2ec 50%,#2f6b3a 50%)}.sw-daltonien{background:linear-gradient(90deg,#1f6fd1 50%,#d9730d 50%)}.sw-contraste{background:linear-gradient(90deg,#fff 50%,#000 50%)}
+@media (max-width:760px){.hide-sm{display:none}}
+.trend{font-size:11px;font-weight:600;font-family:var(--f-mono);margin-left:4px;white-space:nowrap}
+.disc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.imp table{min-width:620px}.imp td,.imp th{padding:6px 8px;font-size:12.5px}
+.imp tr.dup td{opacity:.55}
 /* motion: short entrance on first load only, drawer slide, growing bars; all off with reduced motion */
 .ico{display:inline-block}
 body{transition:background-color .3s ease,color .3s ease}
@@ -296,10 +313,15 @@ tbody tr{transition:background-color .15s}
       <a href="#investisseurs" data-go="investisseurs">Grands investisseurs</a>
       <a href="#titres" data-go="titres">Tous les titres</a>
     </div>
-    <select class="palsel" id="palSel" aria-label="Style de couleurs"><option value="">Couleurs : Classique</option><option value="nuit">Couleurs : Nuit</option><option value="ocean">Couleurs : Océan</option><option value="foret">Couleurs : Forêt</option><option value="daltonien">Couleurs : Daltonien</option><option value="contraste">Couleurs : Contraste élevé</option></select>
-    <button class="btn" id="tocBtn" aria-expanded="false" aria-controls="tocPanel">Sommaire</button>
-    <button class="btn" id="lockBtn" type="button">🔒 Déverrouiller</button>
-    <button class="btn" id="gearBtn" type="button" aria-label="Réglages" title="Réglages">⚙️</button>
+    <div class="pop"><button class="btn icon" id="palBtn" type="button" aria-haspopup="true" aria-expanded="false" title="Couleurs">🎨</button>
+      <div class="popmenu" id="palMenu" hidden role="menu">
+        <span class="lbl">Style de couleurs</span>
+        <button type="button" role="menuitemradio" data-pal=""><span class="sw sw-classique"></span>Classique</button><button type="button" role="menuitemradio" data-pal="nuit"><span class="sw sw-nuit"></span>Nuit</button><button type="button" role="menuitemradio" data-pal="ocean"><span class="sw sw-ocean"></span>Océan</button><button type="button" role="menuitemradio" data-pal="foret"><span class="sw sw-foret"></span>Forêt</button><button type="button" role="menuitemradio" data-pal="daltonien"><span class="sw sw-daltonien"></span>Daltonien</button><button type="button" role="menuitemradio" data-pal="contraste"><span class="sw sw-contraste"></span>Contraste élevé</button>
+      </div></div>
+    <button class="btn icon" id="langBtn" type="button" title="Langue des analyses et des nouvelles">FR</button>
+    <button class="btn" id="tocBtn" aria-expanded="false" aria-controls="tocPanel">☰ <span class="hide-sm">Sommaire</span></button>
+    <button class="btn" id="lockBtn" type="button">🔒</button>
+    <button class="btn icon" id="gearBtn" type="button" aria-label="Réglages" title="Réglages">⚙️</button>
     <button class="privsw" id="privBtn" role="switch" aria-checked="false" title="Le mode privé cache tes montants, tes positions et tout ce qui révèle ton portefeuille."><span class="knob"></span><span id="privLbl">Public</span></button>
   </div>
   <div class="tocpanel" id="tocPanel" hidden>
@@ -309,7 +331,7 @@ tbody tr{transition:background-color .15s}
       <li class="priv"><a href="#portefeuille" data-go="portefeuille">Mon portefeuille</a>
         <ol><li><a href="#positions" data-go="positions">Positions et suggestions</a></li><li><a href="#ventes" data-go="ventes">Suggestions de vente</a></li><li><a href="#evolution" data-go="evolution">Évolution et répartition géographique</a></li><li><a href="#repartition" data-go="repartition">Répartition par secteur</a></li><li><a href="#dividendes" data-go="dividendes">Dividendes et journal des mouvements</a></li></ol></li>
       <li><a href="#occasions" data-go="occasions">Trouver des occasions</a>
-        <ol><li><a href="#meilleures" data-go="meilleures">Meilleures occasions</a></li><li class="priv"><a href="#plan" data-go="plan">Planificateur d'investissement</a></li><li><a href="#carte" data-go="carte">Carte des occasions</a></li><li><a href="#eviter" data-go="eviter">À éviter</a></li></ol></li>
+        <ol><li><a href="#meilleures" data-go="meilleures">Meilleures occasions</a></li><li><a href="#decouvertes" data-go="decouvertes">Découvertes de la semaine</a></li><li class="priv"><a href="#plan" data-go="plan">Planificateur d'investissement</a></li><li><a href="#carte" data-go="carte">Carte des occasions</a></li><li><a href="#eviter" data-go="eviter">À éviter</a></li></ol></li>
       <li><a href="#investisseurs" data-go="investisseurs">Ce que font les grands investisseurs</a></li>
       <li><a href="#titres" data-go="titres">Tous les titres suivis</a>
         <ol><li><a href="#ajout" data-go="ajout">Ajouter un titre à surveiller</a></li></ol></li>
@@ -328,6 +350,7 @@ tbody tr{transition:background-color .15s}
 
   <div class="part" id="aujourdhui"><span class="lbl">Partie 1</span><h2><span class="ico">📅</span> Aujourd'hui</h2></div>
   <div class="alert anchor" id="splits" hidden></div>
+  <div class="alert anchor" id="verdicts" hidden style="background:var(--good-soft);border-color:var(--good)"></div>
   <div class="alert anchor priv" id="pricealerts" hidden style="background:var(--accent-soft);border-color:var(--accent)"></div>
   <section class="day anchor" id="journee" aria-label="Ta journée"></section>
   <div class="brief priv" id="brief" hidden></div>
@@ -338,7 +361,7 @@ tbody tr{transition:background-color .15s}
     <div class="sh">
       <div style="display:flex;flex-direction:column;gap:4px"><h3>📊 Positions et suggestions</h3>
       <p>Chaque position regroupée tous comptes confondus, avec ce que le radar suggère : renforcer, conserver, réévaluer ou vendre.</p></div>
-      <button class="btn primary" id="txOpen">+ Ajouter un achat ou une vente</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="impOpen">📥 Importer un relevé Wealthsimple</button><button class="btn primary" id="txOpen">+ Ajouter un achat ou une vente</button></div>
     </div>
     <div class="tw"><table id="tHold"><thead><tr>
       <th data-k="name">Titre</th><th class="r" data-k="value">Valeur (CAD)</th><th class="r" data-k="w">Poids</th><th class="r" data-k="gain">Gain</th><th class="r" data-k="pl">Si je vends (CAD)</th><th class="r" data-k="score">Score</th><th data-k="action">Suggestion</th>
@@ -395,6 +418,11 @@ tbody tr{transition:background-color .15s}
       <p>Titres de ta liste de surveillance que tu ne détiens pas encore, classés par score. Le score combine la qualité (modèles Buffett, Burry, Duckett, Fink, Jensen de ton fichier), la valorisation, l'écart avec le sommet, le risque, l'avis des analystes et ce dont ton portefeuille manque.</p>
     </div>
     <div class="cards" id="opps"><div class="empty">Chargement des titres…</div></div>
+  </section>
+
+  <section class="anchor" id="decouvertes">
+    <div class="sh"><h3>🆕 Découvertes de la semaine</h3><p>Chaque lundi, le Radar passe en revue les quelque 560 entreprises du S&P 500 et du TSX 60 que tu ne suis pas encore. Il garde celles dont le score est le meilleur.</p></div>
+    <div class="disc-grid" id="discList"><div class="empty">Les découvertes apparaissent après le prochain balayage du lundi.</div></div>
   </section>
 
   <section class="panel anchor priv" id="plan">
@@ -556,6 +584,38 @@ function renderSplits() {
     return `<div class="row" data-t="${esc(x.t)}"><b>${esc(x.t)}</b><span>${esc(nice(s?.name || ''))} · ${esc(splitTxt(x))} · ${esc(x.date)}${x.recorded ? '' : ' · <i>à confirmer</i>'}</span></div><div class="note" style="margin:-2px 0 4px">${what}</div>`;
   }).join('');
 }
+function renderVerdicts() {
+  const el = $('#verdicts'); const ch = [];
+  for (const s of Object.values(state.stocks)) {
+    const h = s.scoreHist || []; if (h.length < 2) continue;
+    const a = h[h.length - 2][1], b = h[h.length - 1][1];
+    const va = verdictOf(a), vb = verdictOf(b);
+    if (va.t !== vb.t) ch.push({ s, a, b, va, vb, up: b > a });
+  }
+  if (!ch.length) { el.hidden = true; return; }
+  ch.sort((x, y) => (y.up - x.up) || (y.b - x.b));
+  el.hidden = false;
+  el.innerHTML = `<span class="lbl">🔁 Changements de verdict depuis la dernière mise à jour</span>` + ch.slice(0, 8).map(x => `<div class="row" data-t="${esc(x.s.ticker)}"><b>${esc(x.s.ticker)}</b><span>${x.up ? '⬆️' : '⬇️'} ${esc(x.va.t)} → <b>${esc(x.vb.t)}</b> <span class="muted">(score ${x.a} → ${x.b})</span></span></div>`).join('');
+}
+function renderDiscover() {
+  const d = Store.discover?.items || [];
+  const el = $('#discList'); if (!el) return;
+  if (!d.length) return;
+  const L = state.lang || 'fr';
+  el.innerHTML = d.map((x, i) => { const v = verdictOf(x.score || 0); const added = !!Store.uni[x.t];
+    return `<div class="card" style="--i:${i};cursor:default">
+      <div class="row"><div><div class="tk">${esc(x.t)} · ${esc(x.index || '')}</div><div class="nm">${esc(x.name || x.t)}</div><div class="note">${esc(x.sector || '')}${x.region ? ' · ' + esc(x.region) : ''}</div></div>${ring(x.score || 0, v.col)}</div>
+      <div class="row" style="align-items:center"><span class="pill ${v.c}">${v.t}</span><span class="num">${nf(x.price)} <span class="${x.chg >= 0 ? 'up' : 'down'}">${pct(x.chg)}</span></span></div>
+      <ul class="reasons">${((x.pros || {})[L] || []).slice(0, 2).map(r => `<li>${esc(r)}</li>`).join('')}${((x.cons || {})[L] || []).slice(0, 1).map(r => `<li class="c">${esc(r)}</li>`).join('')}</ul>
+      ${added ? '<span class="note">✅ Dans ta liste</span>' : `<button class="btn" data-add="${esc(x.t)}" data-name="${esc(x.name || '')}" data-sector="${esc(x.sector || '')}" data-region="${esc(x.region || '')}" data-cur="${esc(x.cur || '')}">➕ Ajouter à ma liste</button>`}
+    </div>`; }).join('');
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-add]'); if (!b) return;
+  b.disabled = true; b.textContent = 'Ajout…';
+  try { await DB.doc('stocks/' + docId(b.dataset.add)).set({ ticker: b.dataset.add, name: b.dataset.name, sector: b.dataset.sector || 'Autre', region: b.dataset.region || null, cur: b.dataset.cur || 'USD', etf: false, addedBy: 'Découverte du Radar' }); b.outerHTML = '<span class="note">✅ Ajouté. Ses données arrivent dans environ 15 minutes.</span>'; }
+  catch (err) { b.disabled = false; b.textContent = err?.code === 'no_token' ? 'Ajoute ton jeton GitHub (⚙️)' : 'Réessayer'; }
+});
 function renderPriceAlerts() {
   const el = $('#pricealerts');
   const list = Object.values(state.stocks).map(s => ({ s, al: alertState(s) })).filter(x => x.al);
@@ -591,6 +651,7 @@ function portfolio() {
 }
 
 /* ---------- analysis engine ---------- */
+const T = (fr, en) => (state.lang || 'fr') === 'en' ? en : fr;
 function analyze(s, pf) {
   const pros = [], cons = [];
   let pts = 50;
@@ -600,62 +661,61 @@ function analyze(s, pf) {
   const up = s.target && price ? s.target / price - 1 : null;
   const pe = s.fpe || s.pe;
   if (s.etf) {
-    pts += 10; pros.push('Fonds indiciel : diversification instantanée sur des dizaines ou centaines de titres');
+    pts += 10; pros.push(T('Fonds indiciel : diversification instantanée sur des dizaines ou centaines de titres', 'Index fund: instant diversification across dozens or hundreds of stocks'));
     const etfW = pf?.sect?.ETF ?? null, tgt = state.meta?.sectorTargets?.ETF;
-    if (etfW != null && tgt && etfW < tgt - 0.05) { pts += 10; pros.push(`Tes FNB pèsent ${pct(etfW, 0, false)} du portefeuille pour une cible de ${pct(tgt, 0, false)}`); }
+    if (etfW != null && tgt && etfW < tgt - 0.05) { pts += 10; pros.push(T(`Tes FNB pèsent ${pct(etfW, 0, false)} du portefeuille pour une cible de ${pct(tgt, 0, false)}`, `Your ETFs are ${pct(etfW, 0, false)} of the portfolio vs a ${pct(tgt, 0, false)} target`)); }
   } else {
-    if (pe == null || pe <= 0) { pts -= 12; cons.push('Pas de bénéfice positif (P/E nul ou négatif) : le prix repose sur des promesses'); }
-    else if (pe < 12) { pts += 14; pros.push(`Valorisation basse : P/E de ${nf(pe, 1)}, on paie peu pour chaque dollar de profit`); }
-    else if (pe < 18) { pts += 8; pros.push(`Valorisation raisonnable (P/E ${nf(pe, 1)})`); }
+    if (pe == null || pe <= 0) { pts -= 12; cons.push(T('Pas de bénéfice positif (P/E nul ou négatif) : le prix repose sur des promesses', 'No positive earnings (P/E negative or zero): the price rests on promises')); }
+    else if (pe < 12) { pts += 14; pros.push(T(`Valorisation basse : P/E de ${nf(pe, 1)}, on paie peu pour chaque dollar de profit`, `Cheap valuation: P/E of ${nf(pe, 1)}, you pay little for each dollar of profit`)); }
+    else if (pe < 18) { pts += 8; pros.push(T(`Valorisation raisonnable (P/E ${nf(pe, 1)})`, `Reasonable valuation (P/E ${nf(pe, 1)})`)); }
     else if (pe < 28) { }
-    else if (pe < 45) { pts -= 8; cons.push(`Valorisation élevée (P/E ${nf(pe, 1)}) : beaucoup de croissance déjà dans le prix`); }
-    else { pts -= 16; cons.push(`Valorisation très élevée (P/E ${nf(pe, 0)}) : peu de marge d'erreur`); }
-    if (s.mcap > 2e11) { pts += 4; pros.push(`Géant établi (${big(s.mcap)} de capitalisation)`); }
-    else if (s.mcap && s.mcap < 3e9) { pts -= 6; cons.push(`Petite capitalisation (${big(s.mcap)}) : plus fragile et plus volatile`); }
+    else if (pe < 45) { pts -= 8; cons.push(T(`Valorisation élevée (P/E ${nf(pe, 1)}) : beaucoup de croissance déjà dans le prix`, `High valuation (P/E ${nf(pe, 1)}): a lot of growth already priced in`)); }
+    else { pts -= 16; cons.push(T(`Valorisation très élevée (P/E ${nf(pe, 0)}) : peu de marge d'erreur`, `Very high valuation (P/E ${nf(pe, 0)}): little room for error`)); }
+    if (s.mcap > 2e11) { pts += 4; pros.push(T(`Géant établi (${big(s.mcap)} de capitalisation)`, `Established giant (${big(s.mcap)} market cap)`)); }
+    else if (s.mcap && s.mcap < 3e9) { pts -= 6; cons.push(T(`Petite capitalisation (${big(s.mcap)}) : plus fragile et plus volatile`, `Small cap (${big(s.mcap)}): more fragile and volatile`)); }
   }
   if (disc != null) {
-    if (disc >= 0.15 && disc <= 0.45) { pts += 8; pros.push(`Se négocie ${pct(disc, 0, false)} sous son sommet de l'année : point d'entrée plus bas`); }
-    else if (disc > 0.45) { pts -= 4; cons.push(`A chuté de ${pct(disc, 0, false)} depuis son sommet : comprendre pourquoi avant d'acheter`); }
-    else if (disc < 0.04) { pts -= 3; cons.push('Proche de son sommet de l\'année : peu de rabais'); }
+    if (disc >= 0.15 && disc <= 0.45) { pts += 8; pros.push(T(`Se négocie ${pct(disc, 0, false)} sous son sommet de l'année : point d'entrée plus bas`, `Trades ${pct(disc, 0, false)} below its 52-week high: a lower entry point`)); }
+    else if (disc > 0.45) { pts -= 4; cons.push(T(`A chuté de ${pct(disc, 0, false)} depuis son sommet : comprendre pourquoi avant d'acheter`, `Down ${pct(disc, 0, false)} from its high: understand why before buying`)); }
+    else if (disc < 0.04) { pts -= 3; cons.push(T('Proche de son sommet de l\'année : peu de rabais', 'Near its 52-week high: little discount')); }
   }
   if (s.beta != null) {
-    if (s.beta > 1.6) { pts -= 8; cons.push(`Très volatile (bêta ${nf(s.beta, 2)}) : bouge environ ${nf(s.beta, 1)}× plus que le marché`); }
-    else if (s.beta < 0.8 && s.beta > 0) { pts += 4; pros.push(`Peu volatile (bêta ${nf(s.beta, 2)}) : stabilise le portefeuille`); }
+    if (s.beta > 1.6) { pts -= 8; cons.push(T(`Très volatile (bêta ${nf(s.beta, 2)}) : bouge environ ${nf(s.beta, 1)}× plus que le marché`, `Very volatile (beta ${nf(s.beta, 2)}): moves about ${nf(s.beta, 1)}× the market`)); }
+    else if (s.beta < 0.8 && s.beta > 0) { pts += 4; pros.push(T(`Peu volatile (bêta ${nf(s.beta, 2)}) : stabilise le portefeuille`, `Low volatility (beta ${nf(s.beta, 2)}): steadies the portfolio`)); }
   }
   if (up != null) {
-    if (up > 0.2) { pts += 10; pros.push(`Les analystes visent ${money(s.target, 2)}, soit ${pct(up, 0)} de potentiel`); }
-    else if (up > 0.08) { pts += 5; pros.push(`Cible moyenne des analystes : ${money(s.target, 2)} (${pct(up, 0)})`); }
-    else if (up < 0) { pts -= 8; cons.push(`Le prix dépasse déjà la cible des analystes (${money(s.target, 2)})`); }
+    if (up > 0.2) { pts += 10; pros.push(T(`Les analystes visent ${money(s.target, 2)}, soit ${pct(up, 0)} de potentiel`, `Analysts target ${money(s.target, 2)}, ${pct(up, 0)} upside`)); }
+    else if (up > 0.08) { pts += 5; pros.push(T(`Cible moyenne des analystes : ${money(s.target, 2)} (${pct(up, 0)})`, `Average analyst target: ${money(s.target, 2)} (${pct(up, 0)})`)); }
+    else if (up < 0) { pts -= 8; cons.push(T(`Le prix dépasse déjà la cible des analystes (${money(s.target, 2)})`, `Price is already above the analyst target (${money(s.target, 2)})`)); }
   }
   // fit with Evan's portfolio
   if (pf && !s.etf) {
     const sec = s.sector, w = pf.sect[sec] ?? 0, tgt = state.meta?.sectorTargets?.[sec];
     if (tgt != null) {
-      if (w > tgt + 0.05) { pts -= 6; cons.push(`Ton portefeuille a déjà ${pct(w, 0, false)} en ${sec} (cible ${pct(tgt, 0, false)})`); }
-      else if (w < tgt - 0.03) { pts += 5; pros.push(`Rééquilibre ton portefeuille : ${sec} à ${pct(w, 0, false)} pour une cible de ${pct(tgt, 0, false)}`); }
-    } else if (!w) { pts += 4; pros.push(`Ajoute un secteur absent de ton portefeuille (${sec})`); }
+      if (w > tgt + 0.05) { pts -= 6; cons.push(T(`Ton portefeuille a déjà ${pct(w, 0, false)} en ${sec} (cible ${pct(tgt, 0, false)})`, `Your portfolio already has ${pct(w, 0, false)} in ${sec} (target ${pct(tgt, 0, false)})`)); }
+      else if (w < tgt - 0.03) { pts += 5; pros.push(T(`Rééquilibre ton portefeuille : ${sec} à ${pct(w, 0, false)} pour une cible de ${pct(tgt, 0, false)}`, `Rebalances your portfolio: ${sec} at ${pct(w, 0, false)} vs a ${pct(tgt, 0, false)} target`)); }
+    } else if (!w) { pts += 4; pros.push(T(`Ajoute un secteur absent de ton portefeuille (${sec})`, `Adds a sector missing from your portfolio (${sec})`)); }
   }
   if (pf && !s.owned) {
     const g = regionOf(s);
     const us = pf.rows.reduce((acc, r) => acc + (regionOf(r.s) === 'États-Unis' ? r.w : 0), 0);
-    if (g !== 'États-Unis' && us > 0.8) { pts += 4; pros.push(`Diversifie hors des États-Unis (${s.region && g === 'International' ? s.region : g}) : ${pct(us, 0, false)} de ton portefeuille y est`); }
+    if (g !== 'États-Unis' && us > 0.8) { pts += 4; pros.push(T(`Diversifie hors des États-Unis (${s.region && g === 'International' ? s.region : g}) : ${pct(us, 0, false)} de ton portefeuille y est`, `Diversifies outside the US (${s.region && g === 'International' ? s.region : g}): ${pct(us, 0, false)} of your portfolio is there`)); }
   }
   if (pf && s.owned) {
     const r = pf.rows.find(r => r.t === s.ticker);
-    if (r && r.w > 0.06) { pts -= 4; cons.push(`Déjà ${pct(r.w, 1, false)} de ton portefeuille : attention à la concentration`); }
+    if (r && r.w > 0.06) { pts -= 4; cons.push(T(`Déjà ${pct(r.w, 1, false)} de ton portefeuille : attention à la concentration`, `Already ${pct(r.w, 1, false)} of your portfolio: watch concentration`)); }
   }
   // what the great investors do with it
   const byInv = investorMap()[s.ticker] || [];
   const longs = byInv.filter(x => !x.short), shorts = byInv.filter(x => x.short);
   if (longs.length) {
     pts += Math.min(8, 3 * longs.length);
-    pros.push('Détenu par ' + longs.map(x => x.name + (x.w ? ` (${nf(x.w, 1)} %)` : '') + (x.chg ? ` · ${x.chg.toLowerCase()}` : '')).join(', '));
+    pros.push(T('Détenu par ', 'Held by ') + longs.map(x => x.name + (x.w ? ` (${nf(x.w, 1)} %)` : '') + (x.chg ? ` · ${x.chg.toLowerCase()}` : '')).join(', '));
   }
-  shorts.forEach(x => { pts -= 4; cons.push(`${x.name} a parié contre ce titre (options de vente)`); });
+  shorts.forEach(x => { pts -= 4; cons.push(T(`${x.name} a parié contre ce titre (options de vente)`, `${x.name} bet against this stock (put options)`)); });
   // flags from the workbook that the rules don't already cover
   const skip = /P\/E|β|Décote|creux|capitalisation|Méga/i;
-  (s.green || []).filter(x => !skip.test(x)).forEach(x => pros.push(x));
-  (s.red || []).filter(x => !skip.test(x)).forEach(x => cons.push(x));
+  if ((state.lang || 'fr') === 'fr') { (s.green || []).filter(x => !skip.test(x)).forEach(x => pros.push(x)); (s.red || []).filter(x => !skip.test(x)).forEach(x => cons.push(x)); }
   const rule = Math.max(0, Math.min(100, pts));
   const score = Math.round(s.consensus != null ? 0.5 * s.consensus + 0.5 * rule : rule);
   return { score, rule, disc, pos, up, pros: [...(s.pros || []), ...pros], cons: [...(s.cons || []), ...cons], verdict: verdictOf(score) };
@@ -730,8 +790,9 @@ function render() {
   const { pf, items } = list();
   renderStatus(); renderKpis(pf, items); renderOpps(items); renderAvoid(items);
   renderHold(pf, items); renderAll(items); renderCharts(pf, items);
-  renderInvestors(); renderDivs(pf); renderTx(); renderDay(pf); renderSplits(); renderPriceAlerts(); renderPlan();
+  renderInvestors(); renderDivs(pf); renderTx(); renderDay(pf); renderSplits(); renderPriceAlerts(); renderPlan(); renderVerdicts(); renderDiscover();
   $('#txOpen').hidden = state.canWrite === false;
+  $('#impOpen').hidden = state.canWrite === false;
   $('#ajout').hidden = state.canWrite === false;
   if (state.open && !state.form) renderDrawer(state.open, false);
 }
@@ -825,8 +886,17 @@ function countUp(root) {
 }
 // smart badges: earnings soon, ex-dividend soon, price alert reached
 function daysTo(d) { if (!d) return null; const x = (Date.parse(d + 'T12:00') - Date.now()) / 864e5; return Math.ceil(x); }
+function trend(s) {
+  const h = s.scoreHist || []; if (h.length < 2) return null;
+  const last = h[h.length - 1], lim = Date.parse(last[0]) - 7 * 864e5;
+  let ref = h[0]; for (const x of h) { if (Date.parse(x[0]) <= lim) ref = x; }
+  if (ref === last) ref = h[h.length - 2];
+  return { d: last[1] - ref[1], days: Math.round((Date.parse(last[0]) - Date.parse(ref[0])) / 864e5) };
+}
+function trendTag(s) { const tr = trend(s); if (!tr || Math.abs(tr.d) < 3) return ''; return `<span class="trend ${tr.d > 0 ? 'up' : 'down'}" title="Variation du score radar sur ${tr.days} jours">${tr.d > 0 ? '▲' : '▼'}${Math.abs(tr.d)}</span>`; }
 function badges(s) {
   const out = [];
+  const tt = trendTag(s); if (tt) out.push(tt);
   const e = daysTo(s.nextEarnings); if (e != null && e >= 0 && e <= 7) out.push(`<span class="badge hot" title="Prochains résultats le ${esc(s.nextEarnings)}">📣 Résultats ${e === 0 ? 'aujourd\'hui' : 'dans ' + e + ' j'}</span>`);
   const x = daysTo(s.lastDiv?.exDate); if (s.owned && !state.priv && x != null && x >= 0 && x <= 10) out.push(`<span class="badge ok" title="Pour recevoir le dividende, il faut détenir le titre avant cette date">💵 Ex-div. ${x === 0 ? 'aujourd\'hui' : 'dans ' + x + ' j'}</span>`);
   const al = alertState(s); if (al && !state.priv) out.push(`<span class="badge hot bell" title="${esc(al.msg)}">🔔 ${al.short}</span>`);
@@ -1044,7 +1114,7 @@ function renderDrawer(t, focus) {
       <div class="num" style="font-size:20px;margin-top:4px">${nf(s.price)} <span style="font-size:14px" class="${s.chg >= 0 ? 'up' : 'down'}">${s.chg >= 0 ? '▲' : '▼'} ${pct(s.chg, 2)} aujourd'hui</span></div><div style="margin-top:4px">${badges(s)}</div></div>
       <button class="close" id="xClose" aria-label="Fermer">×</button></div>
     ${(() => { const x = splitList().find(z => z.t === s.ticker); return x ? `<div class="alert"><b>${esc(splitTxt(x))} · ${esc(x.date)}${x.recorded ? '' : ' (à confirmer)'}</b><span class="note">Après un fractionnement, tu as plus d'actions à un prix plus bas : la valeur de ta position ne change pas.${x.recorded ? ' Les prix passés du graphique sont ajustés.' : ''}</span></div>` : ''; })()}
-    <div class="box" style="flex-direction:row;align-items:center;gap:14px">${ring(a.score, a.verdict.col)}<div><span class="pill ${a.verdict.c}">${a.verdict.t}</span><div class="note" style="margin-top:4px">${s.consensus != null ? `Qualité (modèles investisseurs) ${Math.round(s.consensus)} · ` : ''}règles marché ${a.rule}/100</div></div></div>
+    <div class="box" style="flex-direction:row;align-items:center;gap:14px">${ring(a.score, a.verdict.col)}<div><span class="pill ${a.verdict.c}">${a.verdict.t}</span><div class="note" style="margin-top:4px">${s.consensus != null ? `Qualité (modèles investisseurs${s.scoresAuto ? ', recalculés automatiquement' : ''}) ${Math.round(s.consensus)} · ` : ''}règles marché ${a.rule}/100${(() => { const tr = trend(s); return tr ? ` · tendance ${tr.d >= 0 ? '+' : ''}${tr.d} sur ${tr.days} j` : ''; })()}</div></div></div>
     <div class="box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><span class="lbl">📈 Évolution de l'action</span>
       <div class="seg" role="group" aria-label="Période" id="pRange">${[['3m', '3 mois'], ['6m', '6 mois'], ['1y', '1 an'], ['all', 'Tout']].map(([k, l]) => `<button type="button" data-r="${k}" aria-pressed="${state.range === k}">${l}</button>`).join('')}</div></div>
       <div id="pStats" class="note"></div>
@@ -1134,7 +1204,7 @@ function fundBox(s) {
     fvHtml = `<div><span class="lbl">Prix vs ${fv ? 'valeur estimée' : 'cible des analystes'}</span>
       <div style="margin:6px 0;font-weight:600" class="${diff >= 0 ? 'up' : 'down'}">${diff >= 0.2 ? 'Sous-évalué' : diff >= -0.2 ? 'Prix à peu près juste' : 'Surévalué'} · ${nf(Math.abs(diff) * 100, 1)} % ${diff >= 0 ? 'sous' : 'au-dessus de'} cette valeur</div>
       <div class="fv"><span class="z1"></span><span class="z2"></span><span class="z3"></span>
-        <span class="mk" style="left:${pos(price)}%"><b>Prix ${nf(price)}</b></span><span class="mk fair" style="left:50%"><b>${fv ? 'Valeur' : 'Cible'} ${nf(ref)}</b></span></div>
+        <span class="mk${pos(price) > 70 ? ' flip' : ''}" style="left:${pos(price)}%"><b>Prix ${nf(price)}</b></span><span class="mk fair" style="left:50%"><b>${fv ? 'Valeur' : 'Cible'} ${nf(ref)}</b></span></div>
       <div class="fvl"><span>20 % sous-évalué</span><span>Juste</span><span>20 % surévalué</span></div>
       <p class="note" style="margin:4px 0 0">${fv ? 'Valeur selon un modèle de flux de trésorerie actualisés (DCF). Source : ' + esc(s.fairValueSource || 'non précisée') + '.' : 'Aucune valeur DCF disponible pour l\'instant : comparaison avec la cible moyenne des analystes.'}</p></div>`;
   }
@@ -1380,16 +1450,120 @@ $('#planForm').addEventListener('submit', e => { e.preventDefault(); const v = p
 ['#planN', '#planEtf'].forEach(id => $(id).addEventListener('change', renderPlan));
 if (planAmt) $('#planAmt').value = planAmt;
 
+/* ---------- import of a Wealthsimple activity export (read locally, never uploaded) ---------- */
+function parseCSV(text) {
+  const rows = []; let row = [], f = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) { if (c === '"') { if (text[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
+    else if (c === '"') q = true;
+    else if (c === ',' || c === ';') { row.push(f); f = ''; }
+    else if (c === '\n' || c === '\r') { if (c === '\r' && text[i + 1] === '\n') i++; row.push(f); f = ''; if (row.some(x => x.trim() !== '')) rows.push(row); row = []; }
+    else f += c;
+  }
+  row.push(f); if (row.some(x => x.trim() !== '')) rows.push(row);
+  return rows;
+}
+const num0 = v => { if (v == null) return null; const x = parseFloat(String(v).replace(/[\s$]/g, '').replace(/(\d),(\d{1,6})$/, '$1.$2').replace(/,/g, '')); return isNaN(x) ? null : x; };
+function findCol(h, re) { return h.findIndex(x => re.test(x.trim().toLowerCase())); }
+function normDate(v) { const t = String(v || '').trim(); let m = t.match(/(\d{4})-(\d{2})-(\d{2})/); if (m) return `${m[1]}-${m[2]}-${m[3]}`; const d = new Date(t); return isNaN(d) ? '' : d.toISOString().slice(0, 10); }
+function normAcc(v) { const t = String(v || '').toLowerCase(); if (/celiapp|fhsa/.test(t)) return 'CELIAPP'; if (/celi|tfsa/.test(t)) return 'CELI'; if (/non|personal|cash|individual|enregistr/.test(t)) return 'Non-enregistré'; return ''; }
+function interpret(rows) {
+  const h = rows[0].map(x => x.trim()), body = rows.slice(1);
+  const c = { date: findCol(h, /^(transaction )?date|^date|settle/), type: findCol(h, /^(action|type|transaction|activity|activity type|sub-?type)$|type/), sym: findCol(h, /symbol|ticker|security|symbole/), qty: findCol(h, /quantity|qty|shares|quantité/), price: findCol(h, /^price|unit price|prix/), amount: findCol(h, /amount|net|total|montant/), cur: findCol(h, /currency|devise/), acc: findCol(h, /account|compte/), desc: findCol(h, /description|details|détails/) };
+  const out = [];
+  for (const r of body) {
+    const raw = ((c.type >= 0 ? r[c.type] : '') + ' ' + (c.desc >= 0 ? r[c.desc] : '')).toLowerCase();
+    let type = /reinvest|drip|réinvest/.test(raw) ? 'drip' : /\bbuy\b|bought|achat|purchase|market buy|limit buy/.test(raw) ? 'buy' : /\bsell\b|sold|vente/.test(raw) ? 'sell' : /div/.test(raw) ? 'cashdiv' : 'other';
+    let t = c.sym >= 0 ? String(r[c.sym] || '').trim().toUpperCase() : '';
+    if (!t && c.desc >= 0) { const m = String(r[c.desc]).match(/\b([A-Z]{1,5}(?:\.[A-Z]{1,2})?)\b/); if (m) t = m[1]; }
+    const qty = Math.abs(num0(c.qty >= 0 ? r[c.qty] : null) || 0);
+    let price = Math.abs(num0(c.price >= 0 ? r[c.price] : null) || 0);
+    const amt = Math.abs(num0(c.amount >= 0 ? r[c.amount] : null) || 0);
+    if (!price && qty && amt) price = amt / qty;
+    const known = Store.uni[t] || Store.uni[t + '.TO'];
+    if (!Store.uni[t] && Store.uni[t + '.TO']) t = t + '.TO';
+    const cur = c.cur >= 0 && /cad|usd/i.test(r[c.cur]) ? String(r[c.cur]).toUpperCase().trim() : (/\.(TO|V)$/.test(t) ? 'CAD' : (known?.cur || 'USD'));
+    out.push({ date: normDate(c.date >= 0 ? r[c.date] : ''), type, t, qty, price, cur, account: normAcc(c.acc >= 0 ? r[c.acc] : ''), ok: (type === 'buy' || type === 'sell' || type === 'drip') && t && qty > 0 && price > 0 });
+  }
+  return { cols: c, header: h, rows: out };
+}
+function isDup(x) { return (Store.priv?.transactions || []).some(y => y.t === x.t && y.date === x.date && Math.abs((y.qty || 0) - x.qty) < 1e-6 && (y.type === x.type || (x.type === 'drip' && y.type === 'drip')) && (!x.account || y.account === x.account)); }
+let impData = null;
+function openImport() {
+  openPanel(`<div class="dh"><div><div class="lbl">📥 Wealthsimple</div><h2 id="dName">Importer un relevé d'activités</h2></div><button class="close" id="xClose" aria-label="Fermer">×</button></div>
+    <div class="box"><span class="lbl">🛡️ Sécurité</span><p style="margin:0">Le fichier est lu <b>seulement dans ton navigateur</b> : il n'est jamais envoyé ni enregistré. Seules les transactions que tu coches sont ajoutées à ton coffre chiffré. Dès l'import terminé, la page oublie le fichier. Tu peux ensuite le supprimer de ton dossier Téléchargements.</p></div>
+    <div class="box"><span class="lbl">1. Télécharge le relevé</span><p class="note" style="margin:0">Dans Wealthsimple : onglet Activité (icône d'horloge) → « Télécharger les activités » → choisis la période et le compte → fichier CSV.</p>
+      <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">2. Choisis le fichier CSV<input type="file" id="impFile" accept=".csv,text/csv"></label>
+      <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Compte (si le fichier ne l'indique pas)<select id="impAcc">${ACCOUNTS.map(a => `<option>${a}</option>`).join('')}</select></label></div>
+    <div id="impOut"></div>`);
+  $('#impFile').addEventListener('change', e => {
+    const f = e.target.files[0]; if (!f) return;
+    if (f.size > 5e6) { $('#impOut').innerHTML = '<div class="msg err">Ce fichier est trop gros pour un relevé (plus de 5 Mo).</div>'; return; }
+    const rd = new FileReader();
+    rd.onload = () => { try { impData = interpret(parseCSV(String(rd.result))); showImport(); } catch (err) { $('#impOut').innerHTML = '<div class="msg err">Ce fichier n\'a pas pu être lu. Vérifie que c\'est bien le CSV des activités Wealthsimple.</div>'; } e.target.value = ''; };
+    rd.readAsText(f);
+  });
+  $('#impAcc').addEventListener('change', () => impData && showImport());
+}
+function showImport() {
+  const acc = $('#impAcc').value;
+  const rows = impData.rows.map((x, i) => ({ ...x, i, account: x.account || acc })).filter(x => x.type !== 'other');
+  rows.forEach(x => { x.dup = isDup(x); x.sel = x.ok && !x.dup && x.type !== 'drip' && x.type !== 'cashdiv'; });
+  const nOk = rows.filter(x => x.sel).length;
+  const miss = ['date', 'sym', 'qty'].filter(k => impData.cols[k] < 0);
+  $('#impOut').innerHTML = `<div class="box imp"><span class="lbl">3. Vérifie et importe</span>
+    ${miss.length ? `<div class="msg err">Colonnes non reconnues : ${miss.join(', ')}. En-têtes trouvés : ${esc(impData.header.join(' | '))}</div>` : ''}
+    <p class="note" style="margin:0">${rows.length} lignes reconnues. Les doublons (déjà dans ton journal), les dividendes en argent et les réinvestissements (déjà ajoutés automatiquement) sont décochés par défaut.</p>
+    <div class="tw"><table><thead><tr><th></th><th>Date</th><th>Type</th><th>Titre</th><th class="r">Qté</th><th class="r">Prix</th><th>Compte</th><th>Note</th></tr></thead><tbody>
+    ${rows.map(x => `<tr class="${x.dup ? 'dup' : ''}"><td><input type="checkbox" data-imp="${x.i}" ${x.sel ? 'checked' : ''} ${x.ok ? '' : 'disabled'}></td><td class="num">${esc(x.date)}</td><td>${({ buy: 'Achat', sell: 'Vente', drip: 'DRIP', cashdiv: 'Dividende' })[x.type] || x.type}</td><td><b>${esc(x.t)}</b></td><td class="r num">${nf(x.qty, 4)}</td><td class="r num">${x.price ? nf(x.price) + ' ' + esc(x.cur) : '–'}</td><td>${esc(x.account)}</td><td class="note">${x.dup ? 'déjà importé' : x.type === 'drip' ? 'déjà réinvesti auto.' : x.type === 'cashdiv' ? 'argent, pas d\'actions' : !x.ok ? 'incomplet' : ''}</td></tr>`).join('')}
+    </tbody></table></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><span class="note" id="impMsg">${nOk} transaction(s) cochée(s)</span><button class="btn primary" id="impGo">Importer les transactions cochées</button></div></div>`;
+  $('#impGo').onclick = () => doImport(rows);
+}
+async function doImport(rows) {
+  const pick = new Set([...document.querySelectorAll('[data-imp]:checked')].map(c => +c.dataset.imp));
+  const list = rows.filter(x => pick.has(x.i)).sort((a, b) => a.date.localeCompare(b.date));
+  if (!list.length) { $('#impMsg').textContent = 'Coche au moins une transaction.'; return; }
+  const apply = p => {
+    p.transactions = p.transactions || [];
+    for (const x of list) {
+      const pos = p.positions; const i = pos.findIndex(q => q.t === x.t && q.account === x.account); const prev = i >= 0 ? { ...pos[i] } : null; let realized = null;
+      if (x.type === 'sell') { if (!prev) continue; const q = Math.min(x.qty, prev.qty); realized = (x.price - prev.avg) * q; const left = prev.qty - q; if (left < 1e-6) pos.splice(i, 1); else pos[i].qty = +left.toFixed(6); }
+      else if (prev) { const q = prev.qty + x.qty; pos[i].avg = +((prev.avg * prev.qty + x.price * x.qty) / q).toFixed(4); pos[i].qty = +q.toFixed(6); }
+      else pos.push({ t: x.t, account: x.account, qty: +x.qty.toFixed(6), avg: x.price, cur: x.cur });
+      p.transactions.unshift({ type: x.type, t: x.t, account: x.account, qty: x.qty, price: x.price, cur: x.cur, date: x.date, realized, prev, after: pos.find(q => q.t === x.t && q.account === x.account) || null, createdAt: new Date().toISOString(), source: 'import Wealthsimple', _id: uid() });
+    }
+  };
+  $('#impGo').disabled = true; $('#impMsg').textContent = 'Import en cours…';
+  try {
+    await queue('priv', apply, `Import Wealthsimple (${list.length} transactions)`);
+    const missing = [...new Set(list.map(x => x.t))].filter(t => !Store.uni[t]);
+    for (const t of missing) await DB.doc('stocks/' + docId(t)).set({ ticker: t, name: t, sector: 'Autre', cur: list.find(x => x.t === t).cur, etf: false, addedBy: 'Import Wealthsimple' });
+    impData = null;
+    $('#impOut').innerHTML = `<div class="msg ok">✅ ${list.length} transaction(s) importée(s). Le fichier a été oublié par la page; tu peux le supprimer de ton ordinateur.</div>`;
+  } catch (err) { $('#impGo').disabled = false; $('#impMsg').textContent = err?.code === 'no_token' ? 'Ajoute ton jeton GitHub dans ⚙️ Réglages.' : 'L\'import a échoué. Réessaie.'; }
+}
+$('#impOpen').onclick = openImport;
+
 /* ---------- colour styles ---------- */
 function setPal(p, save) {
   if (p) document.documentElement.setAttribute('data-pal', p); else document.documentElement.removeAttribute('data-pal');
-  $('#palSel').value = p || '';
+  document.querySelectorAll('#palMenu [data-pal]').forEach(b => b.setAttribute('aria-checked', (b.dataset.pal || '') === (p || '')));
   if (save) { try { localStorage.setItem('radar-pal', p || ''); } catch (e) {} }
   Object.keys(charts).forEach(k => { charts[k].destroy(); delete charts[k]; });
   render();
 }
-$('#palSel').addEventListener('change', e => setPal(e.target.value, true));
-(() => { let p = ''; try { p = localStorage.getItem('radar-pal') || ''; } catch (e) {} if (p) { document.documentElement.setAttribute('data-pal', p); $('#palSel').value = p; } })();
+function togglePal(open) { $('#palMenu').hidden = !open; $('#palBtn').setAttribute('aria-expanded', open); }
+$('#palBtn').onclick = e => { e.stopPropagation(); togglePal($('#palMenu').hidden); };
+$('#palMenu').addEventListener('click', e => { const b = e.target.closest('[data-pal]'); if (b) { setPal(b.dataset.pal, true); togglePal(false); } });
+document.addEventListener('click', e => { if (!e.target.closest('.pop')) togglePal(false); });
+(() => { let p = ''; try { p = localStorage.getItem('radar-pal') || ''; } catch (e) {} if (p) document.documentElement.setAttribute('data-pal', p); document.querySelectorAll('#palMenu [data-pal]').forEach(b => b.setAttribute('aria-checked', (b.dataset.pal || '') === p)); })();
+/* language of analyses and news */
+state.lang = (() => { try { return localStorage.getItem('radar-lang') || 'fr'; } catch (e) { return 'fr'; } })();
+function setLang(l) { state.lang = l; try { localStorage.setItem('radar-lang', l); } catch (e) {} $('#langBtn').textContent = l.toUpperCase(); $('#langBtn').title = l === 'fr' ? 'Analyses en français (cliquer pour l\'anglais)' : 'Analyses in English (click for French)'; if (typeof applyStores === 'function' && Store.uni) applyStores(); }
+$('#langBtn').onclick = () => setLang(state.lang === 'fr' ? 'en' : 'fr');
+$('#langBtn').textContent = state.lang.toUpperCase();
 
 /* ---------- private mode ---------- */
 function setPriv(on, save) {
@@ -1582,9 +1756,19 @@ function merge(t, u, m) {
   if (!s.region && m.regionAuto) s.region = m.regionAuto;
   const h = (m.h && m.h.length > 1 ? m.h : u.h) || [];
   s.hist = h.map(([d, p]) => ({ d, p }));
-  const fresh = (u.news || []).filter(n => n.d && Date.now() - Date.parse(n.d) < 21 * 864e5);
-  s.news = fresh.length ? fresh : (m.newsAuto || u.news || []).map(n => ({ d: n.d, t: n.t + (n.lang === 'en' ? ' (en anglais)' : '') }));
-  if (!s.summary && m.about) s.summary = m.about + ' (description en anglais)';
+  const L = state.lang || 'fr';
+  const claudeFresh = u.updatedAt && Date.now() - Date.parse(u.updatedAt) < 30 * 864e5;
+  const freshNews = (u.news || []).filter(n => n.d && Date.now() - Date.parse(n.d) < 21 * 864e5);
+  const yNews = (m.newsAuto || []).map(n => ({ d: n.d, t: n.t + (L === 'fr' && n.lang === 'en' ? ' 🇬🇧' : '') }));
+  s.news = L === 'fr' ? (freshNews.length ? freshNews : yNews.length ? yNews : (u.news || [])) : (yNews.length ? yNews : (u.news || []));
+  const ap = m.autoPros?.[L] || [], ac = m.autoCons?.[L] || [];
+  s.pros = L === 'fr' ? [...(claudeFresh ? (u.pros || []) : []), ...ap] : ap;
+  s.cons = L === 'fr' ? [...(claudeFresh ? (u.cons || []) : []), ...ac] : ac;
+  s.summary = L === 'fr' ? (u.summary || m.autoSummary?.fr || null) : (m.about || m.autoSummary?.en || null);
+  if (m.scoresAuto) { s.scoresExcel = u.scores; s.scores = { ...(u.scores || {}), ...m.scoresAuto }; s.consensus = m.consensusAuto ?? u.consensus; s.scoresAuto = true; }
+  if (!u.fairValue && m.fairValueAuto) { s.fairValue = m.fairValueAuto.value; s.fairValueSource = `estimation prudente du Radar : flux de trésorerie actualisés à ${Math.round(m.fairValueAuto.rate * 1000) / 10} %, croissance de ${Math.round(m.fairValueAuto.growth * 100)} % les 5 premières années puis ${Math.round(m.fairValueAuto.terminal * 1000) / 10} % à long terme`; }
+  s.radarScore = m.radarScore;
+  s.scoreHist = (Store.scores || {})[t] || [];
   s.updatedAt = m.updatedAt || u.updatedAt;
   s.source = m.updatedAt ? 'Yahoo Finance (mise à jour automatique)' + (u.pros?.length ? ' · analyse écrite par Claude le ' + String(u.updatedAt || '').slice(0, 10) : '') : (u.source || '–');
   return s;
@@ -1621,6 +1805,8 @@ async function loadPublic() {
     fetch('data/investors.json' + bust).then(r => r.json()).catch(() => [])
   ]);
   Store.uni = u; Store.market = m; state.investors = inv; invKey = null;
+  const [sc, dv] = await Promise.all([fetch('data/scores.json' + bust).then(r => r.ok ? r.json() : {}).catch(() => ({})), fetch('data/discover.json' + bust).then(r => r.ok ? r.json() : {}).catch(() => ({}))]);
+  Store.scores = sc; Store.discover = dv;
 }
 async function loadPrivateBlob() {
   if (token()) { try { const r = await ghRead('data/private.enc.json'); return JSON.parse(r.text); } catch (e) { /* jeton invalide : lecture publique */ } }

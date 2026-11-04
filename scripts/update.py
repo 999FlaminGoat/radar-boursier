@@ -185,11 +185,11 @@ def news_of(y) -> list:
     return out
 
 
-def fetch_one(t: str, prev: dict, want_fin: bool) -> dict | None:
+def fetch_one(t: str, prev: dict, want_fin: bool, ysym_override: str | None = None) -> dict | None:
     import pandas as pd
     import yfinance as yf
 
-    y = yf.Ticker(ysym(t))
+    y = yf.Ticker(ysym_override or ysym(t))
     h = y.history(period="5y", interval="1d", auto_adjust=False, actions=True)
     if h is None or h.empty:
         return None
@@ -262,6 +262,22 @@ def fetch_one(t: str, prev: dict, want_fin: bool) -> dict | None:
     if want_fin and not out.get("etf"):
         try:
             fin, fh = financials(y)
+            fc, pc = info.get("financialCurrency"), info.get("currency")
+            if fin and fc and pc and fc != pc:
+                # états financiers publiés dans une autre devise (ex. Toyota en yens) : conversion au taux du jour
+                rh = yf.Ticker(f"{fc}{pc}=X").history(period="5d")["Close"].dropna()
+                rate = float(rh.iloc[-1]) if len(rh) else None
+                if rate:
+                    for k in ("rev", "gross", "cogs", "ni", "fcf", "debt"):
+                        if fin.get(k) is not None:
+                            fin[k] = fin[k] * rate
+                    for hh in fh or []:
+                        for k in ("rev", "ni", "fcf"):
+                            if hh.get(k) is not None:
+                                hh[k] = hh[k] * rate
+                    fin["converted"] = f"{fc}→{pc}"
+                else:
+                    fin = fh = None
             if fin:
                 out["fin"], out["finHist"], out["finAt"] = fin, fh, ds(TODAY)
         except Exception as e:
@@ -282,7 +298,7 @@ def fetch_quick(sym: str):
 
 
 # ---------------------------------------------------------------- SEC 13F (grands investisseurs)
-UA = "RadarBoursier 999FlaminGoat@users.noreply.github.com"
+UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36"
 CIKS = {"berkshire": ("0001067983", "BERKSHIRE"), "pershing": ("0001336528", "PERSHING"), "duquesne": ("0001536411", "DUQUESNE"),
         "ark": ("0001697748", "ARK INVEST"), "appaloosa": ("0001656456", "APPALOOSA")}
 NAME_MAP = {"APPLE": "AAPL", "ALPHABET": "GOOGL", "AMAZON COM": "AMZN", "MICROSOFT": "MSFT", "META PLATFORMS": "META", "NVIDIA": "NVDA",
@@ -491,6 +507,23 @@ def apply_private(priv, market, fx):
     d = TODAY.isoformat()
     hist[:] = [h for h in hist if h.get("d") != d] + [{"d": d, "wallet": round(total, 2), "auto": True}]
     priv["lastRun"] = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    # alertes de prix atteintes et résultats imminents (pour la notification, sans détails)
+    n_alert = 0
+    for t, a in (priv.get("alerts") or {}).items():
+        pr = (stocks.get(t) or {}).get("price")
+        if pr is None:
+            continue
+        if (a.get("below") and pr <= a["below"]) or (a.get("above") and pr >= a["above"]):
+            n_alert += 1
+    n_earn = 0
+    for t in held:
+        ne = (stocks.get(t) or {}).get("nextEarnings")
+        try:
+            if ne and 0 <= (dt.date.fromisoformat(ne[:10]) - TODAY).days <= 2:
+                n_earn += 1
+        except Exception:
+            pass
+    priv["_notify"] = {"alerts": n_alert, "earnings": n_earn, "dividends": n_div, "splits": n_sp}
     return n_div, n_sp, total
 
 
@@ -534,6 +567,45 @@ def main():
             log(f"{i + 1}/{len(universe)} titres")
         time.sleep(0.4)
 
+    # scores automatiques, DCF, raisons bilingues, score radar
+    import smart
+    for t, m in out.items():
+        try:
+            if m:
+                smart.enrich(t, m, universe.get(t, {}))
+        except Exception as e:
+            log("  enrichissement impossible", t, e)
+    # historique des scores (pour les tendances et les changements de verdict)
+    sh = jload(DATA / "scores.json", {})
+    dkey = TODAY.isoformat()
+    upgrades = []
+    for t, m in out.items():
+        sc = m.get("radarScore") if m else None
+        if sc is None:
+            continue
+        serie = [x for x in sh.get(t, []) if x[0] != dkey]
+        if serie and smart.verdict(serie[-1][1]) != smart.verdict(sc) and sc >= 66 > serie[-1][1]:
+            upgrades.append(t)
+        sh[t] = (serie + [[dkey, sc]])[-180:]
+    for t in list(sh):
+        if t not in universe:
+            del sh[t]
+    jdump(DATA / "scores.json", sh)
+    # découvertes hebdomadaires
+    disc_file = DATA / "discover.json"
+    disc = jload(disc_file, {})
+    new_disc = []
+    if monday or not disc.get("items") or os.environ.get("FORCE_DISCOVER"):
+        try:
+            items = smart.discover(universe, fetch_one, SECTOR_FR)
+            if items:
+                old = {i["t"] for i in disc.get("items", [])}
+                new_disc = [i["t"] for i in items if i["t"] not in old][:3]
+                disc = {"generatedAt": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "items": items}
+                jdump(disc_file, disc, compact=False)
+        except Exception:
+            traceback.print_exc()
+
     fx = (fetch_quick("CAD=X") or {}).get("v") or prev.get("fx", {}).get("USDCAD") or 1.39
     indices = []
     for n, s in (("S&P 500", "^GSPC"), ("Nasdaq", "^IXIC"), ("TSX", "^GSPTSE")):
@@ -556,10 +628,12 @@ def main():
     pw = os.environ.get("RADAR_PASSWORD")
     pfile = DATA / "private.enc.json"
     note = ""
+    notify_priv = {}
     if pw and pfile.exists():
         try:
             priv = decrypt(jload(pfile, {}), pw)
             n_div, n_sp, total = apply_private(priv, market, fx)
+            notify_priv = priv.pop("_notify", {})
             jdump(pfile, encrypt(priv, pw))
             note = f", {n_div} dividende(s) réinvesti(s), {n_sp} fractionnement(s) appliqué(s)"
             log(f"Portefeuille : {total:,.0f} $ CAD{note}")
@@ -569,7 +643,23 @@ def main():
     else:
         log("RADAR_PASSWORD absent : dividendes et fractionnements non appliqués.")
     market["note"] = f"{len(out) - len(fails)} titres mis à jour{note}"
+    market["upgrades"] = upgrades
     jdump(DATA / "market.json", market)
+
+    # notification (texte volontairement vague : le dépôt est public)
+    lines = []
+    n = notify_priv
+    if n.get("alerts"): lines.append(f"🔔 {n['alerts']} alerte(s) de prix atteinte(s)")
+    if n.get("earnings"): lines.append(f"📣 {n['earnings']} de tes titres publient leurs résultats d'ici 2 jours")
+    if n.get("dividends"): lines.append(f"💰 {n['dividends']} dividende(s) réinvesti(s)")
+    if n.get("splits"): lines.append(f"✂️ {n['splits']} fractionnement(s) d'actions appliqué(s) à tes positions")
+    if upgrades: lines.append("🚀 Passent à « Achat intéressant » : " + ", ".join(upgrades[:6]))
+    if new_disc: lines.append("🆕 Nouvelles découvertes de la semaine : " + ", ".join(new_disc))
+    note_file = ROOT / ".notify.md"
+    if lines:
+        note_file.write_text("\n".join(f"- {l}" for l in lines), encoding="utf-8")
+    elif note_file.exists():
+        note_file.unlink()
 
     if monday or not (DATA / "investors.json").exists() or os.environ.get("FORCE_13F"):
         try:

@@ -11,12 +11,17 @@ on:
         required: false
         default: ""
       force13f:
-        description: "Relire tout de suite les déclarations 13F (oui/non)"
+        description: "Relire tout de suite les déclarations 13F (oui = oui)"
+        required: false
+        default: ""
+      discover:
+        description: "Lancer tout de suite le balayage S&P 500 / TSX 60 (oui = oui)"
         required: false
         default: ""
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: radar-update
@@ -38,6 +43,7 @@ jobs:
         env:
           RADAR_PASSWORD: ${{ secrets.RADAR_PASSWORD }}
           FORCE_13F: ${{ github.event.inputs.force13f }}
+          FORCE_DISCOVER: ${{ github.event.inputs.discover }}
         run: python scripts/update.py ${{ github.event.inputs.symbols }}
       - name: Enregistrer les changements
         run: |
@@ -49,3 +55,20 @@ jobs:
           # Si la page a enregistré quelque chose pendant la mise à jour, sa version est gardée.
           git pull --rebase -X ours origin main
           git push
+      - name: Notifier (application GitHub ou courriel)
+        if: hashFiles('.notify.md') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create radar --color 1f4fd1 --description "Notifications du Radar" 2>/dev/null || true
+          for n in $(gh issue list --label radar --state open --json number -q '.[].number'); do gh issue close "$n"; done
+          {
+            echo "@999FlaminGoat, voici ce qui a changé aujourd'hui :"
+            echo
+            cat .notify.md
+            echo
+            echo "👉 Ouvre ton radar : https://999flamingoat.github.io/radar-boursier/"
+            echo
+            echo "_Le détail reste dans ta page, déverrouillée avec ton mot de passe._"
+          } > body.md
+          gh issue create --title "📡 Radar du $(date +%Y-%m-%d)" --body-file body.md --label radar

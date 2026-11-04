@@ -1,0 +1,403 @@
+{
+ "generatedAt": "2026-11-04T23:04:03Z",
+ "items": [
+  {
+   "t": "K.TO",
+   "name": "Kinross Gold Corporation",
+   "sector": "Matériaux",
+   "region": "Canada",
+   "cur": "CAD",
+   "index": "TSX 60",
+   "price": 29.91,
+   "chg": 0.075126,
+   "pe": 8.17,
+   "target": 50.56,
+   "hi52": 51.92,
+   "score": 80,
+   "verdict": "Achat intéressant",
+   "pros": {
+    "fr": [
+     "Revenus en forte hausse : +37 % sur un an",
+     "Très rentable : garde 38 % de ses revenus en profit",
+     "Génère beaucoup de cash : 3,7 G$ de flux libre (10,4 % de sa valeur)",
+     "Notre estimation DCF (152,08 $) est 408 % au-dessus du prix"
+    ],
+    "en": [
+     "Strong revenue growth: +37% year over year",
+     "Highly profitable: 38% net margin",
+     "Strong cash generation: $3.7B free cash flow (10.4% yield)",
+     "Our DCF estimate ($152.08) is 408% above the price"
+    ]
+   },
+   "cons": {
+    "fr": [],
+    "en": []
+   },
+   "fair": 152.08
+  },
+  {
+   "t": "EXE",
+   "name": "Expand Energy Corporation",
+   "sector": "Énergie",
+   "region": "États-Unis",
+   "cur": "USD",
+   "index": "S&P 500",
+   "price": 87.31,
+   "chg": -0.029134,
+   "pe": 7.53,
+   "target": 123.33,
+   "hi52": 122.89,
+   "score": 80,
+   "verdict": "Achat intéressant",
+   "pros": {
+    "fr": [
+     "Revenus en forte hausse : +189 % sur un an",
+     "Génère beaucoup de cash : 2,5 G$ de flux libre (12,2 % de sa valeur)",
+     "Dividende de 2,6 % par année, bien couvert par les profits",
+     "Notre estimation DCF (517,75 $) est 493 % au-dessus du prix"
+    ],
+    "en": [
+     "Strong revenue growth: +189% year over year",
+     "Strong cash generation: $2.5B free cash flow (12.2% yield)",
+     "2.6% dividend yield, well covered by earnings",
+     "Our DCF estimate ($517.75) is 493% above the price"
+    ]
+   },
+   "cons": {
+    "fr": [],
+    "en": []
+   },
+   "fair": 517.75
+  },
+  {
+   "t": "TMUS",
+   "name": "T-Mobile US, Inc.",
+   "sector": "Technologie",
+   "region": "États-Unis",
+   "cur": "USD",
+   "index": "S&P 500",
+   "price": 159.17,
+   "chg": 0.030827,
+   "pe": 15.35,
+   "target": 225.64,
+   "hi52": 221.98,
+   "score": 78,
+   "verdict": "Achat intéressant",
+   "pros": {
+    "fr": [
+     "Génère beaucoup de cash : 17,8 G$ de flux libre (10,5 % de sa valeur)",
+     "Les analystes prévoient des profits en hausse d'environ 37 %",
+     "Dividende de 2,9 % par année, bien couvert par les profits",
+     "Notre estimation DCF (430,48 $) est 170 % au-dessus du prix"
+    ],
+    "en": [
+     "Strong cash generation: $17.8B free cash flow (10.5% yield)",
+     "Analysts expect earnings to grow about 37%",
+     "2.9% dividend yield, well covered by earnings",
+     "Our DCF estimate ($430.48) is 170% above the price"
+    ]
+   },
+   "cons": {
+    "fr": [
+     "Dette élevée : 122,3 G$, soit 73 % de sa valeur en Bourse"
+    ],
+    "en": [
+     "High debt: $122.3B, 73% of market value"
+    ]
+   },
+   "fair": 430.48
+  },
+  {
+   "t": "LVS",
+   "name": "Las Vegas Sands Corp.",
+   "sector": "Consommation",
+   "region": "États-Unis",
+   "cur": "USD",
+   "index": "S&P 500",
+   "price": 40.74,
+   "chg": 0.06482,
+   "pe": 16.7,
+   "target": 49.57,
+   "hi52": 69.49,
+   "score": 75,
+   "verdict": "Achat intéressant",
+   "pros": {
+    "fr": [
+     "Revenus en forte hausse : +15 % sur un an",
+     "Génère beaucoup de cash : 2,4 G$ de flux libre (9,1 % de sa valeur)",
+     "Les analystes prévoient des profits en hausse d'environ 27 %",
+     "Dividende de 2,9 % par année, bien couvert par les profits"
+    ],
+    "en": [
+     "Strong revenue growth: +15% year over year",
+     "Strong cash generation: $2.4B free cash flow (9.1% yield)",
+     "Analysts expect earnings to grow about 27%",
+     "2.9% dividend yield, well covered by earnings"
+    ]
+   },
+   "cons": {
+    "fr": [
+     "Dette élevée : 15,8 G$, soit 60 % de sa valeur en Bourse"
+    ],
+    "en": [
+     "High debt: $15.8B, 60% of market value"
+    ]
+   },
+   "fair": 138.9
+  },
+  {
+   "t": "CVS",
+   "name": "CVS Health Corporation",
+   "sector": "Santé",
+   "region": "États-Unis",
+   "cur": "USD",
+   "index": "S&P 500",
+   "price": 79.96,
+   "chg": -0.12526,
+   "pe": 21.04,
+   "target": 115.52,
+   "hi52": 110.6,
+   "score": 74,
+   "verdict": "Achat intéressant",
+   "pros": {
+    "fr": [
+     "Génère beaucoup de cash : 11,8 G$ de flux libre (11,5 % de sa valeur)",
+     "Les analystes prévoient des profits en hausse d'environ 125 %",
+     "Dividende de 3,3 % par année, bien couvert par les profits",
+     "Notre estimation DCF (227,65 $) est 185 % au-dessus du prix"
+    ],
+    "en": [
+     "Strong cash generation: $11.8B free cash flow (11.5% yield)",
+     "Analysts expect earnings to grow about 125%",
+     "3.3% dividend yield, well covered by earnings",
+     "Our DCF estimate ($227.65) is 185% above the price"
+    ]
+   },
+   "cons": {
+    "fr": [
+     "Dette élevée : 80,0 G$, soit 78 % de sa valeur en Bourse"
+    ],
+    "en": [
+     "High debt: $80.0B, 78% of market value"
+    ]
+   },
+   "fair": 227.65
+  },
+  {
+   "t": "AEM.TO",
+   "name": "Agnico Eagle Mines Limited",
+   "sector": "Matériaux",
+   "region": "Canada",
+   "cur": "CAD",
+   "index": "TSX 60",
+   "price": 256.31,
+   "chg": 0.094453,
+   "pe": 15.05,
+   "target": 295.19,
+   "hi52": 344.78,
+   "score": 73,
+   "verdict": "Achat intéressant",
+   "pros": {
+    "fr": [
+     "Revenus en forte hausse : +44 % sur un an",
+     "Très rentable : garde 41 % de ses revenus en profit",
+     "Notre estimation DCF (565,70 $) est 121 % au-dessus du prix"
+    ],
+    "en": [
+     "Strong revenue growth: +44% year over year",
+     "Highly profitable: 41% net margin",
+     "Our DCF estimate ($565.70) is 121% above the price"
+    ]
+   },
+   "cons": {
+    "fr": [],
+    "en": []
+   },
+   "fair": 565.7
+  },
+  {
+   "t": "PCG",
+   "name": "PG&E Corporation",
+   "sector": "Énergie",
+   "region": "États-Unis",
+   "cur": "USD",
+   "index": "S&P 500",
+   "price": 13.4,
+   "chg": 0.008277,
+   "pe": 9.93,
+   "target": 17.62,
+   "hi52": 19.11,
+   "score": 71,
+   "verdict": "Achat intéressant",
+   "pros": {
+    "fr": [
+     "Les analystes prévoient des profits en hausse d'environ 33 %"
+    ],
+    "en": [
+     "Analysts expect earnings to grow about 33%"
+    ]
+   },
+   "cons": {
+    "fr": [
+     "Flux de trésorerie libre négatif (-5,0 G$) : dépense plus qu'elle n'encaisse",
+     "Dette élevée : 61,3 G$, soit 152 % de sa valeur en Bourse"
+    ],
+    "en": [
+     "Negative free cash flow ($-5.0B): spending more cash than it brings in",
+     "High debt: $61.3B, 152% of market value"
+    ]
+   },
+   "fair": null
+  },
+  {
+   "t": "LDOS",
+   "name": "Leidos Holdings, Inc.",
+   "sector": "Technologie",
+   "region": "États-Unis",
+   "cur": "USD",
+   "index": "S&P 500",
+   "price": 135.68,
+   "chg": 0.007126,
+   "pe": 12.13,
+   "target": 151.73,
+   "hi52": 199.55,
+   "score": 70,
+   "verdict": "Achat intéressant",
+   "pros": {
+    "fr": [
+     "Génère beaucoup de cash : 2,2 G$ de flux libre (13,1 % de sa valeur)",
+     "Notre estimation DCF (333,39 $) est 146 % au-dessus du prix"
+    ],
+    "en": [
+     "Strong cash generation: $2.2B free cash flow (13.1% yield)",
+     "Our DCF estimate ($333.39) is 146% above the price"
+    ]
+   },
+   "cons": {
+    "fr": [],
+    "en": []
+   },
+   "fair": 333.39
+  },
+  {
+   "t": "XYL",
+   "name": "Xylem Inc.",
+   "sector": "Industrie",
+   "region": "États-Unis",
+   "cur": "USD",
+   "index": "S&P 500",
+   "price": 101.05,
+   "chg": 0.049652,
+   "pe": 22.41,
+   "target": 125.44,
+   "hi52": 151.31,
+   "score": 70,
+   "verdict": "Achat intéressant",
+   "pros": {
+    "fr": [
+     "Les analystes prévoient des profits en hausse d'environ 31 %"
+    ],
+    "en": [
+     "Analysts expect earnings to grow about 31%"
+    ]
+   },
+   "cons": {
+    "fr": [],
+    "en": []
+   },
+   "fair": 87.01
+  },
+  {
+   "t": "JBL",
+   "name": "Jabil Inc.",
+   "sector": "Technologie",
+   "region": "États-Unis",
+   "cur": "USD",
+   "index": "S&P 500",
+   "price": 258.56,
+   "chg": -0.048362,
+   "pe": 26.52,
+   "target": 425.0,
+   "hi52": 385.63,
+   "score": 70,
+   "verdict": "Achat intéressant",
+   "pros": {
+    "fr": [
+     "Revenus en forte hausse : +21 % sur un an",
+     "Génère beaucoup de cash : 1,4 G$ de flux libre (5,2 % de sa valeur)",
+     "Les analystes prévoient des profits en hausse d'environ 127 %",
+     "Notre estimation DCF (649,39 $) est 151 % au-dessus du prix"
+    ],
+    "en": [
+     "Strong revenue growth: +21% year over year",
+     "Strong cash generation: $1.4B free cash flow (5.2% yield)",
+     "Analysts expect earnings to grow about 127%",
+     "Our DCF estimate ($649.39) is 151% above the price"
+    ]
+   },
+   "cons": {
+    "fr": [],
+    "en": []
+   },
+   "fair": 649.39
+  },
+  {
+   "t": "NOC",
+   "name": "Northrop Grumman Corporation",
+   "sector": "Industrie",
+   "region": "États-Unis",
+   "cur": "USD",
+   "index": "S&P 500",
+   "price": 525.35,
+   "chg": -0.045339,
+   "pe": 16.58,
+   "target": 636.0,
+   "hi52": 768.02,
+   "score": 69,
+   "verdict": "Achat intéressant",
+   "pros": {
+    "fr": [
+     "Génère beaucoup de cash : 3,8 G$ de flux libre (5,1 % de sa valeur)"
+    ],
+    "en": [
+     "Strong cash generation: $3.8B free cash flow (5.1% yield)"
+    ]
+   },
+   "cons": {
+    "fr": [],
+    "en": []
+   },
+   "fair": 504.75
+  },
+  {
+   "t": "CMI",
+   "name": "Cummins Inc.",
+   "sector": "Industrie",
+   "region": "États-Unis",
+   "cur": "USD",
+   "index": "S&P 500",
+   "price": 471.84,
+   "chg": -0.05762,
+   "pe": 24.11,
+   "target": 708.66,
+   "hi52": 727.59,
+   "score": 69,
+   "verdict": "Achat intéressant",
+   "pros": {
+    "fr": [
+     "Génère beaucoup de cash : 3,4 G$ de flux libre (5,2 % de sa valeur)",
+     "Les analystes prévoient des profits en hausse d'environ 78 %"
+    ],
+    "en": [
+     "Strong cash generation: $3.4B free cash flow (5.2% yield)",
+     "Analysts expect earnings to grow about 78%"
+    ]
+   },
+   "cons": {
+    "fr": [],
+    "en": []
+   },
+   "fair": 458.03
+  }
+ ]
+}

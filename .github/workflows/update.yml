@@ -1,0 +1,46 @@
+name: Mise à jour du Radar
+
+on:
+  schedule:
+    # 22 h 20 UTC du lundi au vendredi = 17 h 20 à Montréal (heure normale), 18 h 20 l'été.
+    - cron: '20 22 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      symbols:
+        description: "Symboles à mettre à jour (vide = tous)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: radar-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Installer les bibliothèques
+        run: pip install -r requirements.txt
+      - name: Mettre à jour les données
+        env:
+          RADAR_PASSWORD: ${{ secrets.RADAR_PASSWORD }}
+        run: python scripts/update.py ${{ github.event.inputs.symbols }}
+      - name: Enregistrer les changements
+        run: |
+          git config user.name "radar-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then echo "Aucun changement"; exit 0; fi
+          git commit -m "Mise à jour automatique des données ($(date -u +%Y-%m-%d))"
+          # Si la page a enregistré quelque chose pendant la mise à jour, sa version est gardée.
+          git pull --rebase -X ours origin main
+          git push

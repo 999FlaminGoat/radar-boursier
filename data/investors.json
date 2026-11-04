@@ -1,0 +1,422 @@
+[
+ {
+  "aum": null,
+  "filed": "2026-08-14",
+  "firm": "Appaloosa Management",
+  "holdings": [
+   {
+    "chg": "Augmenté",
+    "n": "Amazon",
+    "t": "AMZN",
+    "v": 1190000000
+   },
+   {
+    "chg": "Réduit",
+    "n": "Micron",
+    "t": "MU",
+    "v": 1130000000
+   },
+   {
+    "chg": "Augmenté",
+    "n": "TSMC",
+    "t": "TSM",
+    "v": 788000000
+   },
+   {
+    "chg": "Augmenté",
+    "n": "Alphabet",
+    "t": "GOOGL",
+    "v": 654000000
+   },
+   {
+    "chg": "Augmenté",
+    "n": "Uber",
+    "t": "UBER",
+    "v": 555000000
+   },
+   {
+    "chg": "Augmenté",
+    "n": "Meta",
+    "t": "META",
+    "v": 380000000
+   },
+   {
+    "n": "Nvidia",
+    "t": "NVDA",
+    "v": 305000000
+   },
+   {
+    "chg": "Nouveau",
+    "n": "Boeing",
+    "t": "BA",
+    "v": 173000000
+   }
+  ],
+  "moves": [
+   "Nouvelles positions : Boeing, American Airlines, Broadcom",
+   "A vendu Microsoft, UnitedHealth, Lyft, PDD et JD.com",
+   "Micron réduit de 41 % après une forte hausse"
+  ],
+  "name": "David Tepper",
+  "note": "Valeurs en dollars : seules les positions modifiées au T2 sont connues ici.",
+  "order": 6,
+  "period": "T2 2026 (30 juin)",
+  "positions": null,
+  "source": "Déclaration 13F via insiderset.com",
+  "style": "Opportuniste · rebonds",
+  "updatedAt": "2026-11-03T23:30:00-05:00",
+  "id": "appaloosa"
+ },
+ {
+  "aum": 12900000000,
+  "filed": "2026-05-12",
+  "firm": "ARK Invest",
+  "holdings": [
+   {
+    "n": "Tesla",
+    "t": "TSLA",
+    "w": 8.18
+   },
+   {
+    "chg": "Augmenté",
+    "n": "AMD",
+    "t": "AMD",
+    "w": 4.29
+   },
+   {
+    "n": "CRISPR Therapeutics",
+    "t": "CRSP",
+    "w": 4.19
+   },
+   {
+    "n": "Shopify",
+    "t": "SHOP",
+    "w": 3.85
+   },
+   {
+    "n": "Palantir",
+    "t": "PLTR",
+    "w": 3.54
+   },
+   {
+    "chg": "Augmenté",
+    "n": "Tempus AI",
+    "t": "TEM",
+    "w": 3.38
+   },
+   {
+    "n": "Circle",
+    "t": "CRCL",
+    "w": 3.35
+   },
+   {
+    "chg": "Augmenté",
+    "n": "Robinhood",
+    "t": "HOOD",
+    "w": 3.24
+   },
+   {
+    "n": "Coinbase",
+    "t": "COIN",
+    "w": 3.22
+   },
+   {
+    "chg": "Réduit",
+    "n": "Teradyne",
+    "t": "TER",
+    "w": 2.87
+   },
+   {
+    "chg": "Augmenté",
+    "n": "Roblox",
+    "t": "RBLX",
+    "w": 2.59
+   }
+  ],
+  "moves": [
+   "Renforce Tempus AI (+27 %), Robinhood (+25 %) et Roblox (+22 %)",
+   "Réduit Teradyne (−47 %) et Roku (−35 %)",
+   "Tesla reste la première position"
+  ],
+  "name": "Cathie Wood",
+  "note": null,
+  "order": 5,
+  "period": "T1 2026 (31 mars)",
+  "positions": 210,
+  "source": "13F via 13foresight.com",
+  "style": "Innovation disruptive",
+  "updatedAt": "2026-11-03T23:30:00-05:00",
+  "id": "ark"
+ },
+ {
+  "aum": 299250000000,
+  "filed": "2026-08-14",
+  "firm": "Berkshire Hathaway",
+  "holdings": [
+   {
+    "n": "Apple",
+    "t": "AAPL",
+    "w": 22.04
+   },
+   {
+    "n": "American Express",
+    "t": "AXP",
+    "w": 17.14
+   },
+   {
+    "chg": "Augmenté",
+    "n": "Alphabet (A + C)",
+    "t": "GOOGL",
+    "w": 12.62
+   },
+   {
+    "n": "Coca-Cola",
+    "t": "KO",
+    "w": 10.86
+   },
+   {
+    "chg": "Réduit",
+    "n": "Bank of America",
+    "t": "BAC",
+    "w": 9.2
+   },
+   {
+    "n": "Chevron",
+    "t": "CVX",
+    "w": 4.67
+   },
+   {
+    "n": "Occidental",
+    "t": "OXY",
+    "w": 4.3
+   },
+   {
+    "n": "Chubb",
+    "t": "CB",
+    "w": 3.9
+   },
+   {
+    "n": "Moody's",
+    "t": "MCO",
+    "w": 3.73
+   },
+   {
+    "n": "Kraft Heinz",
+    "t": "KHC",
+    "w": 2.57
+   },
+   {
+    "chg": "Réduit",
+    "n": "DaVita",
+    "t": "DVA",
+    "w": 2.15
+   }
+  ],
+  "moves": [
+   "Alphabet : grosse hausse (+45 % en A, +658 % en C)",
+   "Delta Air Lines +44 %, Lennar +30 %, New York Times en hausse",
+   "Réduit Kroger (−22 %), Capital One (−58 %) et Nucor (−52 %); a vendu Constellation Brands"
+  ],
+  "name": "Warren Buffett",
+  "note": "Buffett est président du conseil; Greg Abel dirige Berkshire depuis janvier 2026.",
+  "order": 1,
+  "period": "T2 2026 (30 juin)",
+  "positions": 27,
+  "source": "Déclaration 13F via insiderset.com",
+  "style": "Valeur · long terme",
+  "updatedAt": "2026-11-03T23:30:00-05:00",
+  "id": "berkshire"
+ },
+ {
+  "aum": 4350000000,
+  "filed": "2026-08-14",
+  "firm": "Duquesne Family Office",
+  "holdings": [
+   {
+    "n": "Natera",
+    "t": "NTRA",
+    "w": 19.86
+   },
+   {
+    "n": "TSMC",
+    "t": "TSM",
+    "w": 6.47
+   },
+   {
+    "n": "STMicroelectronics",
+    "t": "STM",
+    "w": 5.34
+   },
+   {
+    "n": "Insmed",
+    "t": "INSM",
+    "w": 3.49
+   },
+   {
+    "n": "YPF (Argentine)",
+    "t": "YPF",
+    "w": 3.28
+   },
+   {
+    "chg": "Augmenté",
+    "n": "Amazon",
+    "t": "AMZN",
+    "w": 2.96
+   },
+   {
+    "n": "Alphabet",
+    "t": "GOOGL",
+    "w": 2.76
+   },
+   {
+    "n": "FNB Brésil",
+    "t": "EWZ",
+    "w": 2.72
+   },
+   {
+    "n": "Seagate",
+    "t": "STX",
+    "w": 2.7
+   },
+   {
+    "chg": "Nouveau",
+    "n": "Fox Corp",
+    "t": "FOXA",
+    "w": 2.64
+   }
+  ],
+  "moves": [
+   "Nouvelles positions : AMD, Aurora, Beam Therapeutics, Baidu",
+   "A vendu Broadcom, Bloom Energy, Celestica, Coherent",
+   "Réduit Alcoa; augmenté Cleveland-Cliffs et Amazon"
+  ],
+  "name": "Stanley Druckenmiller",
+  "note": null,
+  "order": 4,
+  "period": "T2 2026 (30 juin)",
+  "positions": 76,
+  "source": "Déclaration 13F via insiderset.com",
+  "style": "Macro · opportuniste",
+  "updatedAt": "2026-11-03T23:30:00-05:00",
+  "id": "duquesne"
+ },
+ {
+  "aum": 13700000000,
+  "filed": "2026-08-14",
+  "firm": "Pershing Square",
+  "holdings": [
+   {
+    "n": "Brookfield",
+    "t": "BN",
+    "w": 17.6
+   },
+   {
+    "chg": "Réduit",
+    "n": "Amazon",
+    "t": "AMZN",
+    "w": 17.4
+   },
+   {
+    "n": "Uber",
+    "t": "UBER",
+    "w": 15.7
+   },
+   {
+    "chg": "Augmenté",
+    "n": "Microsoft",
+    "t": "MSFT",
+    "w": 15.3
+   },
+   {
+    "n": "Restaurant Brands",
+    "t": "QSR.TO",
+    "w": 12.2
+   },
+   {
+    "n": "Meta",
+    "t": "META",
+    "w": 11.1
+   },
+   {
+    "n": "Howard Hughes",
+    "t": "HHH",
+    "w": 8.7
+   }
+  ],
+  "moves": [
+   "Nouvelles positions au T2 2026 : Visa, Mastercard, Netflix, S&P Global, Intercontinental Exchange, Alcon",
+   "A vendu Alphabet et Universal Music",
+   "Amazon réduit de plus de 25 %, Microsoft augmenté"
+  ],
+  "name": "Bill Ackman",
+  "note": "Poids du T1 2026; mouvements du T2 2026.",
+  "order": 3,
+  "period": "T1–T2 2026",
+  "positions": null,
+  "source": "13F via arkolith.com et investorlens.capital",
+  "style": "Concentré · qualité",
+  "updatedAt": "2026-11-03T23:30:00-05:00",
+  "id": "pershing"
+ },
+ {
+  "aum": 68140000,
+  "filed": "2025-11-03",
+  "firm": "Scion Asset Management",
+  "holdings": [
+   {
+    "chg": "Augmenté",
+    "n": "Molina Healthcare",
+    "t": "MOH",
+    "w": 35.11
+   },
+   {
+    "chg": "Augmenté",
+    "n": "Lululemon",
+    "t": "LULU",
+    "w": 26.11
+   },
+   {
+    "chg": "Nouveau",
+    "n": "Sallie Mae",
+    "t": "SLM",
+    "w": 19.5
+   }
+  ],
+  "moves": [
+   "A parié contre Palantir et Nvidia avec des options de vente (puts)",
+   "Diversification du portefeuille",
+   "Options d'achat (calls) sur Pfizer et Halliburton"
+  ],
+  "name": "Michael Burry",
+  "note": "Scion s'est désinscrit de la SEC en novembre 2025 : sa dernière déclaration date du T3 2025. Il publie maintenant ses idées sur Substack.",
+  "options": [
+   {
+    "t": "PLTR",
+    "type": "put",
+    "v": 912100000
+   },
+   {
+    "t": "NVDA",
+    "type": "put",
+    "v": 186580000
+   },
+   {
+    "t": "PFE",
+    "type": "call",
+    "v": 152880000
+   },
+   {
+    "t": "HAL",
+    "type": "call",
+    "v": 61500000
+   }
+  ],
+  "order": 2,
+  "period": "T3 2025 (dernière déclaration)",
+  "positions": 3,
+  "source": "Déclaration 13F via insiderset.com; désinscription rapportée par Reuters",
+  "style": "Contrarien",
+  "updatedAt": "2026-11-03T23:30:00-05:00",
+  "id": "scion"
+ }
+]

@@ -498,12 +498,16 @@ def snow_one(m, u, mk, spe, slast, sec):
     mg_now = ni / rev if ni is not None and rev else None
     prevf = fh[-2] if fin.get("period", "").startswith("Exercice") and len(fh) >= 2 else (fh[-1] if fh else None)
     mg_prev = prevf["ni"] / prevf["rev"] if prevf and prevf.get("ni") is not None and prevf.get("rev") else None
+    if mg_now is not None and mg_prev is not None and abs(mg_now - mg_prev) < 5e-4 and len(fh) >= 2:
+        # les 12 derniers mois = dernier exercice : on compare avec l'exercice précédent
+        p2_ = fh[-2]
+        mg_prev = p2_["ni"] / p2_["rev"] if p2_.get("ni") is not None and p2_.get("rev") else None
     lastg, cagr, yrs = _ni_growth(m)
     roe = rx.get("roe")
     past = [
         ["p1", (B(fcf >= 0.5 * ni) if ni > 0 else 0) if ni is not None and fcf is not None and not fin_sector else None, _r(fcf / ni, 2) if ni and fcf is not None else None, None],
         ["p2", B(mg_now > mg_prev) if mg_now is not None and mg_prev is not None else None, _r(mg_now), _r(mg_prev)],
-        ["p3", B(cagr > 0) if cagr is not None else (0 if fh and fh[-1].get("ni") is not None and fh[-1]["ni"] <= 0 else None), _r(cagr), yrs],
+        ["p3", B(cagr > 0) if cagr is not None else (0 if fh and fh[-1].get("ni") is not None and fh[-1]["ni"] <= 0 else (1 if fh and fh[-1].get("ni") is not None and fh[-1]["ni"] > 0 and any((h.get("ni") or 0) <= 0 for h in fh) else None)), _r(cagr), yrs if cagr is not None else "turn"],
         ["p4", B(lastg > cagr) if lastg is not None and cagr is not None else None, _r(lastg), _r(cagr)],
         ["p5", B(lastg > slast) if lastg is not None and slast is not None else None, _r(lastg), _r(slast)],
         ["p6", B(roe > 0.20) if roe is not None else None, _r(roe), None],

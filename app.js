@@ -679,8 +679,82 @@ function renderDrawer(t, focus) {
 }
 const clamp = (v, a = 0, b = 100) => Math.max(a, Math.min(b, v));
 const avgOf = arr => { const v = arr.filter(x => x != null && !isNaN(x)); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
+// ----- profil en 5 axes : 30 critères calculés chaque jour par la mise à jour automatique
+const AXK = ['value', 'future', 'past', 'health', 'dividend'];
+const AXN = { value: ['Valeur', 'Value'], future: ['Futur', 'Future'], past: ['Passé', 'Past'], health: ['Santé', 'Health'], dividend: ['Dividende', 'Dividend'] };
+const AXQ = { value: ['Le prix est-il bas par rapport à sa valeur, au marché et aux analystes ?', 'Is the price low versus its value, the market and analysts?'],
+  future: ['Les profits et les revenus devraient-ils croître rapidement ?', 'Are earnings and revenue expected to grow fast?'],
+  past: ['L\'entreprise a-t-elle bien performé ces dernières années ?', 'Has the company performed well in recent years?'],
+  health: ['Le bilan est-il solide (liquidités, dette, intérêts) ?', 'Is the balance sheet solid (cash, debt, interest)?'],
+  dividend: ['Le dividende est-il intéressant, stable et bien couvert ?', 'Is the dividend attractive, stable and well covered?'] };
+const pc0 = v => pct(v, 1, false);
+const SRC = b => b === 'f' ? T(' (prévision des analystes)', ' (analyst forecast)') : b === 'r' ? T(' (dernier trimestre sur un an)', ' (latest quarter, year over year)') : '';
+const NOD = () => T('Donnée pas encore disponible', 'Data not available yet');
+const CK = {
+  v1: [['Sous la valeur estimée (DCF)', 'Below fair value (DCF)'], (a, b) => b ? T(`Prix ${nf(a)} pour une valeur estimée de ${nf(b)}`, `Price ${nf(a)} vs fair value ${nf(b)}`) : T('Aucune valeur estimée', 'No fair value')],
+  v2: [['Nettement sous la valeur (20 % ou plus)', 'Well below fair value (20 %+)'], a => a == null ? T('Aucune valeur estimée', 'No fair value') : a >= 0 ? T(`${pc0(a)} sous la valeur estimée`, `${pc0(a)} below fair value`) : T(`${pc0(-a)} au-dessus de la valeur estimée`, `${pc0(-a)} above fair value`)],
+  v3: [['P/E plus bas que le secteur', 'P/E below sector'], (a, b) => a ? T(`P/E de ${nf(a, 1)} contre ${nf(b, 1)} pour son secteur`, `P/E ${nf(a, 1)} vs ${nf(b, 1)} for its sector`) : T('Pas de bénéfice : P/E non calculable', 'No earnings: no P/E')],
+  v4: [['P/E plus bas que le marché', 'P/E below market'], (a, b) => a ? T(`P/E de ${nf(a, 1)} contre ${nf(b, 1)} pour le marché`, `P/E ${nf(a, 1)} vs ${nf(b, 1)} for the market`) : T('Pas de bénéfice : P/E non calculable', 'No earnings: no P/E')],
+  v5: [['P/E justifié par la croissance (PEG)', 'P/E justified by growth (PEG)'], (a, b) => a ? T(`PEG de ${nf(a, 2)} (intéressant sous 1,5)`, `PEG ${nf(a, 2)} (attractive below 1.5)`) : b != null && b <= 0 ? T('Profits prévus en baisse', 'Earnings expected to fall') : T('P/E ou croissance prévue manquant', 'P/E or forecast missing')],
+  v6: [['Potentiel de 20 % selon les analystes', '20 % upside per analysts'], (a, b) => a != null ? T(`Cible moyenne de ${nf(b)} : ${pct(a, 1)}`, `Mean target ${nf(b)}: ${pct(a, 1)}`) : T('Aucune cible d\'analystes', 'No analyst target')],
+  f1: [['Profits qui battent l\'épargne (3 %)', 'Earnings beat savings rate (3 %)'], (a, b) => `${pct(a, 1)}${T(' par an', ' a year')}${SRC(b)}`],
+  f2: [['Profits qui croissent plus que le marché', 'Earnings grow faster than market'], (a, b) => T(`${pct(a, 1)} contre ${pct(b, 1)} pour le marché`, `${pct(a, 1)} vs ${pct(b, 1)} for the market`)],
+  f3: [['Forte croissance des profits (plus de 20 %)', 'High earnings growth (20 %+)'], (a, b) => `${pct(a, 1)}${SRC(b)}`],
+  f4: [['Revenus qui croissent plus que le marché', 'Revenue grows faster than market'], (a, b) => T(`${pct(a, 1)} contre ${pct(b, 1)} pour le marché`, `${pct(a, 1)} vs ${pct(b, 1)} for the market`)],
+  f5: [['Forte croissance des revenus (plus de 20 %)', 'High revenue growth (20 %+)'], (a, b) => `${pct(a, 1)}${SRC(b)}`],
+  f6: [['Bénéfice par action prévu en hausse de 10 %', 'EPS expected up 10 %'], (a, b) => T(`BPA de ${nf(b)} aujourd'hui, ${nf(a)} prévu`, `EPS ${nf(b)} now, ${nf(a)} expected`)],
+  p1: [['Profits appuyés par de vrais flux de trésorerie', 'Earnings backed by real cash flow'], a => a != null ? T(`Le flux libre vaut ${nf(a * 100, 0)} % du profit net`, `Free cash flow is ${nf(a * 100, 0)} % of net income`) : T('Profit net négatif', 'Negative net income')],
+  p2: [['Marge de profit en hausse', 'Profit margin rising'], (a, b) => T(`Marge nette de ${pc0(a)} contre ${pc0(b)} un an plus tôt`, `Net margin ${pc0(a)} vs ${pc0(b)} a year earlier`)],
+  p3: [['Profits en croissance sur plusieurs années', 'Earnings growing over several years'], (a, b) => b === 'turn' ? T('Passée d\'une perte à un profit', 'Turned from a loss to a profit') : a != null ? T(`${pct(a, 1)} par an sur ${b} ans`, `${pct(a, 1)} a year over ${b} years`) : T('Perte au dernier exercice', 'Loss in last fiscal year')],
+  p4: [['Croissance qui accélère', 'Growth accelerating'], (a, b) => b == null ? T('Pas de moyenne : perte au début de la période', 'No average: loss at start of period') : T(`Dernière année ${pct(a, 1)} contre ${pct(b, 1)} en moyenne`, `Last year ${pct(a, 1)} vs ${pct(b, 1)} on average`)],
+  p5: [['Profits qui battent le secteur', 'Earnings beat sector'], (a, b) => T(`${pct(a, 1)} contre ${pct(b, 1)} pour son secteur`, `${pct(a, 1)} vs ${pct(b, 1)} for its sector`)],
+  p6: [['Rendement des capitaux propres (ROE) de 20 %', 'Return on equity (ROE) of 20 %'], a => `ROE ${pc0(a)}`],
+  h1: [['Actifs à court terme plus grands que les dettes à court terme', 'Short-term assets cover short-term liabilities'], (a, b) => a != null ? `${big(a)} ${T('contre', 'vs')} ${big(b)}` : NOD()],
+  h2: [['Actifs à court terme plus grands que les dettes à long terme', 'Short-term assets cover long-term liabilities'], (a, b) => `${big(a)} ${T('contre', 'vs')} ${big(b)}`],
+  h3: [['Dette nette raisonnable (moins de 40 % des capitaux)', 'Reasonable net debt (under 40 % of equity)'], a => a == null ? T('Capitaux propres négatifs', 'Negative equity') : a < 0 ? T('Plus de liquidités que de dette', 'More cash than debt') : T(`Dette nette de ${pc0(a)} des capitaux propres`, `Net debt is ${pc0(a)} of equity`)],
+  h4: [['Dette en baisse depuis environ 5 ans', 'Debt down over about 5 years'], (a, b) => T(`Dette sur capitaux de ${pc0(a)} contre ${pc0(b)} avant`, `Debt to equity ${pc0(a)} vs ${pc0(b)} before`)],
+  h5: [['Dette couverte par les flux d\'exploitation', 'Debt covered by operating cash flow'], a => a != null ? T(`Les flux d'exploitation valent ${pc0(a)} de la dette (bon au-dessus de 20 %)`, `Operating cash flow is ${pc0(a)} of debt (good above 20 %)`) : T('Aucune dette', 'No debt')],
+  h6: [['Intérêts bien couverts par les profits', 'Interest well covered by earnings'], a => a != null ? T(`Le profit d'exploitation couvre ${nf(a, 1)} fois les intérêts (bon au-dessus de 3)`, `Operating profit covers interest ${nf(a, 1)}x (good above 3)`) : T('Aucun intérêt à payer', 'No interest to pay')],
+  d1: [['Dividende notable', 'Notable dividend'], (a, b) => T(`Rendement de ${pc0(a)} contre ${pc0(b)} pour le quart le plus bas`, `Yield ${pc0(a)} vs ${pc0(b)} for the bottom quarter`)],
+  d2: [['Dividende élevé', 'High dividend'], (a, b) => T(`Rendement de ${pc0(a)} contre ${pc0(b)} pour le quart le plus haut`, `Yield ${pc0(a)} vs ${pc0(b)} for the top quarter`)],
+  d3: [['Dividende stable', 'Stable dividend'], (a, b) => T(`${a} baisse${a > 1 ? 's' : ''} en ${b} ans`, `${a} cut${a > 1 ? 's' : ''} in ${b} years`)],
+  d4: [['Dividende en croissance', 'Growing dividend'], (a, b) => T(`${pct(a, 1)} en ${b} ans`, `${pct(a, 1)} over ${b} years`)],
+  d5: [['Dividende couvert par les profits', 'Dividend covered by earnings'], a => T(`Verse ${pc0(a)} de ses profits (bon sous 90 %)`, `Pays out ${pc0(a)} of earnings (good under 90 %)`)],
+  d6: [['Dividende couvert par les flux de trésorerie', 'Dividend covered by cash flow'], a => a != null ? T(`Verse ${pc0(a)} de son flux libre (bon sous 90 %)`, `Pays out ${pc0(a)} of free cash flow (good under 90 %)`) : T('Flux de trésorerie libre négatif', 'Negative free cash flow')]
+};
+function ckText(c) {
+  const [id, ok, a, b] = c; const def = CK[id]; if (!def) return ['', ''];
+  const name = T(def[0][0], def[0][1]);
+  if (b === 'fin') return [name, T('Non pertinent pour une banque ou un assureur', 'Not relevant for a bank or insurer')];
+  if (b === 'none') return [name, T('Ne verse pas de dividende', 'Pays no dividend')];
+  if (ok == null && a == null) return [name, NOD()];
+  try { return [name, def[1](a, b)]; } catch (e) { return [name, NOD()]; }
+}
+function axisSummary(k, ax) {
+  if (!ax || ax.s == null) return T('Pas assez de données pour cet axe pour l\'instant.', 'Not enough data for this axis yet.');
+  const lc = x => x.charAt(0).toLowerCase() + x.slice(1);
+  const ok = ax.c.filter(c => c[1] === 1).map(c => lc(T(CK[c[0]][0][0], CK[c[0]][0][1])));
+  const no = ax.c.filter(c => c[1] === 0).map(c => lc(T(CK[c[0]][0][0], CK[c[0]][0][1])));
+  if (k === 'dividend' && ax.c[0][3] === 'none') return T('Pas de dividende : cet axe reste vide, ce qui est normal pour une entreprise de croissance.', 'No dividend: this axis stays empty, which is normal for a growth company.');
+  if (k === 'health' && ax.c[0][3] === 'fin') return T('Banque ou assureur : les règles d\'endettement habituelles ne s\'appliquent pas.', 'Bank or insurer: usual debt rules do not apply.');
+  const lvl = ax.s >= 5 ? T('Point fort', 'Strength') : ax.s >= 3 ? T('Correct', 'Fair') : T('Point faible', 'Weakness');
+  return `<b>${lvl}</b> · ${ok.length ? T('réussit : ', 'passes: ') + ok.slice(0, 2).join(', ') : ''}${ok.length && no.length ? ' ; ' : ''}${no.length ? T('échoue : ', 'fails: ') + no.slice(0, 2).join(', ') : ''}.`;
+}
+function shapeSummary(s) {
+  const sn = s.snow; if (!sn) return '';
+  const sc = AXK.map(k => [T(AXN[k][0], AXN[k][1]), sn[k]?.s]).filter(x => x[1] != null);
+  const hi = sc.filter(x => x[1] >= 5).map(x => x[0]), lo = sc.filter(x => x[1] <= 2).map(x => x[0]);
+  return (hi.length ? T('Fort en ', 'Strong in ') + hi.join(', ') : T('Aucun axe très fort', 'No very strong axis')) + (lo.length ? T(' · faible en ', ' · weak in ') + lo.join(', ') : '') + '.';
+}
 // five-axis profile (0-100), in the spirit of a "snowflake"
 function snow(s) {
+  if (s.snow) {
+    const old = snowOld(s);
+    return AXK.map((k, i) => { const a = s.snow[k]; return a && a.s != null ? [T(AXN[k][0], AXN[k][1]), a.s / 6 * 100, '', false] : [T(AXN[k][0], AXN[k][1]), old[i][1], old[i][2], old[i][1] != null]; });
+  }
+  return snowOld(s);
+}
+function snowOld(s) {
   const f = s.fin || {}; const price = s.price;
   const pe = s.pe, fv = s.fairValue || s.target;
   const value = s.etf ? null : avgOf([pe == null ? 15 : pe < 12 ? 90 : pe < 18 ? 75 : pe < 25 ? 55 : pe < 35 ? 35 : 15, fv && price ? clamp(50 + (fv / price - 1) * 150) : null]);
@@ -722,14 +796,42 @@ function fundBox(s) {
   if (f?.revGrowth != null) ratios.push(['Croissance revenus', pct(f.revGrowth, 1)]);
   if (f?.fcf != null) ratios.push(['Flux libre', (f.fcf < 0 ? '−' : '') + big(Math.abs(f.fcf))]);
   return `<div class="box"><span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-profile"/></svg> Profil de l'entreprise</span>
-    <div class="fund"><div class="snow"><canvas id="cSnow" aria-label="Profil en cinq axes"></canvas></div>
-      <div class="axes">${ax.map(([n, v, t, est]) => `<div title="${esc(t)}"><span>${n}</span><span class="t"><i style="width:${v ?? 0}%;background:var(${v == null ? '--line' : v >= 60 ? '--good' : v >= 40 ? '--warn' : '--bad'})"></i></span><span class="num">${v == null ? '…' : Math.round(v)}${est ? '<span class="est">≈</span>' : ''}</span></div>`).join('')}
-      <p class="note" style="margin:4px 0 0">Plus la forme est grande et ronde, plus l'entreprise est solide sur les cinq axes.${ax.some(a => a[3]) ? ' ≈ : estimé avec les scores de ton fichier Excel en attendant les états financiers.' : ''}${ax.some(a => a[1] == null) ? ' … : en cours de collecte.' : ''}</p></div></div>
+    <div class="fund"><div><div class="snow" id="snowWrap"><canvas id="cSnow" aria-label="${T('Profil en cinq axes', 'Five-axis profile')}"></canvas></div><p class="snowsum">${s.snow ? esc(shapeSummary(s)) : ''}</p></div>
+      <div>${s.snow ? `<div class="axtabs" role="tablist">${AXK.map((k, i) => { const x = s.snow[k] || {}; return `<button type="button" role="tab" data-ax="${i}" aria-selected="${i === state.ax ? 'true' : 'false'}"><b>${T(AXN[k][0], AXN[k][1])}<span>${x.s == null ? '–' : x.ok + '/' + x.n}</span></b><span class="dots">${(x.c || []).map(c => `<i class="${c[1] === 1 ? 'ok' : c[1] === 0 ? 'no' : ''}"></i>`).join('')}</span></button>`; }).join('')}</div><div class="axd" id="axD"></div>`
+      : `<div class="axes">${ax.map(([n, v, t, est]) => `<div title="${esc(t)}"><span>${n}</span><span class="t"><i style="width:${v ?? 0}%;background:var(${v == null ? '--line' : v >= 60 ? '--good' : v >= 40 ? '--warn' : '--bad'})"></i></span><span class="num">${v == null ? '…' : Math.round(v)}${est ? '<span class="est">≈</span>' : ''}</span></div>`).join('')}
+      <p class="note" style="margin:4px 0 0">${T('Les critères détaillés arrivent à la prochaine mise à jour automatique.', 'Detailed checks arrive with the next automatic update.')}</p></div>`}</div></div>
     ${ratios.length ? `<div class="ratios">${ratios.map(([l, v]) => `<div><span class="lbl">${l}</span><div class="v">${v}</div></div>`).join('')}</div>` : ''}
     ${fvHtml}
     ${f?.rev ? `<div><span class="lbl">Des revenus aux profits${f.period ? ' · ' + esc(f.period) : ''}</span><div class="chartbox sm"><canvas id="cWater" aria-label="Revenus, coûts et profits"></canvas></div></div>` : '<p class="note" style="margin:0">Revenus, coûts et profits : ajoutés à la prochaine mise à jour automatique de ce titre.</p>'}
     ${(s.finHist || []).length > 1 ? `<div><span class="lbl">Historique des revenus et profits</span><div class="read" id="fRead"></div><div class="chartbox sm"><canvas id="cFin" aria-label="Historique des revenus, profits et flux de trésorerie"></canvas></div></div>` : ''}
   </div>`.replace('class="box">', `class="box" style="border-top:3px solid var(${colTok})">`);
+}
+function selectAxis(s, i, anim = true) {
+  i = (i + AXK.length) % AXK.length;
+  const changed = state.axSel !== i; state.axSel = i; state.ax = i;
+  document.querySelectorAll('.axtabs button').forEach(b => b.setAttribute('aria-selected', String(+b.dataset.ax === i)));
+  const k = AXK[i], a = s.snow[k] || { c: [] }, d = $('#axD');
+  if (d && (changed || !d.innerHTML)) {
+    d.innerHTML = `<h4>${T(AXN[k][0], AXN[k][1])}<span>${a.s == null ? T('données insuffisantes', 'not enough data') : `${a.ok}/${a.n} ${T('critères réussis', 'checks passed')}`}</span></h4><p>${T(AXQ[k][0], AXQ[k][1])} ${axisSummary(k, a)}</p>
+      <ul class="ck">${a.c.map(c => { const [n, why] = ckText(c); const cl = c[1] === 1 ? 'ok' : c[1] === 0 ? 'no' : 'na'; return `<li class="${cl}"><svg class="i" aria-hidden="true"><use href="#i-${cl === 'ok' ? 'check' : cl === 'no' ? 'x' : 'na'}"/></svg><span>${esc(n)}<small>${esc(why)}</small></span></li>`; }).join('')}</ul>`;
+    if (anim) { d.classList.remove('swap'); void d.offsetWidth; d.classList.add('swap'); }
+  }
+  const ch = charts.cSnow; if (!ch) return;
+  if (!changed && state.axA === 1) return;
+  cancelAnimationFrame(state.axRaf); const t0 = performance.now();
+  const step = t => { state.axA = Math.min(1, (t - t0) / 220); ch.draw(); if (state.axA < 1) state.axRaf = requestAnimationFrame(step); };
+  state.axRaf = requestAnimationFrame(step);
+}
+function setupAxes(s) {
+  if (state.ax == null) state.ax = 0;
+  state.axSel = null; state.axA = 0; selectAxis(s, state.ax, false);
+  document.querySelectorAll('.axtabs button').forEach(b => { b.onmouseenter = b.onfocus = b.onclick = () => selectAxis(s, +b.dataset.ax); });
+  const tl = $('.axtabs'); if (tl) tl.onkeydown = e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); selectAxis(s, state.axSel + (e.key === 'ArrowRight' ? 1 : -1)); $(`.axtabs button[data-ax="${state.axSel}"]`)?.focus(); } };
+  const cv = $('#cSnow'), wrap = $('#snowWrap');
+  const pick = e => { const ch = charts.cSnow, sc = ch?.scales.r; if (!sc) return; const r = cv.getBoundingClientRect(); const p = e.touches ? e.touches[0] : e;
+    const x = p.clientX - r.left - sc.xCenter, y = p.clientY - r.top - sc.yCenter; if (Math.hypot(x, y) > sc.drawingArea * 1.25) return;
+    let ang = Math.atan2(y, x) + Math.PI / 2; if (ang < 0) ang += 2 * Math.PI; const i = Math.round(ang / (2 * Math.PI / AXK.length)) % AXK.length; selectAxis(s, i); };
+  wrap.onmousemove = pick; wrap.onclick = pick; wrap.addEventListener('touchstart', pick, { passive: true });
 }
 function drawFund(s) {
   ['cSnow', 'cWater', 'cFin'].forEach(k => { if (charts[k]) { charts[k].destroy(); delete charts[k]; } });
@@ -737,8 +839,17 @@ function drawFund(s) {
   const th = themeOpts();
   const ax = snow(s); const tot = avgOf(ax.map(a => a[1]));
   const col = tot == null ? th.muted : tot >= 60 ? th.good : tot >= 42 ? th.warn : css('--bad');
-  if ($('#cSnow')) charts.cSnow = new Chart($('#cSnow'), { type: 'radar', data: { labels: ax.map(a => a[0]), datasets: [{ data: ax.map(a => a[1] ?? 0), borderColor: col, backgroundColor: col + '66', borderWidth: 2, tension: .45, pointRadius: 0 }] },
-    options: { maintainAspectRatio: false, animation: ANIM, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { r: { min: 0, max: 100, ticks: { display: false, stepSize: 25 }, grid: { color: th.line }, angleLines: { color: th.line }, pointLabels: { color: th.muted, font: { size: 10.5, weight: '600' } } } } } });
+  if ($('#cSnow')) {
+    const hl = { id: 'axHl', beforeDatasetsDraw(ch) {
+      const sc = ch.scales.r; if (!sc || state.axA == null) return; const c = ch.ctx, n = ax.length, i = state.axSel ?? 0;
+      const a0 = sc.getIndexAngle(i) - Math.PI / 2, w = Math.PI / n;
+      c.save(); c.globalAlpha = state.axA; c.fillStyle = th.accent + '26'; c.strokeStyle = th.accent; c.lineWidth = 1.5;
+      c.beginPath(); c.moveTo(sc.xCenter, sc.yCenter); c.arc(sc.xCenter, sc.yCenter, sc.drawingArea, a0 - w, a0 + w); c.closePath(); c.fill(); c.globalAlpha = state.axA * .7; c.stroke(); c.restore(); } };
+    charts.cSnow = new Chart($('#cSnow'), { type: 'radar', plugins: [hl], data: { labels: ax.map(a => a[0]), datasets: [{ data: ax.map(a => a[1] ?? 0), borderColor: col, backgroundColor: col + '66', borderWidth: 2, tension: .45, pointRadius: 0 }] },
+      options: { maintainAspectRatio: false, animation: ANIM, events: [], plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { r: { min: 0, max: 100, ticks: { display: false, stepSize: 100 / 6 }, grid: { color: th.line }, angleLines: { color: th.line },
+        pointLabels: { color: c => c.index === state.axSel ? th.accent : th.muted, font: c => ({ size: 11, weight: c.index === state.axSel ? '700' : '600' }) } } } } });
+    if (s.snow) setupAxes(s);
+  }
   const f = s.fin;
   if (f?.rev && $('#cWater')) {
     const gross = f.gross ?? (f.cogs != null ? f.rev - f.cogs : null);
@@ -1258,6 +1369,7 @@ function merge(t, u, m) {
   const s = { ...u };
   for (const k of NUMF) if (m[k] !== undefined && m[k] !== null) s[k] = m[k];
   s.ticker = t;
+  if (m.snow) s.snow = m.snow;
   if (!s.name || s.name === t) s.name = m.name || t;
   if (m.etf) s.etf = true;
   if (!s.sector || s.sector === 'Autre') s.sector = s.etf ? 'ETF' : (m.sectorAuto || 'Autre');

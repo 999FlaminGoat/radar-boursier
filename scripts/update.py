@@ -200,11 +200,15 @@ def balance_extras(y) -> dict:
             out["ltl"] = out["tl"] - out["cl"]
     ab = y.balance_sheet
     if ab is not None and not ab.empty:
-        c0 = sorted(ab.columns)[0]
-        d0 = num(ab.loc["Total Debt", c0]) if "Total Debt" in ab.index else None
-        e0 = next((num(ab.loc[k, c0]) for k in ("Stockholders Equity", "Common Stock Equity") if k in ab.index), None)
-        if d0 is not None and e0:
-            out["de0"], out["de0y"] = round(d0 / e0, 4), int(c0.year)
+        cols = sorted(ab.columns)
+        for c0 in cols[:-1]:  # plus ancienne année complète (Yahoo laisse parfois les vieilles colonnes vides)
+            d0 = num(ab.loc["Total Debt", c0]) if "Total Debt" in ab.index else None
+            if d0 is None and "Long Term Debt" in ab.index:
+                d0 = num(ab.loc["Long Term Debt", c0])
+            e0 = next((num(ab.loc[k, c0]) for k in ("Stockholders Equity", "Common Stock Equity") if k in ab.index and num(ab.loc[k, c0]) is not None), None)
+            if d0 is not None and e0 and e0 > 0 and cols[-1].year - c0.year >= 2:
+                out["de0"], out["de0y"] = round(d0 / e0, 4), int(c0.year)
+                break
     inc = y.income_stmt
     if inc is not None and not inc.empty:
         c = sorted(inc.columns)[-1]

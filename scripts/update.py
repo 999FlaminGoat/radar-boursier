@@ -186,6 +186,60 @@ def news_of(y) -> list:
     return out
 
 
+def balance_extras(y) -> dict:
+    """Bilan : actifs et passifs, endettement il y a ~5 ans, couverture des intérêts."""
+    out = {}
+    qb = y.quarterly_balance_sheet
+    if qb is not None and not qb.empty:
+        c = sorted(qb.columns)[-1]
+        g = lambda *ks: next((num(qb.loc[k, c]) for k in ks if k in qb.index and num(qb.loc[k, c]) is not None), None)
+        out.update({"ca": g("Current Assets"), "cl": g("Current Liabilities"), "tl": g("Total Liabilities Net Minority Interest"),
+                    "eq": g("Stockholders Equity", "Common Stock Equity"), "debt": g("Total Debt"),
+                    "cash": g("Cash Cash Equivalents And Short Term Investments", "Cash And Cash Equivalents")})
+        if out.get("tl") is not None and out.get("cl") is not None:
+            out["ltl"] = out["tl"] - out["cl"]
+    ab = y.balance_sheet
+    if ab is not None and not ab.empty:
+        c0 = sorted(ab.columns)[0]
+        d0 = num(ab.loc["Total Debt", c0]) if "Total Debt" in ab.index else None
+        e0 = next((num(ab.loc[k, c0]) for k in ("Stockholders Equity", "Common Stock Equity") if k in ab.index), None)
+        if d0 is not None and e0:
+            out["de0"], out["de0y"] = round(d0 / e0, 4), int(c0.year)
+    inc = y.income_stmt
+    if inc is not None and not inc.empty:
+        c = sorted(inc.columns)[-1]
+        ebit = num(inc.loc["EBIT", c]) if "EBIT" in inc.index else None
+        ie = next((num(inc.loc[k, c]) for k in ("Interest Expense", "Interest Expense Non Operating") if k in inc.index), None)
+        if ebit is not None:
+            out["ebit"] = ebit
+        if ie is not None:
+            out["int"] = abs(ie)
+    return {k: v for k, v in out.items() if v is not None}
+
+
+def estimates(y) -> dict:
+    """Croissance prévue par les analystes pour l'an prochain (bénéfices et revenus)."""
+    out = {}
+    try:
+        ge = y.growth_estimates
+        if ge is not None and not ge.empty:
+            col = "stockTrend" if "stockTrend" in ge.columns else ge.columns[0]
+            for k in ("+1y", "0y"):
+                if k in ge.index and num(ge.loc[k, col]) is not None:
+                    out["eg"] = num(ge.loc[k, col], 4); out["egp"] = k; break
+    except Exception:
+        pass
+    try:
+        re_ = y.revenue_estimate
+        if re_ is not None and not re_.empty and "growth" in re_.columns:
+            for k in ("+1y", "0y"):
+                if k in re_.index and num(re_.loc[k, "growth"]) is not None:
+                    out["rg"] = num(re_.loc[k, "growth"], 4); out["rgp"] = k; break
+    except Exception:
+        pass
+    return out
+
+
 def fetch_one(t: str, prev: dict, want_fin: bool, ysym_override: str | None = None) -> dict | None:
     import pandas as pd
     import yfinance as yf
@@ -216,6 +270,12 @@ def fetch_one(t: str, prev: dict, want_fin: bool, ysym_override: str | None = No
         out["divAnnual"] = round(float(ttm.sum()), 4) if len(ttm) else 0
         if len(dv):
             out["lastDiv"] = {"exDate": ds(dv.index[-1]), "amount": round(float(dv.iloc[-1]), 6)}
+        # sommes annuelles des dividendes (années complètes) pour la stabilité et la croissance
+        try:
+            yrs = dv.groupby(dv.index.year).sum()
+            out["divYears"] = [[int(k), round(float(v), 4)] for k, v in yrs.items() if int(k) < close.index[-1].year]
+        except Exception:
+            pass
     if "Stock Splits" in h:
         sp = h["Stock Splits"][h["Stock Splits"] > 0]
         out["splitEvents"] = [[ds(d), float(v)] for d, v in sp.items() if d.year >= 2020]
@@ -238,6 +298,14 @@ def fetch_one(t: str, prev: dict, want_fin: bool, ysym_override: str | None = No
         out["mcap"] = num(info.get("marketCap"))
         out["beta"] = num(info.get("beta"), 3)
         out["target"] = num(info.get("targetMeanPrice"), 2)
+        # ratios bruts pour les critères du profil (valeur, futur, passé, santé, dividende)
+        RX = {"roe": "returnOnEquity", "roa": "returnOnAssets", "pm": "profitMargins", "eg": "earningsGrowth", "rg": "revenueGrowth",
+              "de": "debtToEquity", "cr": "currentRatio", "cash": "totalCash", "debt": "totalDebt", "fcf": "freeCashflow",
+              "ocf": "operatingCashflow", "payout": "payoutRatio", "shares": "sharesOutstanding", "teps": "trailingEps",
+              "feps": "forwardEps", "peg": "trailingPegRatio", "pb": "priceToBook"}
+        rx = {k: num(info.get(v), 4) for k, v in RX.items() if num(info.get(v)) is not None}
+        if rx:
+            out["rx"] = rx
         rk = RATING_FR.get(info.get("recommendationKey") or "none")
         n_an = info.get("numberOfAnalystOpinions")
         out["rating"] = f"{rk} ({n_an} analystes)" if rk and n_an else rk
@@ -283,6 +351,15 @@ def fetch_one(t: str, prev: dict, want_fin: bool, ysym_override: str | None = No
                 out["fin"], out["finHist"], out["finAt"] = fin, fh, ds(TODAY)
         except Exception as e:
             log("  états financiers indisponibles:", t, e)
+    if want_fin and not out.get("etf"):
+        try:
+            out["bsx"] = balance_extras(y)
+        except Exception as e:
+            log("  bilan indisponible:", t, e)
+        try:
+            out["est"] = estimates(y)
+        except Exception as e:
+            log("  prévisions indisponibles:", t, e)
     n = news_of(y)
     if n:
         out["newsAuto"] = n
@@ -575,14 +652,14 @@ def main():
             out[t] = pstocks.get(t, {})
             continue
         old = pstocks.get(t, {})
-        want_fin = monday or not old.get("fin") or not old.get("finAt")
+        want_fin = monday or not old.get("fin") or not old.get("finAt") or ("bsx" not in old and not old.get("etf"))
         for attempt in range(3):
             try:
                 m = fetch_one(t, old, want_fin)
                 if m is None:
                     raise RuntimeError("aucune donnée")
                 if not want_fin:
-                    for k in ("fin", "finHist", "finAt"):
+                    for k in ("fin", "finHist", "finAt", "bsx", "est"):
                         if k in old:
                             m[k] = old[k]
                 m["updatedAt"] = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -608,6 +685,11 @@ def main():
                 smart.enrich(t, m, universe.get(t, {}))
         except Exception as e:
             log("  enrichissement impossible", t, e)
+    # profil en 5 axes : 30 critères comparés au marché et au secteur
+    try:
+        smart.snowflake_all(out, universe)
+    except Exception:
+        traceback.print_exc()
     # historique des scores (pour les tendances et les changements de verdict)
     sh = jload(DATA / "scores.json", {})
     dkey = TODAY.isoformat()

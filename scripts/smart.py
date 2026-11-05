@@ -389,3 +389,168 @@ def discover(universe: dict, fetch_one, sector_fr: dict, limit=12):
             print("  découverte ignorée", s, e)
     res.sort(key=lambda r: -(r["score"] or 0))
     return res[:limit]
+
+
+# ------------------------------------------------------------------ profil en 5 axes (30 critères)
+def _med(xs):
+    xs = sorted(x for x in xs if x is not None)
+    if not xs:
+        return None
+    n = len(xs)
+    return xs[n // 2] if n % 2 else (xs[n // 2 - 1] + xs[n // 2]) / 2
+
+
+def _q(xs, q):
+    xs = sorted(x for x in xs if x is not None)
+    return xs[min(len(xs) - 1, int(q * len(xs)))] if xs else None
+
+
+def _r(x, nd=4):
+    return None if x is None else round(float(x), nd)
+
+
+def _fiscal(m):
+    return [h for h in (m.get("finHist") or []) if str(h.get("y", "")).startswith("Ex.")]
+
+
+def _ni_growth(m):
+    """(croissance du dernier exercice, croissance annuelle moyenne, nb d'années) du profit net."""
+    fh = [h for h in _fiscal(m) if h.get("ni") is not None]
+    last = cagr = None
+    if len(fh) >= 2 and fh[-2]["ni"] > 0:
+        last = fh[-1]["ni"] / fh[-2]["ni"] - 1
+    if len(fh) >= 3 and fh[0]["ni"] > 0 and fh[-1]["ni"] > 0:
+        cagr = (fh[-1]["ni"] / fh[0]["ni"]) ** (1 / (len(fh) - 1)) - 1
+    return last, cagr, len(fh) - 1
+
+
+def _fwd(m):
+    est, rx = m.get("est") or {}, m.get("rx") or {}
+    g = est.get("eg") if est.get("eg") is not None else rx.get("eg")
+    r = est.get("rg") if est.get("rg") is not None else rx.get("rg")
+    return g, r, ("f" if est.get("eg") is not None else "r"), ("f" if est.get("rg") is not None else "r")
+
+
+def snowflake_all(stocks: dict, universe: dict):
+    """Calcule pour chaque titre 30 critères (6 par axe) inspirés des profils « flocon ».
+    Chaque critère : [id, réussi (1/0/None si non applicable), valeur a, valeur b]."""
+    def sector(t, m):
+        s = (universe.get(t) or {}).get("sector")
+        return s if s not in (None, "Autre") else m.get("sectorAuto")
+
+    live = {t: m for t, m in stocks.items() if m and not m.get("etf") and m.get("price")}
+    pe = {t: m["pe"] for t, m in live.items() if m.get("pe") and 0 < m["pe"] < 400}
+    g1 = {t: _fwd(m)[0] for t, m in live.items()}
+    r1 = {t: _fwd(m)[1] for t, m in live.items()}
+    last = {t: _ni_growth(m)[0] for t, m in live.items()}
+    yld = [m["divAnnual"] / m["price"] for m in live.values() if m.get("divAnnual")]
+    mk = {"pe": _med(pe.values()), "g": _med(g1.values()), "r": _med(r1.values()), "y25": _q(yld, .25), "y75": _q(yld, .75)}
+    bysec = {}
+    for t, m in live.items():
+        bysec.setdefault(sector(t, m), []).append(t)
+    sec_pe = {s: _med([pe.get(t) for t in ts]) for s, ts in bysec.items()}
+    sec_last = {s: _med([last.get(t) for t in ts]) for s, ts in bysec.items()}
+
+    for t, m in stocks.items():
+        if not m or t not in live:
+            if m:
+                m.pop("snow", None)
+            continue
+        sec = sector(t, m)
+        u = universe.get(t) or {}
+        m["snow"] = snow_one(m, u, mk, sec_pe.get(sec), sec_last.get(sec), sec)
+    return mk
+
+
+def snow_one(m, u, mk, spe, slast, sec):
+    price = m["price"]
+    rx, fin, bs = m.get("rx") or {}, m.get("fin") or {}, m.get("bsx") or {}
+    fv = u.get("fairValue") or (m.get("fairValueAuto") or {}).get("value")
+    pe = m.get("pe") if m.get("pe") and m["pe"] > 0 else None
+    B = lambda c: None if c is None else (1 if c else 0)
+    fin_sector = sec == "Finance & Assurance"
+
+    # 1. VALEUR
+    g, r, gs, rs = _fwd(m)
+    peg = pe / (g * 100) if pe and g and g > 0 else None
+    tgt = m.get("target")
+    value = [
+        ["v1", B(price < fv) if fv else None, _r(price, 2), _r(fv, 2)],
+        ["v2", B(price < fv * 0.8) if fv else None, _r(1 - price / fv, 4) if fv else None, None],
+        ["v3", (B(pe < spe) if pe else 0) if spe else None, _r(pe, 1), _r(spe, 1)],
+        ["v4", (B(pe < mk["pe"]) if pe else 0) if mk["pe"] else None, _r(pe, 1), _r(mk["pe"], 1)],
+        ["v5", B(0 < peg < 1.5) if peg else (0 if pe is None or (g is not None and g <= 0) else None), _r(peg, 2), _r(g, 4)],
+        ["v6", B(tgt >= price * 1.2) if tgt else None, _r(tgt / price - 1, 4) if tgt else None, _r(tgt, 2)],
+    ]
+    # 2. FUTUR
+    feps, teps = rx.get("feps"), rx.get("teps")
+    future = [
+        ["f1", B(g > 0.03) if g is not None else None, _r(g), gs],
+        ["f2", B(g > mk["g"]) if g is not None and mk["g"] is not None else None, _r(g), _r(mk["g"])],
+        ["f3", B(g > 0.20) if g is not None else None, _r(g), gs],
+        ["f4", B(r > mk["r"]) if r is not None and mk["r"] is not None else None, _r(r), _r(mk["r"])],
+        ["f5", B(r > 0.20) if r is not None else None, _r(r), rs],
+        ["f6", B(feps > teps * 1.1 if teps > 0 else feps > 0) if feps is not None and teps is not None else None, _r(feps, 2), _r(teps, 2)],
+    ]
+    # 3. PASSÉ
+    ni, fcf, rev = fin.get("ni"), fin.get("fcf"), fin.get("rev")
+    fh = _fiscal(m)
+    mg_now = ni / rev if ni is not None and rev else None
+    prevf = fh[-2] if fin.get("period", "").startswith("Exercice") and len(fh) >= 2 else (fh[-1] if fh else None)
+    mg_prev = prevf["ni"] / prevf["rev"] if prevf and prevf.get("ni") is not None and prevf.get("rev") else None
+    lastg, cagr, yrs = _ni_growth(m)
+    roe = rx.get("roe")
+    past = [
+        ["p1", (B(fcf >= 0.5 * ni) if ni > 0 else 0) if ni is not None and fcf is not None and not fin_sector else None, _r(fcf / ni, 2) if ni and fcf is not None else None, None],
+        ["p2", B(mg_now > mg_prev) if mg_now is not None and mg_prev is not None else None, _r(mg_now), _r(mg_prev)],
+        ["p3", B(cagr > 0) if cagr is not None else (0 if fh and fh[-1].get("ni") is not None and fh[-1]["ni"] <= 0 else None), _r(cagr), yrs],
+        ["p4", B(lastg > cagr) if lastg is not None and cagr is not None else None, _r(lastg), _r(cagr)],
+        ["p5", B(lastg > slast) if lastg is not None and slast is not None else None, _r(lastg), _r(slast)],
+        ["p6", B(roe > 0.20) if roe is not None else None, _r(roe), None],
+    ]
+    # 4. SANTÉ (les règles d'endettement ne s'appliquent pas aux banques et assureurs)
+    ca, cl, ltl = bs.get("ca"), bs.get("cl"), bs.get("ltl")
+    debt = bs.get("debt", rx.get("debt"))
+    cash = bs.get("cash", rx.get("cash"))
+    eq = bs.get("eq")
+    de = rx.get("de") / 100 if rx.get("de") is not None else (debt / eq if debt is not None and eq else None)
+    nde = (debt - (cash or 0)) / eq if debt is not None and eq and eq > 0 else None
+    ocf = rx.get("ocf")
+    ebit, it = bs.get("ebit"), bs.get("int")
+    if fin_sector:
+        health = [[k, None, None, "fin"] for k in ("h1", "h2", "h3", "h4", "h5", "h6")]
+    else:
+        health = [
+            ["h1", B(ca > cl) if ca is not None and cl else (B(rx["cr"] > 1) if rx.get("cr") is not None else None), _r(ca), _r(cl)],
+            ["h2", B(ca > ltl) if ca is not None and ltl is not None else None, _r(ca), _r(ltl)],
+            ["h3", B(nde < 0.4) if nde is not None else (0 if eq is not None and eq <= 0 else None), _r(nde), None],
+            ["h4", B(de < bs["de0"]) if de is not None and bs.get("de0") is not None else None, _r(de), _r(bs.get("de0"))],
+            ["h5", (1 if not debt else B(ocf > 0.2 * debt)) if ocf is not None and debt is not None else None, _r(ocf / debt, 3) if ocf is not None and debt else None, None],
+            ["h6", (1 if not it else B(ebit > 3 * it)) if ebit is not None else None, _r(ebit / it, 1) if ebit is not None and it else None, None],
+        ]
+    # 5. DIVIDENDE
+    da = m.get("divAnnual") or 0
+    y = da / price if price else 0
+    dy = [v for _, v in (m.get("divYears") or [])]
+    if not da:
+        dividend = [[k, 0, None, "none"] for k in ("d1", "d2", "d3", "d4", "d5", "d6")]
+    else:
+        cuts = sum(1 for a, b in zip(dy, dy[1:]) if b < a * 0.9)
+        po = rx.get("payout")
+        sh, fcf2 = rx.get("shares"), rx.get("fcf", fcf)
+        cpo = da * sh / fcf2 if sh and fcf2 and fcf2 > 0 else None
+        dividend = [
+            ["d1", B(y > mk["y25"]) if mk["y25"] else None, _r(y), _r(mk["y25"])],
+            ["d2", B(y > mk["y75"]) if mk["y75"] else None, _r(y), _r(mk["y75"])],
+            ["d3", B(cuts == 0 and len(dy) >= 4) if dy else None, cuts, len(dy)],
+            ["d4", B(dy[-1] > dy[0]) if len(dy) >= 3 else None, _r(dy[-1] / dy[0] - 1) if len(dy) >= 3 and dy[0] else None, len(dy)],
+            ["d5", B(0 < po < 0.9) if po is not None else None, _r(po), None],
+            ["d6", B(cpo < 0.9) if cpo is not None else (0 if fcf2 is not None and fcf2 <= 0 else None), _r(cpo), None],
+        ]
+
+    def axis(checks):
+        app = [c for c in checks if c[1] is not None]
+        ok = sum(c[1] for c in app)
+        s = round(6 * ok / len(app)) if len(app) >= 3 else None
+        return {"s": s, "ok": ok, "n": len(app), "c": checks}
+    return {"value": axis(value), "future": axis(future), "past": axis(past), "health": axis(health), "dividend": axis(dividend)}

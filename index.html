@@ -172,6 +172,7 @@ tbody tr:hover{background:var(--surface-2)}
 .chip b{font-family:var(--f-mono);font-size:12px}
 /* form + journal */
 .form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form input[type=checkbox]{width:auto;flex:none;width:20px;height:20px}
 .form label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:500;min-width:0}
 .form .full{grid-column:1/-1}
 .form input,.form select{width:100%}
@@ -308,6 +309,7 @@ tbody tr{transition:background-color .15s}
 .btn:active{transform:scale(.97)}
 .plan td,.plan th{white-space:nowrap}
 
+#planForm{grid-template-columns:170px 170px 190px auto}
 /* ---------- téléphone ---------- */
 .tabbar{display:none}
 .brand-ico{display:none}
@@ -322,7 +324,7 @@ tbody tr{transition:background-color .15s}
   .topbar .btn{min-width:38px;height:38px;padding:0 8px;display:inline-flex;align-items:center;justify-content:center;font-size:16px}
   .topbar #langBtn{font-size:13px;font-weight:700}
   .privsw{height:38px;padding:4px 10px 4px 4px;font-size:12.5px}
-  .popmenu{right:0;left:auto}
+  .popmenu{position:fixed;top:calc(env(safe-area-inset-top,0px) + 54px);right:max(12px,env(safe-area-inset-right,0px));left:auto}
   .wrap{gap:22px;padding-top:14px;padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   .part h2{font-size:23px}
   .sh p{font-size:13px}
@@ -336,6 +338,8 @@ tbody tr{transition:background-color .15s}
   .tabbar a.on{color:var(--accent);background:var(--accent-soft)}
   .tabbar a.on span{transform:scale(1.12)}
   .anchor,.part{scroll-margin-top:64px}
+  #planForm{grid-template-columns:1fr 1fr}#planForm label:first-child{grid-column:1/-1}#planForm button{grid-column:1/-1}
+  .addrow label,.addrow select,.addrow input{min-width:0;width:100%}
   /* listes de cartes qu'on fait glisser du doigt */
   #opps,#discList{display:flex;grid-template-columns:none;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;
     margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:2px max(16px,env(safe-area-inset-left,0px)) 10px;scroll-padding-inline:16px;
@@ -492,7 +496,7 @@ tbody tr{transition:background-color .15s}
   <section class="panel anchor priv" id="plan">
     <div class="sh" style="margin:0"><h3>💡 Planificateur : j'ai de l'argent à investir</h3><span class="lbl">selon tes cibles</span></div>
     <p class="note" style="margin:0">Entre le montant que tu veux placer. Le radar le répartit d'abord vers les secteurs sous ta cible (feuille Analyse), puis choisit le titre au meilleur score dans chacun.</p>
-    <form class="addrow" id="planForm" novalidate style="grid-template-columns:170px 170px 190px auto">
+    <form class="addrow" id="planForm" novalidate>
       <label>Montant (CAD)<input type="number" id="planAmt" min="1" step="any" inputmode="decimal" placeholder="ex. 500"></label>
       <label>Nombre de titres<select id="planN"><option>2</option><option selected>3</option><option>5</option><option>8</option></select></label>
       <label>Types de titres<select id="planEtf"><option value="all">Actions et FNB</option><option value="stocks">Actions seulement</option><option value="etf">FNB seulement</option></select></label>

@@ -13,7 +13,7 @@
 <meta name="format-detection" content="telephone=no">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>">
+<link rel="icon" type="image/png" href="icon-192.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,"Segoe UI",sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Radar Boursier</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -310,9 +310,22 @@ tbody tr{transition:background-color .15s}
 .plan td,.plan th{white-space:nowrap}
 
 #planForm{grid-template-columns:170px 170px 190px auto}
+
+/* ---------- icônes maison ---------- */
+.i{width:1.15em;height:1.15em;flex:none;display:inline-block;vertical-align:-.2em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
+h3>.i:first-child,.lbl>.i:first-child,.kpi .lbl .i,.ico .i,.sh h3 .i,.note>.i:first-child,.swipehint .i{color:var(--accent)}
+.lbl>.i:first-child{width:1.25em;height:1.25em;vertical-align:-.28em;margin-right:2px}
+.ico .i{width:.95em;height:.95em;vertical-align:-.1em;stroke-width:1.7}
+.topbar .btn .i{width:19px;height:19px;vertical-align:-4px}
+.brand-ico .i,.brand .i{width:22px;height:22px;color:var(--accent);vertical-align:-5px}
+.tabbar a span .i{width:23px;height:23px;vertical-align:0}
+.pill .i{width:1.1em;height:1.1em;vertical-align:-.22em;margin-right:1px}
+.badge .i{width:1.1em;height:1.1em;vertical-align:-.22em}
+.i.up,.up .i{color:var(--good)!important}.i.down,.down .i{color:var(--bad)!important}
+.box.g h3 .i{color:var(--good)}.box.b h3 .i{color:var(--bad)}
 /* ---------- téléphone ---------- */
 .tabbar{display:none}
-.brand-ico{display:none}
+.brand-ico{display:inline;margin-right:6px}
 @media (max-width:760px){
   html{-webkit-text-size-adjust:100%}
   body{-webkit-tap-highlight-color:transparent}
@@ -369,9 +382,10 @@ tbody tr{transition:background-color .15s}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-radar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="M12 12 18.4 5.6"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><path d="M5 16.5 9 13l3 2 5-6" opacity=".55"/></symbol><symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M8 14h2M12 14h2M16 14h.5M8 17.2h2M12 17.2h2"/></symbol><symbol id="i-wallet" viewBox="0 0 24 24"><path d="M4 7.5V18a2 2 0 0 0 2 2h13a1 1 0 0 0 1-1v-3"/><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H17v3"/><path d="M4 7.5A.5.5 0 0 0 4.5 8H19a1 1 0 0 1 1 1v3"/><path d="M20 12h-4a2 2 0 0 0 0 4h4z"/></symbol><symbol id="i-binoculars" viewBox="0 0 24 24"><circle cx="6.5" cy="15.5" r="3.5"/><circle cx="17.5" cy="15.5" r="3.5"/><path d="M10 15.5h4M4 13 6 5.5h3L10 13M20 13 18 5.5h-3L14 13M10 9h4"/></symbol><symbol id="i-landmark" viewBox="0 0 24 24"><path d="M3 9.5 12 4l9 5.5"/><path d="M4 20h16M5 17.5h14"/><path d="M6.5 10.5v7M10 10.5v7M14 10.5v7M17.5 10.5v7"/></symbol><symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6.5h11M9 12h11M9 17.5h11"/><circle cx="4.75" cy="6.5" r="1" fill="currentColor"/><circle cx="4.75" cy="12" r="1" fill="currentColor"/><circle cx="4.75" cy="17.5" r="1" fill="currentColor"/></symbol><symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3.5a8.5 8.5 0 1 0 0 17c1.3 0 2-.8 2-1.8 0-1.4-1.3-1.7-1.3-3 0-1 .8-1.7 1.8-1.7H17a3.5 3.5 0 0 0 3.5-3.5c0-3.9-3.8-7-8.5-7Z"/><circle cx="7.6" cy="11" r="1.1" fill="currentColor"/><circle cx="10" cy="7.3" r="1.1" fill="currentColor"/><circle cx="14.6" cy="7.4" r="1.1" fill="currentColor"/></symbol><symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><path d="M12 14.5v2.5"/></symbol><symbol id="i-unlock" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 7.7-1.5"/><path d="M12 14.5v2.5"/></symbol><symbol id="i-vault" viewBox="0 0 24 24"><path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.2 7.5 9.5 4.3-1.3 7.5-4.9 7.5-9.5V6Z"/><rect x="9" y="11" width="6" height="5" rx="1"/><path d="M10.2 11V9.6a1.8 1.8 0 0 1 3.6 0V11"/></symbol><symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.2 7.5 9.5 4.3-1.3 7.5-4.9 7.5-9.5V6Z"/></symbol><symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.2 7.5 9.5 4.3-1.3 7.5-4.9 7.5-9.5V6Z"/><path d="m9 12 2.2 2.2L15.5 10"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m8.2 12.3 2.6 2.6 5-5.4"/></symbol><symbol id="i-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m9 9 6 6M15 9l-6 6"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 8.2v7.6M8.2 12h7.6"/></symbol><symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15Z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/></symbol><symbol id="i-import" viewBox="0 0 24 24"><path d="M12 3.5v10M8 9.5l4 4 4-4"/><path d="M4 14.5v3A2.5 2.5 0 0 0 6.5 20h11a2.5 2.5 0 0 0 2.5-2.5v-3"/></symbol><symbol id="i-trend-up" viewBox="0 0 24 24"><path d="m3.5 17 6-6 4 4 7-7.5"/><path d="M15 7.5h5.5V13"/></symbol><symbol id="i-trend-down" viewBox="0 0 24 24"><path d="m3.5 7 6 6 4-4 7 7.5"/><path d="M15 16.5h5.5V11"/></symbol><symbol id="i-sell" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M8.5 8.5l7 7M15.5 10v5.5H10"/></symbol><symbol id="i-coins" viewBox="0 0 24 24"><ellipse cx="9" cy="7" rx="5.5" ry="2.5"/><path d="M3.5 7v3.5c0 1.4 2.5 2.5 5.5 2.5M3.5 10.5V14c0 1.4 2.5 2.5 5.5 2.5"/><ellipse cx="15" cy="13.5" rx="5.5" ry="2.5"/><path d="M9.5 13.5V17c0 1.4 2.5 2.5 5.5 2.5s5.5-1.1 5.5-2.5v-3.5"/></symbol><symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3.6 2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8Z"/></symbol><symbol id="i-swipe" viewBox="0 0 24 24"><path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4"/></symbol><symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 4.2 2.9 17.5A2 2 0 0 0 4.6 20.5h14.8a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0Z"/><path d="M12 9.5v4.5"/><circle cx="12" cy="17" r=".9" fill="currentColor"/></symbol><symbol id="i-split" viewBox="0 0 24 24"><path d="M12 3v6"/><path d="M12 9 6.5 15M12 9l5.5 6"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="18" r="2.5"/><circle cx="12" cy="9" r="1.2" fill="currentColor"/></symbol><symbol id="i-repeat" viewBox="0 0 24 24"><path d="M4 11V9.5A3.5 3.5 0 0 1 7.5 6H19M15.5 2.5 19 6l-3.5 3.5"/><path d="M20 13v1.5a3.5 3.5 0 0 1-3.5 3.5H5M8.5 21.5 5 18l3.5-3.5"/></symbol><symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol><symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol><symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></symbol><symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M6.5 3.5h11M6.5 20.5h11"/><path d="M7.5 3.5c0 4.5 4.5 5.5 4.5 8.5s-4.5 4-4.5 8.5M16.5 3.5c0 4.5-4.5 5.5-4.5 8.5s4.5 4 4.5 8.5"/></symbol><symbol id="i-buy" viewBox="0 0 24 24"><path d="M12 3.2 14.3 5l2.9-.2.9 2.8 2.4 1.6-1 2.8 1 2.8-2.4 1.6-.9 2.8-2.9-.2L12 20.8 9.7 19l-2.9.2-.9-2.8-2.4-1.6 1-2.8-1-2.8 2.4-1.6.9-2.8 2.9.2Z"/><path d="m8.8 12.2 2.2 2.2 4.2-4.6"/></symbol><symbol id="i-thumb" viewBox="0 0 24 24"><path d="M7.5 10.5v9.5"/><path d="M15.5 6.5 14.7 10H19a2 2 0 0 1 2 2.4l-1.2 5.8a2.2 2.2 0 0 1-2.2 1.8H4.5a1 1 0 0 1-1-1v-7.5a1 1 0 0 1 1-1h3l3.3-6.5a2.3 2.3 0 0 1 4.7 2.5Z"/></symbol><symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m6 6 12 12"/></symbol><symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3.5v17M7.5 20.5h9M5 7h14M5 7l-2.5 6a3 3 0 0 0 5 0Zm14 0-2.5 6a3 3 0 0 0 5 0Z"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></symbol><symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx=".5"/><path d="M9.5 2.5V6M14.5 2.5V6M9.5 18v3.5M14.5 18v3.5M2.5 9.5H6M2.5 14.5H6M18 9.5h3.5M18 14.5h3.5"/></symbol><symbol id="i-megaphone" viewBox="0 0 24 24"><path d="M4 10v4a1 1 0 0 0 1 1h3l8 4.5v-15L8 9H5a1 1 0 0 0-1 1Z"/><path d="M8 15v4.5M19.5 9.5a3.5 3.5 0 0 1 0 5"/></symbol><symbol id="i-banknote" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v.01M18 14.5v.01"/></symbol><symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></symbol><symbol id="i-rain" viewBox="0 0 24 24"><path d="M7 15.5a4.5 4.5 0 1 1 1-8.9A5.5 5.5 0 0 1 18.6 9 3.5 3.5 0 0 1 17.5 15.5Z"/><path d="m8.5 18.5-1 2M12.5 18.5l-1 2M16.5 18.5l-1 2"/></symbol><symbol id="i-partly" viewBox="0 0 24 24"><path d="M8 3v1.5M3.6 4.6l1 1M2 9h1.5M11.4 4.6l-1 1"/><path d="M5.3 11.6a3.5 3.5 0 0 1 5.6-4.1"/><path d="M9 19.5a4 4 0 1 1 .9-7.9 5 5 0 0 1 9.5 1.9A3 3 0 0 1 18.5 19.5Z"/></symbol><symbol id="i-news" viewBox="0 0 24 24"><path d="M4 5.5h12.5v13a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2Z"/><path d="M16.5 9.5H20v9a2 2 0 0 1-2 2"/><path d="M7.5 9h5.5M7.5 12.5h5.5M7.5 16h3.5"/></symbol><symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3.5c.6 4.3 2.2 5.9 6.5 6.5-4.3.6-5.9 2.2-6.5 6.5-.6-4.3-2.2-5.9-6.5-6.5 4.3-.6 5.9-2.2 6.5-6.5Z"/><path d="M18.5 15.5c.3 1.9 1 2.6 2.9 2.9-1.9.3-2.6 1-2.9 2.9-.3-1.9-1-2.6-2.9-2.9 1.9-.3 2.6-1 2.9-2.9Z"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol><symbol id="i-profile" viewBox="0 0 24 24"><path d="M12 3.5 20.1 9.4 17 18.9H7L3.9 9.4Z"/><path d="M12 8 15.8 10.8 14.3 15.3H9.7L8.2 10.8Z" fill="currentColor" fill-opacity=".18"/></symbol><symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8"/><path d="M4 3.5V8h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.9L20 16"/><path d="M20 20.5V16h-4.5"/></symbol><symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4.5"/><path d="m11.2 11.8 8.3-8.3M16.5 6.5l2.5 2.5M14 9l2 2"/></symbol><symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 17.5h6M10 20.5h4"/><path d="M8.5 14.5a6 6 0 1 1 7 0c-.6.5-1 1.2-1 2V17.5h-5V16.5c0-.8-.4-1.5-1-2Z"/></symbol><symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4.5 3.5 6.5v13L9 17.5l6 2 5.5-2v-13L15 6.5Z"/><path d="M9 4.5v13M15 6.5v13"/></symbol><symbol id="i-pie" viewBox="0 0 24 24"><path d="M12 3.5a8.5 8.5 0 1 0 8.5 8.5H12Z"/><path d="M15 3.8A8.5 8.5 0 0 1 20.2 9H15Z"/></symbol><symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.5 3.5 5.5 3.5 8.5s-1 6-3.5 8.5c-2.5-2.5-3.5-5.5-3.5-8.5S9.5 6 12 3.5Z"/></symbol><symbol id="i-receipt" viewBox="0 0 24 24"><path d="M5.5 3.5h13v17l-2.2-1.4-2.1 1.4-2.2-1.4-2.2 1.4-2.1-1.4-2.2 1.4Z"/><path d="M9 8h6M9 11.5h6M9 15h3.5"/></symbol><symbol id="i-bars" viewBox="0 0 24 24"><path d="M4 20.5h16"/><rect x="5.5" y="11" width="3" height="7" rx=".6"/><rect x="10.5" y="6" width="3" height="12" rx=".6"/><rect x="15.5" y="13.5" width="3" height="4.5" rx=".6"/></symbol><symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol><symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 4v16h16"/><path d="m7.5 15 3.5-4 3 2.5 5-6"/></symbol><symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m15.5 8.5-2 5-5 2 2-5Z"/></symbol></defs></svg>
 <nav class="topbar" id="bar" aria-label="Navigation">
   <div class="barin">
-    <a class="brand" href="#top" data-go="top"><span class="brand-ico">📡</span><span class="brand-txt"> Radar Boursier</span></a>
+    <a class="brand" href="#top" data-go="top"><span class="brand-ico"><svg class="i" aria-hidden="true"><use href="#i-radar"/></svg></span><span class="brand-txt"> Radar Boursier</span></a>
     <div class="toc" id="toc">
       <a href="#aujourdhui" data-go="aujourdhui">Aujourd'hui</a>
       <a href="#portefeuille" data-go="portefeuille" class="priv">Mon portefeuille</a>
@@ -379,15 +393,15 @@ tbody tr{transition:background-color .15s}
       <a href="#investisseurs" data-go="investisseurs">Grands investisseurs</a>
       <a href="#titres" data-go="titres">Tous les titres</a>
     </div>
-    <div class="pop"><button class="btn icon" id="palBtn" type="button" aria-haspopup="true" aria-expanded="false" title="Couleurs">🎨</button>
+    <div class="pop"><button class="btn icon" id="palBtn" type="button" aria-haspopup="true" aria-expanded="false" title="Couleurs"><svg class="i" aria-hidden="true"><use href="#i-palette"/></svg></button>
       <div class="popmenu" id="palMenu" hidden role="menu">
         <span class="lbl">Style de couleurs</span>
         <button type="button" role="menuitemradio" data-pal=""><span class="sw sw-classique"></span>Classique</button><button type="button" role="menuitemradio" data-pal="nuit"><span class="sw sw-nuit"></span>Nuit</button><button type="button" role="menuitemradio" data-pal="ocean"><span class="sw sw-ocean"></span>Océan</button><button type="button" role="menuitemradio" data-pal="foret"><span class="sw sw-foret"></span>Forêt</button><button type="button" role="menuitemradio" data-pal="daltonien"><span class="sw sw-daltonien"></span>Daltonien</button><button type="button" role="menuitemradio" data-pal="contraste"><span class="sw sw-contraste"></span>Contraste élevé</button>
       </div></div>
     <button class="btn icon" id="langBtn" type="button" title="Langue des analyses et des nouvelles">FR</button>
-    <button class="btn" id="tocBtn" aria-expanded="false" aria-controls="tocPanel">☰ <span class="hide-sm">Sommaire</span></button>
-    <button class="btn" id="lockBtn" type="button">🔒</button>
-    <button class="btn icon" id="gearBtn" type="button" aria-label="Réglages" title="Réglages">⚙️</button>
+    <button class="btn" id="tocBtn" aria-expanded="false" aria-controls="tocPanel"><svg class="i" aria-hidden="true"><use href="#i-menu"/></svg> <span class="hide-sm">Sommaire</span></button>
+    <button class="btn" id="lockBtn" type="button"><svg class="i" aria-hidden="true"><use href="#i-lock"/></svg></button>
+    <button class="btn icon" id="gearBtn" type="button" aria-label="Réglages" title="Réglages"><svg class="i" aria-hidden="true"><use href="#i-gear"/></svg></button>
     <button class="privsw" id="privBtn" role="switch" aria-checked="false" title="Le mode privé cache tes montants, tes positions et tout ce qui révèle ton portefeuille."><span class="knob"></span><span id="privLbl">Public</span></button>
   </div>
   <div class="tocpanel" id="tocPanel" hidden>
@@ -414,7 +428,7 @@ tbody tr{transition:background-color .15s}
     <div class="status" id="status"><span class="dot"></span><span>Connexion aux données…</span></div>
   </header>
 
-  <div class="part" id="aujourdhui"><span class="lbl">Partie 1</span><h2><span class="ico">📅</span> Aujourd'hui</h2></div>
+  <div class="part" id="aujourdhui"><span class="lbl">Partie 1</span><h2><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg></span> Aujourd'hui</h2></div>
   <div class="alert anchor" id="splits" hidden></div>
   <div class="alert anchor" id="verdicts" hidden style="background:var(--good-soft);border-color:var(--good)"></div>
   <div class="alert anchor priv" id="pricealerts" hidden style="background:var(--accent-soft);border-color:var(--accent)"></div>
@@ -422,12 +436,12 @@ tbody tr{transition:background-color .15s}
   <div class="brief priv" id="brief" hidden></div>
   <section class="kpis anchor priv" id="resume" aria-label="Résumé du portefeuille"><div class="kpi"></div></section>
 
-  <div class="part priv" id="portefeuille"><span class="lbl">Partie 2</span><h2><span class="ico">💼</span> Mon portefeuille</h2></div>
+  <div class="part priv" id="portefeuille"><span class="lbl">Partie 2</span><h2><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-wallet"/></svg></span> Mon portefeuille</h2></div>
   <section class="priv anchor" id="positions">
     <div class="sh">
-      <div style="display:flex;flex-direction:column;gap:4px"><h3>📊 Positions et suggestions</h3>
+      <div style="display:flex;flex-direction:column;gap:4px"><h3><svg class="i" aria-hidden="true"><use href="#i-bars"/></svg> Positions et suggestions</h3>
       <p>Chaque position regroupée tous comptes confondus, avec ce que le radar suggère : renforcer, conserver, réévaluer ou vendre.</p></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="impOpen">📥 Importer un relevé Wealthsimple</button><button class="btn primary" id="txOpen">+ Ajouter un achat ou une vente</button></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="impOpen"><svg class="i" aria-hidden="true"><use href="#i-import"/></svg> Importer un relevé Wealthsimple</button><button class="btn primary" id="txOpen">+ Ajouter un achat ou une vente</button></div>
     </div>
     <div class="tw"><table id="tHold"><thead><tr>
       <th data-k="name">Titre</th><th class="r" data-k="value">Valeur (CAD)</th><th class="r" data-k="w">Poids</th><th class="r" data-k="gain">Gain</th><th class="r" data-k="pl">Si je vends (CAD)</th><th class="r" data-k="score">Score</th><th data-k="action">Suggestion</th>
@@ -436,12 +450,12 @@ tbody tr{transition:background-color .15s}
 
   <section class="grid2 priv">
     <div class="panel anchor" id="ventes">
-      <div class="sh" style="margin:0"><h3>🔻 Suggestions de vente</h3><span class="lbl">titres détenus</span></div>
+      <div class="sh" style="margin:0"><h3><svg class="i" aria-hidden="true"><use href="#i-sell"/></svg> Suggestions de vente</h3><span class="lbl">titres détenus</span></div>
       <p class="note" style="margin:0">Positions où le radar voit une raison de vendre ou d'alléger, avec ce que tu encaisserais aujourd'hui : gain ou perte.</p>
       <div id="sells"></div>
     </div>
     <div class="panel anchor" id="evolution">
-      <h3>📈 Évolution du portefeuille Wealthsimple</h3>
+      <h3><svg class="i" aria-hidden="true"><use href="#i-chart"/></svg> Évolution du portefeuille Wealthsimple</h3>
       <div class="read" id="hRead"></div>
       <div class="chartbox sm"><canvas id="cHist" aria-label="Historique de la valeur du portefeuille"></canvas></div>
       <p class="note" style="margin:0">Valeur du compte Wealthsimple selon ta feuille Historique; le dernier point est calculé en direct.</p>
@@ -450,12 +464,12 @@ tbody tr{transition:background-color .15s}
 
   <section class="grid2 priv">
     <div class="panel anchor" id="repartition">
-      <div class="sh" style="margin:0"><h3>🧩 Répartition par secteur vs cible</h3><span class="lbl">valeur en direct</span></div>
+      <div class="sh" style="margin:0"><h3><svg class="i" aria-hidden="true"><use href="#i-pie"/></svg> Répartition par secteur vs cible</h3><span class="lbl">valeur en direct</span></div>
       <p class="note" style="margin:0" id="sectNote">Cibles tirées de ta feuille Analyse.</p>
       <div class="chartbox"><canvas id="cSect" aria-label="Répartition sectorielle actuelle et cible"></canvas></div>
     </div>
     <div class="panel">
-      <h3>🌎 Où est ton argent</h3>
+      <h3><svg class="i" aria-hidden="true"><use href="#i-globe"/></svg> Où est ton argent</h3>
       <p class="note" style="margin:0" id="geoNote"></p>
       <div id="geo" class="inv"></div>
       <span class="lbl" style="margin-top:6px">Prochains événements (45 jours)</span>
@@ -465,36 +479,36 @@ tbody tr{transition:background-color .15s}
 
   <section class="grid2 priv anchor" id="dividendes">
     <div class="panel">
-      <div class="sh" style="margin:0"><h3>💰 Dividendes réinvestis</h3><span class="lbl">automatique</span></div>
+      <div class="sh" style="margin:0"><h3><svg class="i" aria-hidden="true"><use href="#i-coins"/></svg> Dividendes réinvestis</h3><span class="lbl">automatique</span></div>
       <div class="kpis" id="divKpis" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr))"></div>
       <p class="note" style="margin:0">Chaque jour ouvrable, la mise à jour automatique repère les dividendes versés et ajoute à tes positions les fractions d'actions réinvesties (DRIP). Retenue fiscale américaine de 15 % appliquée sur les titres en USD.</p>
       <div id="divList"></div>
     </div>
     <div class="panel">
-      <h3>🧾 Journal des mouvements</h3>
+      <h3><svg class="i" aria-hidden="true"><use href="#i-receipt"/></svg> Journal des mouvements</h3>
       <p class="note" style="margin:0">Tes achats et ventes entrés ici. Le plus récent peut être annulé.</p>
       <div id="txList"></div>
     </div>
   </section>
 
-  <div class="part" id="occasions"><span class="lbl">Partie 3</span><h2><span class="ico">🔭</span> Trouver des occasions</h2></div>
+  <div class="part" id="occasions"><span class="lbl">Partie 3</span><h2><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-binoculars"/></svg></span> Trouver des occasions</h2></div>
   <section class="anchor" id="meilleures">
     <div class="sh">
-      <h3>⭐ Meilleures occasions à l'étude</h3>
+      <h3><svg class="i" aria-hidden="true"><use href="#i-star"/></svg> Meilleures occasions à l'étude</h3>
       <p>Titres de ta liste de surveillance que tu ne détiens pas encore, classés par score. Le score combine la qualité (modèles Buffett, Burry, Duckett, Fink, Jensen de ton fichier), la valorisation, l'écart avec le sommet, le risque, l'avis des analystes et ce dont ton portefeuille manque.</p>
     </div>
-    <span class="swipehint">👉 Glisse pour voir les autres titres</span>
+    <span class="swipehint"><svg class="i" aria-hidden="true"><use href="#i-swipe"/></svg> Glisse pour voir les autres titres</span>
     <div class="cards" id="opps"><div class="empty">Chargement des titres…</div></div>
   </section>
 
   <section class="anchor" id="decouvertes">
-    <div class="sh"><h3>🆕 Découvertes de la semaine</h3><p>Chaque lundi, le Radar passe en revue les quelque 560 entreprises du S&P 500 et du TSX 60 que tu ne suis pas encore. Il garde celles dont le score est le meilleur.</p></div>
-    <span class="swipehint">👉 Glisse pour voir les autres découvertes</span>
+    <div class="sh"><h3><svg class="i" aria-hidden="true"><use href="#i-compass"/></svg> Découvertes de la semaine</h3><p>Chaque lundi, le Radar passe en revue les quelque 560 entreprises du S&P 500 et du TSX 60 que tu ne suis pas encore. Il garde celles dont le score est le meilleur.</p></div>
+    <span class="swipehint"><svg class="i" aria-hidden="true"><use href="#i-swipe"/></svg> Glisse pour voir les autres découvertes</span>
     <div class="disc-grid" id="discList"><div class="empty">Les découvertes apparaissent après le prochain balayage du lundi.</div></div>
   </section>
 
   <section class="panel anchor priv" id="plan">
-    <div class="sh" style="margin:0"><h3>💡 Planificateur : j'ai de l'argent à investir</h3><span class="lbl">selon tes cibles</span></div>
+    <div class="sh" style="margin:0"><h3><svg class="i" aria-hidden="true"><use href="#i-bulb"/></svg> Planificateur : j'ai de l'argent à investir</h3><span class="lbl">selon tes cibles</span></div>
     <p class="note" style="margin:0">Entre le montant que tu veux placer. Le radar le répartit d'abord vers les secteurs sous ta cible (feuille Analyse), puis choisit le titre au meilleur score dans chacun.</p>
     <form class="addrow" id="planForm" novalidate>
       <label>Montant (CAD)<input type="number" id="planAmt" min="1" step="any" inputmode="decimal" placeholder="ex. 500"></label>
@@ -507,19 +521,19 @@ tbody tr{transition:background-color .15s}
 
   <section class="grid2">
     <div class="panel anchor" id="carte">
-      <div class="sh" style="margin:0"><h3>🗺️ Carte des occasions</h3><span class="lbl">clique un point</span></div>
+      <div class="sh" style="margin:0"><h3><svg class="i" aria-hidden="true"><use href="#i-map"/></svg> Carte des occasions</h3><span class="lbl">clique un point</span></div>
       <p class="note" style="margin:0">En haut à droite : bon score et prix bien sous le sommet de l'année. En bas à gauche : cher et peu attrayant.</p>
       <div class="chartbox"><canvas id="cMap" aria-label="Nuage de points score contre décote"></canvas></div>
       <div class="legend"><span class="priv"><b style="background:var(--accent)"></b>Je détiens</span><span><b style="background:var(--warn)"></b><span class="priv">Surveillé</span><span class="pubonly">Titre suivi</span></span></div>
     </div>
     <div class="panel anchor" id="eviter">
-      <h3>🚫 À éviter pour l'instant</h3>
+      <h3><svg class="i" aria-hidden="true"><use href="#i-ban"/></svg> À éviter pour l'instant</h3>
       <p class="note" style="margin:0">Les scores les plus faibles parmi les titres que tu surveilles, avec la raison principale.</p>
       <ul class="reasons" id="avoid" style="gap:9px"></ul>
     </div>
   </section>
 
-  <div class="part" id="investisseurs"><span class="lbl">Partie 4</span><h2><span class="ico">🏛️</span> Ce que font les grands investisseurs</h2></div>
+  <div class="part" id="investisseurs"><span class="lbl">Partie 4</span><h2><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-landmark"/></svg></span> Ce que font les grands investisseurs</h2></div>
   <section>
     <div class="sh">
       <p>Leurs plus grosses positions selon leurs dernières déclarations 13F à la SEC. Ces déclarations arrivent environ 45 jours après la fin du trimestre : ce sont des photos du passé, pas leurs positions d'aujourd'hui.<span class="priv"> En bleu foncé, les titres que tu détiens aussi.</span></p>
@@ -528,7 +542,7 @@ tbody tr{transition:background-color .15s}
     <div class="invgrid" id="investors"><div class="empty">Chargement des portefeuilles…</div></div>
   </section>
 
-  <div class="part" id="titres"><span class="lbl">Partie 5</span><h2><span class="ico">📋</span> Tous les titres suivis</h2></div>
+  <div class="part" id="titres"><span class="lbl">Partie 5</span><h2><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg></span> Tous les titres suivis</h2></div>
   <section>
     <div class="sh">
       <div class="tools">
@@ -541,7 +555,7 @@ tbody tr{transition:background-color .15s}
       </div>
     </div>
     <div class="panel anchor" id="ajout" style="margin-bottom:14px">
-      <div class="sh" style="margin:0"><h3>➕ Ajouter un titre à surveiller</h3><span class="lbl">manuel</span></div>
+      <div class="sh" style="margin:0"><h3><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg> Ajouter un titre à surveiller</h3><span class="lbl">manuel</span></div>
       <form class="addrow" id="addForm" novalidate>
         <label>Symbole<input type="text" id="addT" placeholder="ex. COST, RY.TO, NESN" autocomplete="off" maxlength="12"></label>
         <label>Nom (facultatif)<input type="text" id="addName" placeholder="Rempli automatiquement si vide" maxlength="80"></label>
@@ -560,11 +574,11 @@ tbody tr{transition:background-color .15s}
 </div>
 
 <nav class="tabbar" id="tabbar" aria-label="Sections">
-  <a href="#aujourdhui" data-go="aujourdhui"><span>📅</span><b data-fr="Aujourd'hui" data-en="Today">Aujourd'hui</b></a>
-  <a href="#portefeuille" data-go="portefeuille" class="priv"><span>💼</span><b data-fr="Portefeuille" data-en="Portfolio">Portefeuille</b></a>
-  <a href="#occasions" data-go="occasions"><span>🔭</span><b data-fr="Occasions" data-en="Ideas">Occasions</b></a>
-  <a href="#investisseurs" data-go="investisseurs"><span>🏛️</span><b data-fr="Investisseurs" data-en="Investors">Investisseurs</b></a>
-  <a href="#titres" data-go="titres"><span>📋</span><b data-fr="Titres" data-en="Stocks">Titres</b></a>
+  <a href="#aujourdhui" data-go="aujourdhui"><span><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg></span><b data-fr="Aujourd'hui" data-en="Today">Aujourd'hui</b></a>
+  <a href="#portefeuille" data-go="portefeuille" class="priv"><span><svg class="i" aria-hidden="true"><use href="#i-wallet"/></svg></span><b data-fr="Portefeuille" data-en="Portfolio">Portefeuille</b></a>
+  <a href="#occasions" data-go="occasions"><span><svg class="i" aria-hidden="true"><use href="#i-binoculars"/></svg></span><b data-fr="Occasions" data-en="Ideas">Occasions</b></a>
+  <a href="#investisseurs" data-go="investisseurs"><span><svg class="i" aria-hidden="true"><use href="#i-landmark"/></svg></span><b data-fr="Investisseurs" data-en="Investors">Investisseurs</b></a>
+  <a href="#titres" data-go="titres"><span><svg class="i" aria-hidden="true"><use href="#i-list"/></svg></span><b data-fr="Titres" data-en="Stocks">Titres</b></a>
 </nav>
 <div class="scrim" id="scrim" hidden></div>
 <aside class="drawer" id="drawer" hidden aria-modal="true" role="dialog" aria-labelledby="dName"></aside>
@@ -648,7 +662,7 @@ function renderSplits() {
   const el = $('#splits');
   if (!list.length) { el.hidden = true; return; }
   el.hidden = false;
-  el.innerHTML = `<span class="lbl">✂️ Fractionnements d'actions</span>` + list.map(x => {
+  el.innerHTML = `<span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-split"/></svg> Fractionnements d'actions</span>` + list.map(x => {
     const s = state.stocks[x.t];
     const mine = x.owned && !state.priv;
     let what;
@@ -670,7 +684,7 @@ function renderVerdicts() {
   if (!ch.length) { el.hidden = true; return; }
   ch.sort((x, y) => (y.up - x.up) || (y.b - x.b));
   el.hidden = false;
-  el.innerHTML = `<span class="lbl">🔁 Changements de verdict depuis la dernière mise à jour</span>` + ch.slice(0, 8).map(x => `<div class="row" data-t="${esc(x.s.ticker)}"><b>${esc(x.s.ticker)}</b><span>${x.up ? '⬆️' : '⬇️'} ${esc(x.va.t)} → <b>${esc(x.vb.t)}</b> <span class="muted">(score ${x.a} → ${x.b})</span></span></div>`).join('');
+  el.innerHTML = `<span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-repeat"/></svg> Changements de verdict depuis la dernière mise à jour</span>` + ch.slice(0, 8).map(x => `<div class="row" data-t="${esc(x.s.ticker)}"><b>${esc(x.s.ticker)}</b><span>${x.up ? '<svg class="i up" aria-hidden="true"><use href="#i-arrow-up"/></svg>' : '<svg class="i down" aria-hidden="true"><use href="#i-arrow-down"/></svg>'} ${esc(x.va.t)} → <b>${esc(x.vb.t)}</b> <span class="muted">(score ${x.a} → ${x.b})</span></span></div>`).join('');
 }
 function renderDiscover() {
   const d = Store.discover?.items || [];
@@ -680,23 +694,23 @@ function renderDiscover() {
   el.innerHTML = d.map((x, i) => { const v = verdictOf(x.score || 0); const added = !!Store.uni[x.t];
     return `<div class="card" style="--i:${i};cursor:default">
       <div class="row"><div><div class="tk">${esc(x.t)} · ${esc(x.index || '')}</div><div class="nm">${esc(x.name || x.t)}</div><div class="note">${esc(x.sector || '')}${x.region ? ' · ' + esc(x.region) : ''}</div></div>${ring(x.score || 0, v.col)}</div>
-      <div class="row" style="align-items:center"><span class="pill ${v.c}">${v.t}</span><span class="num">${nf(x.price)} <span class="${x.chg >= 0 ? 'up' : 'down'}">${pct(x.chg)}</span></span></div>
+      <div class="row" style="align-items:center"><span class="pill ${v.c}">${v.h}</span><span class="num">${nf(x.price)} <span class="${x.chg >= 0 ? 'up' : 'down'}">${pct(x.chg)}</span></span></div>
       <ul class="reasons">${((x.pros || {})[L] || []).slice(0, 2).map(r => `<li>${esc(r)}</li>`).join('')}${((x.cons || {})[L] || []).slice(0, 1).map(r => `<li class="c">${esc(r)}</li>`).join('')}</ul>
-      ${added ? '<span class="note">✅ Dans ta liste</span>' : `<button class="btn" data-add="${esc(x.t)}" data-name="${esc(x.name || '')}" data-sector="${esc(x.sector || '')}" data-region="${esc(x.region || '')}" data-cur="${esc(x.cur || '')}">➕ Ajouter à ma liste</button>`}
+      ${added ? '<span class="note"><svg class="i up" aria-hidden="true"><use href="#i-check"/></svg> Dans ta liste</span>' : `<button class="btn" data-add="${esc(x.t)}" data-name="${esc(x.name || '')}" data-sector="${esc(x.sector || '')}" data-region="${esc(x.region || '')}" data-cur="${esc(x.cur || '')}"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg> Ajouter à ma liste</button>`}
     </div>`; }).join('');
 }
 document.addEventListener('click', async e => {
   const b = e.target.closest('[data-add]'); if (!b) return;
   b.disabled = true; b.textContent = 'Ajout…';
-  try { await DB.doc('stocks/' + docId(b.dataset.add)).set({ ticker: b.dataset.add, name: b.dataset.name, sector: b.dataset.sector || 'Autre', region: b.dataset.region || null, cur: b.dataset.cur || 'USD', etf: false, addedBy: 'Découverte du Radar' }); b.outerHTML = '<span class="note">✅ Ajouté. Ses données arrivent dans environ 15 minutes.</span>'; }
-  catch (err) { b.disabled = false; b.textContent = err?.code === 'no_token' ? 'Ajoute ton jeton GitHub (⚙️)' : 'Réessayer'; }
+  try { await DB.doc('stocks/' + docId(b.dataset.add)).set({ ticker: b.dataset.add, name: b.dataset.name, sector: b.dataset.sector || 'Autre', region: b.dataset.region || null, cur: b.dataset.cur || 'USD', etf: false, addedBy: 'Découverte du Radar' }); b.outerHTML = '<span class="note"><svg class="i up" aria-hidden="true"><use href="#i-check"/></svg> Ajouté. Ses données arrivent dans environ 15 minutes.</span>'; }
+  catch (err) { b.disabled = false; b.textContent = err?.code === 'no_token' ? 'Ajoute ton jeton GitHub (Réglages)' : 'Réessayer'; }
 });
 function renderPriceAlerts() {
   const el = $('#pricealerts');
   const list = Object.values(state.stocks).map(s => ({ s, al: alertState(s) })).filter(x => x.al);
   if (!list.length) { el.hidden = true; return; }
   el.hidden = false;
-  el.innerHTML = `<span class="lbl">🔔 Tes alertes de prix</span>` + list.map(({ s, al }) => `<div class="row" data-t="${esc(s.ticker)}"><b>${esc(s.ticker)}</b><span>${al.hit ? '🎯' : '⏳'} ${esc(al.msg)}</span></div>`).join('');
+  el.innerHTML = `<span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-bell"/></svg> Tes alertes de prix</span>` + list.map(({ s, al }) => `<div class="row" data-t="${esc(s.ticker)}"><b>${esc(s.ticker)}</b><span>${al.hit ? '<svg class="i" aria-hidden="true"><use href="#i-target"/></svg>' : '<svg class="i" aria-hidden="true"><use href="#i-hourglass"/></svg>'} ${esc(al.msg)}</span></div>`).join('');
 }
 function rebuild() {
   const held = holdingsMap(), o = {};
@@ -806,11 +820,11 @@ function investorMap() {
   invKey = state.investors; invCache = m; return m;
 }
 function verdictOf(sc) {
-  if (sc >= 66) return { t: '🚀 Achat intéressant', c: 'v-buy', col: '--good' };
-  if (sc >= 57) return { t: '👍 À considérer', c: 'v-con', col: '--mid' };
-  if (sc >= 46) return { t: '👀 À surveiller', c: 'v-watch', col: '--muted' };
-  if (sc >= 36) return { t: '⚠️ Prudence', c: 'v-care', col: '--warn' };
-  return { t: '⛔ Éviter', c: 'v-avoid', col: '--bad' };
+  if (sc >= 66) return { t: 'Achat intéressant', h: '<svg class="i" aria-hidden="true"><use href="#i-buy"/></svg> Achat intéressant', c: 'v-buy', col: '--good' };
+  if (sc >= 57) return { t: 'À considérer', h: '<svg class="i" aria-hidden="true"><use href="#i-thumb"/></svg> À considérer', c: 'v-con', col: '--mid' };
+  if (sc >= 46) return { t: 'À surveiller', h: '<svg class="i" aria-hidden="true"><use href="#i-eye"/></svg> À surveiller', c: 'v-watch', col: '--muted' };
+  if (sc >= 36) return { t: 'Prudence', h: '<svg class="i" aria-hidden="true"><use href="#i-alert"/></svg> Prudence', c: 'v-care', col: '--warn' };
+  return { t: 'Éviter', h: '<svg class="i" aria-hidden="true"><use href="#i-ban"/></svg> Éviter', c: 'v-avoid', col: '--bad' };
 }
 const INTL = ['TSM', 'ASML', 'ARM', 'BYDDY', 'SPOT', 'STM', 'NVO', 'SAP', 'MELI', 'SONY', 'TM', 'BABA', 'RACE', 'SE', 'AZN', 'HDB', 'SHEL', 'BIDU', 'YPF'];
 function regionOf(s) {
@@ -833,7 +847,7 @@ function sellSignal(s, a, pf) {
   if (!s.etf && tg != null && (pf.sect[sec] || 0) > tg + 0.1 && a.score < 52) { level = level || 'Alléger'; out.push(`Secteur ${sec} surpondéré (${pct(pf.sect[sec], 0, false)} pour une cible de ${pct(tg, 0, false)}) et score moyen`); }
   return level ? { level, reasons: out, row: r } : null;
 }
-const EMO = { 'Vendre': '🔻', 'Alléger': '⚖️', 'Réévaluer': '🔍', 'Prendre des profits': '💰', 'Renforcer': '➕', 'Conserver': '🤝' };
+const EMO = { 'Vendre': '<svg class="i" aria-hidden="true"><use href="#i-sell"/></svg>', 'Alléger': '<svg class="i" aria-hidden="true"><use href="#i-scale"/></svg>', 'Réévaluer': '<svg class="i" aria-hidden="true"><use href="#i-search"/></svg>', 'Prendre des profits': '<svg class="i" aria-hidden="true"><use href="#i-coins"/></svg>', 'Renforcer': '<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg>', 'Conserver': '<svg class="i" aria-hidden="true"><use href="#i-shield-check"/></svg>' };
 const emo = l => (EMO[l] ? EMO[l] + ' ' : '') + l;
 function actionOf(a, sig) {
   if (sig) return { t: emo(sig.level), c: sig.level === 'Vendre' ? 'v-avoid' : 'v-care' };
@@ -932,7 +946,7 @@ function renderStatus() {
   const last = st?.lastRun || Object.values(state.stocks).reduce((m, s) => s.updatedAt > m ? s.updatedAt : m, '');
   const ageH = last ? (Date.now() - new Date(last)) / 36e5 : 999;
   const cls = !dbFresh ? '' : ageH < 30 ? 'live' : 'stale';
-  el.innerHTML = `<span class="dot ${cls}"></span><span>Données au ${esc(fmtDate(last))}</span><span>·</span><span>Mise à jour auto : ${esc(st?.schedule || 'jours ouvrables')}</span>${state.unlocked ? '' : '<span>·</span><span>🔒 portefeuille verrouillé</span>'}`;
+  el.innerHTML = `<span class="dot ${cls}"></span><span>Données au ${esc(fmtDate(last))}</span><span>·</span><span>Mise à jour auto : ${esc(st?.schedule || 'jours ouvrables')}</span>${state.unlocked ? '' : '<span>·</span><span><svg class="i" aria-hidden="true"><use href="#i-lock"/></svg> portefeuille verrouillé</span>'}`;
 }
 function renderKpis(pf, items) {
   if (!pf) { $('#resume').innerHTML = ''; return; }
@@ -941,10 +955,10 @@ function renderKpis(pf, items) {
   const best = items.filter(x => !x.s.owned && !x.s.etf).sort((a, b) => b.a.score - a.a.score)[0];
   const n = items.filter(x => !x.s.owned).length;
   $('#resume').innerHTML = `
-   <div class="kpi"><span class="lbl">💼 Valeur estimée</span><span class="v" data-count="${Math.round(pf.total)}" data-suffix=" $">${money(pf.total)}</span><span class="s">${pf.rows.length} titres, prix à jour × tes quantités</span></div>
-   <div class="kpi"><span class="lbl">📈 Gain latent</span><span class="v ${gain >= 0 ? 'up' : 'down'}">${gain >= 0 ? '+' : ''}${money(gain)}</span><span class="s">${pct(gain / pf.cost)} sur le coût</span></div>
-   <div class="kpi"><span class="lbl">💻 Poids techno</span><span class="v ${tech > 0.35 ? 'down' : ''}">${pct(tech, 0, false)}</span><span class="s">cible ${pct(state.meta.sectorTargets?.Technologie ?? .3, 0, false)} · ${tech > 0.35 ? 'surpondéré' : 'équilibré'}</span></div>
-   <div class="kpi"><span class="lbl">⭐ Meilleure occasion</span><span class="v">${best ? esc(best.s.ticker.replace('_', '.')) : '–'}</span><span class="s">${best ? `score ${best.a.score} parmi ${n} titres surveillés` : ''}</span></div>`;
+   <div class="kpi"><span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-wallet"/></svg> Valeur estimée</span><span class="v" data-count="${Math.round(pf.total)}" data-suffix=" $">${money(pf.total)}</span><span class="s">${pf.rows.length} titres, prix à jour × tes quantités</span></div>
+   <div class="kpi"><span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-chart"/></svg> Gain latent</span><span class="v ${gain >= 0 ? 'up' : 'down'}">${gain >= 0 ? '+' : ''}${money(gain)}</span><span class="s">${pct(gain / pf.cost)} sur le coût</span></div>
+   <div class="kpi"><span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-cpu"/></svg> Poids techno</span><span class="v ${tech > 0.35 ? 'down' : ''}">${pct(tech, 0, false)}</span><span class="s">cible ${pct(state.meta.sectorTargets?.Technologie ?? .3, 0, false)} · ${tech > 0.35 ? 'surpondéré' : 'équilibré'}</span></div>
+   <div class="kpi"><span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-star"/></svg> Meilleure occasion</span><span class="v">${best ? esc(best.s.ticker.replace('_', '.')) : '–'}</span><span class="s">${best ? `score ${best.a.score} parmi ${n} titres surveillés` : ''}</span></div>`;
   countUp($('#resume'));
   const b = state.status?.marketBrief;
   $('#brief').hidden = !b;
@@ -972,9 +986,9 @@ function trendTag(s) { const tr = trend(s); if (!tr || Math.abs(tr.d) < 3) retur
 function badges(s) {
   const out = [];
   const tt = trendTag(s); if (tt) out.push(tt);
-  const e = daysTo(s.nextEarnings); if (e != null && e >= 0 && e <= 7) out.push(`<span class="badge hot" title="Prochains résultats le ${esc(s.nextEarnings)}">📣 Résultats ${e === 0 ? 'aujourd\'hui' : 'dans ' + e + ' j'}</span>`);
-  const x = daysTo(s.lastDiv?.exDate); if (s.owned && !state.priv && x != null && x >= 0 && x <= 10) out.push(`<span class="badge ok" title="Pour recevoir le dividende, il faut détenir le titre avant cette date">💵 Ex-div. ${x === 0 ? 'aujourd\'hui' : 'dans ' + x + ' j'}</span>`);
-  const al = alertState(s); if (al && !state.priv) out.push(`<span class="badge hot bell" title="${esc(al.msg)}">🔔 ${al.short}</span>`);
+  const e = daysTo(s.nextEarnings); if (e != null && e >= 0 && e <= 7) out.push(`<span class="badge hot" title="Prochains résultats le ${esc(s.nextEarnings)}"><svg class="i" aria-hidden="true"><use href="#i-megaphone"/></svg> Résultats ${e === 0 ? 'aujourd\'hui' : 'dans ' + e + ' j'}</span>`);
+  const x = daysTo(s.lastDiv?.exDate); if (s.owned && !state.priv && x != null && x >= 0 && x <= 10) out.push(`<span class="badge ok" title="Pour recevoir le dividende, il faut détenir le titre avant cette date"><svg class="i" aria-hidden="true"><use href="#i-banknote"/></svg> Ex-div. ${x === 0 ? 'aujourd\'hui' : 'dans ' + x + ' j'}</span>`);
+  const al = alertState(s); if (al && !state.priv) out.push(`<span class="badge hot bell" title="${esc(al.msg)}"><svg class="i" aria-hidden="true"><use href="#i-bell"/></svg> ${al.short}</span>`);
   return out.join('');
 }
 function alertState(s) {
@@ -996,7 +1010,7 @@ function renderOpps(items) {
   $('#opps').innerHTML = top.map(({ s, a }, i) => `
     <button class="card" style="--i:${i}" data-t="${esc(s.ticker)}">
       <div class="row"><div><div class="tk">${esc(s.ticker)} · ${esc(s.sector || '')}</div><div class="nm">${esc(nice(s.name))}</div><div>${badges(s)}</div></div>${ring(a.score, a.verdict.col)}</div>
-      <div class="row" style="align-items:center"><span class="pill ${a.verdict.c}">${a.verdict.t}</span><span class="num">${nf(s.price)} <span class="${s.chg >= 0 ? 'up' : 'down'}">${pct(s.chg)}</span></span></div>
+      <div class="row" style="align-items:center"><span class="pill ${a.verdict.c}">${a.verdict.h}</span><span class="num">${nf(s.price)} <span class="${s.chg >= 0 ? 'up' : 'down'}">${pct(s.chg)}</span></span></div>
       <ul class="reasons">${a.pros.slice(0, 2).map(r => `<li>${esc(r)}</li>`).join('')}${a.cons.slice(0, 1).map(r => `<li class="c">${esc(r)}</li>`).join('')}</ul>
       ${rangeBar(s)}
     </button>`).join('');
@@ -1055,7 +1069,7 @@ function renderAll(items) {
   $('#tAll tbody').innerHTML = rows.map(({ s, a }) => `<tr data-t="${esc(s.ticker)}">
     <td><b>${esc(nice(s.name))}</b> <span class="tk">${esc(s.ticker)}</span>${badges(s)}${s.owned ? ' <span class="pill v-con priv" style="padding:1px 7px">détenu</span>' : ''}</td>
     <td class="r num">${nf(s.price)}</td><td class="r num ${s.chg >= 0 ? 'up' : 'down'}">${pct(s.chg)}</td>
-    <td class="r num"><b>${a.score}</b></td><td><span class="pill ${a.verdict.c}">${a.verdict.t}</span></td>
+    <td class="r num"><b>${a.score}</b></td><td><span class="pill ${a.verdict.c}">${a.verdict.h}</span></td>
     <td class="r num">${s.etf ? '–' : nf(s.fpe || s.pe, 1)}</td><td class="r num">${pct(a.disc, 0, false)}</td><td class="r num ${a.up > 0 ? 'up' : a.up < 0 ? 'down' : ''}">${a.up == null ? '–' : pct(a.up, 0)}</td></tr>`).join('') || '<tr><td colspan="8" class="muted">Aucun titre ne correspond.</td></tr>';
 }
 function nice(n) { // "ALPHABET INC." -> "Alphabet Inc."
@@ -1150,17 +1164,17 @@ function renderDay(pf) {
     .map(s => `<div class="r" data-t="${esc(s.ticker)}"><span><b>${esc(s.ticker)}</b> <span class="muted">${esc(nice(s.name))}</span></span><span class="num ${s.chg >= 0 ? 'up' : 'down'}">${pct(s.chg, 2)}</span></div>`).join('') || '<span class="note">Aucun</span>';
   $('#journee').innerHTML = `
     <div><span class="lbl">Ta journée · ${esc(dateTxt)}</span>
-      <h2 class="${moodCls}" style="margin-top:4px">${moodCls === 'up' ? '☀️' : moodCls === 'down' ? '🌧️' : '⛅'} ${esc(mood)}</h2>
+      <h2 class="${moodCls}" style="margin-top:4px">${moodCls === 'up' ? '<svg class="i" aria-hidden="true"><use href="#i-sun"/></svg>' : moodCls === 'down' ? '<svg class="i" aria-hidden="true"><use href="#i-rain"/></svg>' : '<svg class="i" aria-hidden="true"><use href="#i-partly"/></svg>'} ${esc(mood)}</h2>
       ${dp != null ? `<div class="priv"><div class="num" style="font-size:18px;margin-top:4px"><span class="${dv >= 0 ? 'up' : 'down'}">${dv >= 0 ? '+' : '−'}${money(Math.abs(dv))} (${pct(dp, 2)})</span></div><div class="note">${up} de tes titres en hausse, ${down} en baisse (${nMine} titres avec un prix du jour)</div></div>` : ''}
       ${d0?.indices?.length ? `<div class="idx">${d0.indices.map(i => `<span>${esc(i.n)} <b class="${i.chg >= 0 ? 'up' : 'down'}">${pct(i.chg, 2)}</b></span>`).join('')}</div>` : ''}
       ${d0?.text ? `<p class="note" style="margin:8px 0 0">${esc(d0.text)}</p>` : ''}
     </div>
     <div class="priv"><span class="lbl">Mes titres</span>
-      <div class="note" style="margin-top:6px">📈 Plus fortes hausses</div><div class="mv">${list(mine, 1)}</div>
-      <div class="note" style="margin-top:6px">📉 Plus fortes baisses</div><div class="mv">${list(mine, -1)}</div></div>
+      <div class="note" style="margin-top:6px"><svg class="i up" aria-hidden="true"><use href="#i-trend-up"/></svg> Plus fortes hausses</div><div class="mv">${list(mine, 1)}</div>
+      <div class="note" style="margin-top:6px"><svg class="i down" aria-hidden="true"><use href="#i-trend-down"/></svg> Plus fortes baisses</div><div class="mv">${list(mine, -1)}</div></div>
     <div><span class="lbl"><span class="priv">Ma liste de surveillance</span><span class="pubonly">Titres suivis</span></span>
-      <div class="note" style="margin-top:6px">📈 Plus fortes hausses</div><div class="mv">${list(watch, 1)}</div>
-      <div class="note" style="margin-top:6px">📉 Plus fortes baisses</div><div class="mv">${list(watch, -1)}</div></div>`;
+      <div class="note" style="margin-top:6px"><svg class="i up" aria-hidden="true"><use href="#i-trend-up"/></svg> Plus fortes hausses</div><div class="mv">${list(watch, 1)}</div>
+      <div class="note" style="margin-top:6px"><svg class="i down" aria-hidden="true"><use href="#i-trend-down"/></svg> Plus fortes baisses</div><div class="mv">${list(watch, -1)}</div></div>`;
 }
 
 function upsert(id, cfg) {
@@ -1194,8 +1208,8 @@ function renderDrawer(t, focus) {
       <div class="num" style="font-size:20px;margin-top:4px">${nf(s.price)} <span style="font-size:14px" class="${s.chg >= 0 ? 'up' : 'down'}">${s.chg >= 0 ? '▲' : '▼'} ${pct(s.chg, 2)} aujourd'hui</span></div><div style="margin-top:4px">${badges(s)}</div></div>
       <button class="close" id="xClose" aria-label="Fermer">×</button></div>
     ${(() => { const x = splitList().find(z => z.t === s.ticker); return x ? `<div class="alert"><b>${esc(splitTxt(x))} · ${esc(x.date)}${x.recorded ? '' : ' (à confirmer)'}</b><span class="note">Après un fractionnement, tu as plus d'actions à un prix plus bas : la valeur de ta position ne change pas.${x.recorded ? ' Les prix passés du graphique sont ajustés.' : ''}</span></div>` : ''; })()}
-    <div class="box" style="flex-direction:row;align-items:center;gap:14px">${ring(a.score, a.verdict.col)}<div><span class="pill ${a.verdict.c}">${a.verdict.t}</span><div class="note" style="margin-top:4px">${s.consensus != null ? `Qualité (modèles investisseurs${s.scoresAuto ? ', recalculés automatiquement' : ''}) ${Math.round(s.consensus)} · ` : ''}règles marché ${a.rule}/100${(() => { const tr = trend(s); return tr ? ` · tendance ${tr.d >= 0 ? '+' : ''}${tr.d} sur ${tr.days} j` : ''; })()}</div></div></div>
-    <div class="box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><span class="lbl">📈 Évolution de l'action</span>
+    <div class="box" style="flex-direction:row;align-items:center;gap:14px">${ring(a.score, a.verdict.col)}<div><span class="pill ${a.verdict.c}">${a.verdict.h}</span><div class="note" style="margin-top:4px">${s.consensus != null ? `Qualité (modèles investisseurs${s.scoresAuto ? ', recalculés automatiquement' : ''}) ${Math.round(s.consensus)} · ` : ''}règles marché ${a.rule}/100${(() => { const tr = trend(s); return tr ? ` · tendance ${tr.d >= 0 ? '+' : ''}${tr.d} sur ${tr.days} j` : ''; })()}</div></div></div>
+    <div class="box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-chart"/></svg> Évolution de l'action</span>
       <div class="seg" role="group" aria-label="Période" id="pRange">${[['3m', '3 mois'], ['6m', '6 mois'], ['1y', '1 an'], ['all', 'Tout']].map(([k, l]) => `<button type="button" data-r="${k}" aria-pressed="${state.range === k}">${l}</button>`).join('')}</div></div>
       <div id="pStats" class="note"></div>
       <div class="read" id="pRead"></div>
@@ -1204,8 +1218,8 @@ function renderDrawer(t, focus) {
     ${fundBox(s)}
     ${s.summary ? `<div class="box"><span class="lbl">En bref</span><p style="margin:0">${esc(s.summary)}</p></div>` : ''}
     <div class="cols2">
-      <div class="box g"><h3>✅ Pourquoi investir</h3><ul class="reasons">${a.pros.map(r => `<li>${esc(r)}</li>`).join('') || '<li class="muted">Rien de marquant</li>'}</ul></div>
-      <div class="box b"><h3>❌ Pourquoi s'abstenir</h3><ul class="reasons">${a.cons.map(r => `<li class="c">${esc(r)}</li>`).join('') || '<li class="muted">Aucun signal négatif marquant</li>'}</ul></div>
+      <div class="box g"><h3><svg class="i up" aria-hidden="true"><use href="#i-check"/></svg> Pourquoi investir</h3><ul class="reasons">${a.pros.map(r => `<li>${esc(r)}</li>`).join('') || '<li class="muted">Rien de marquant</li>'}</ul></div>
+      <div class="box b"><h3><svg class="i down" aria-hidden="true"><use href="#i-x"/></svg> Pourquoi s'abstenir</h3><ul class="reasons">${a.cons.map(r => `<li class="c">${esc(r)}</li>`).join('') || '<li class="muted">Aucun signal négatif marquant</li>'}</ul></div>
     </div>
     <div class="facts">
       <div><span class="lbl">P/E</span><div class="v">${s.etf ? '–' : nf(s.pe, 1)}</div></div>
@@ -1222,17 +1236,17 @@ function renderDrawer(t, focus) {
     ${hold ? `<div class="box"><span class="lbl">Ta position</span><div class="num">${nf(hold.h.qty, 4)} actions · prix moyen ${nf(hold.h.avg)} ${hold.h.cur} · ${money(hold.value)} · <span class="${hold.gain >= 0 ? 'up' : 'down'}">${pct(hold.gain, 1)}</span></div><div class="note">${esc(hold.h.accounts.join(' · '))} · ${pct(hold.w, 1, false)} du portefeuille</div></div>` : ''}
     ${state.priv ? '' : sellBox(s, a, pf)}
     ${inv.length ? `<div class="box"><span class="lbl">Scores par style d'investisseur</span><div class="inv">${inv.map(([n, v, k]) => `<div title="${k}"><span>${n}</span><span class="t"><i style="width:${v}%"></i></span><span class="num">${Math.round(v)}</span></div>`).join('')}</div></div>` : ''}
-    <div class="box"><span class="lbl">📰 À savoir</span>${(s.news || []).length ? `<ul class="news">${s.news.map(n => `<li><span class="d">${esc(n.d || '')}</span><span>${esc(n.t)}</span></li>`).join('')}</ul>` : '<span class="note">Les nouvelles s\'ajoutent à la prochaine mise à jour automatique.</span>'}</div>
-    <div class="box" id="aiBox"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span class="lbl">🤖 Avis de Claude</span><span><button class="btn" id="aiStop" hidden>Arrêter</button> <button class="btn primary" id="aiGo">Analyser ce titre</button></span></div>
+    <div class="box"><span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-news"/></svg> À savoir</span>${(s.news || []).length ? `<ul class="news">${s.news.map(n => `<li><span class="d">${esc(n.d || '')}</span><span>${esc(n.t)}</span></li>`).join('')}</ul>` : '<span class="note">Les nouvelles s\'ajoutent à la prochaine mise à jour automatique.</span>'}</div>
+    <div class="box" id="aiBox"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-spark"/></svg> Avis de Claude</span><span><button class="btn" id="aiStop" hidden>Arrêter</button> <button class="btn primary" id="aiGo">Analyser ce titre</button></span></div>
       <div class="ai" id="aiOut">${keepAi ? prevAi : '<span class="note">Claude lit les chiffres ci-dessus et ton portefeuille, puis te donne un avis équilibré.</span>'}</div></div>
-    ${state.canWrite !== false ? `<div class="box priv"><span class="lbl">🔔 Alerte de prix</span>
+    ${state.canWrite !== false ? `<div class="box priv"><span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-bell"/></svg> Alerte de prix</span>
       <div class="form" style="grid-template-columns:1fr 1fr auto auto;align-items:end">
         <label>M'avertir sous<input type="number" step="any" min="0" id="alB" value="${state.alerts[s.ticker]?.below ?? ''}" placeholder="ex. ${s.price ? nf(s.price * 0.9, 2).replace(/\s/g, '') : ''}"></label>
         <label>M'avertir au-dessus de<input type="number" step="any" min="0" id="alA" value="${state.alerts[s.ticker]?.above ?? ''}"></label>
         <button class="btn primary" id="alSave" type="button">Enregistrer</button>${state.alerts[s.ticker] ? '<button class="btn" id="alDel" type="button">Retirer</button>' : '<span></span>'}
       </div><span class="note" id="alMsg">L'alerte s'affiche dans « Aujourd'hui » et sur le titre dès que le prix mis à jour franchit ton seuil.</span></div>` : ''}
     ${state.canWrite !== false ? `<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn priv" id="dTx">${s.owned ? 'Enregistrer un achat ou une vente' : 'J\'ai acheté ce titre'}</button>${s.owned ? '' : '<button class="btn" id="dDel">Retirer de ma liste</button>'}</div>` : ''}
-    <p class="note">🕒 Source : ${esc(s.source || '–')} · mis à jour ${esc(fmtDate(s.updatedAt))}${s.updatedAt && Date.now() - Date.parse(s.updatedAt) > 8 * 864e5 ? ' · <span class="down">⚠️ analyse de plus de 8 jours, elle sera rafraîchie à une prochaine mise à jour</span>' : ''}</p>`;
+    <p class="note"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg> Source : ${esc(s.source || '–')} · mis à jour ${esc(fmtDate(s.updatedAt))}${s.updatedAt && Date.now() - Date.parse(s.updatedAt) > 8 * 864e5 ? ' · <span class="down"><svg class="i" aria-hidden="true"><use href="#i-alert"/></svg> analyse de plus de 8 jours, elle sera rafraîchie à une prochaine mise à jour</span>' : ''}</p>`;
   d.hidden = false; $('#scrim').hidden = false;
   $('#xClose').onclick = closeDrawer;
   const dTx = $('#dTx'); if (dTx) dTx.onclick = () => openTxForm(s.ticker);
@@ -1240,7 +1254,7 @@ function renderDrawer(t, focus) {
   const alSave = $('#alSave'); if (alSave) alSave.onclick = async () => {
     const b = parseFloat($('#alB').value), ab = parseFloat($('#alA').value);
     if (!(b > 0) && !(ab > 0)) { $('#alMsg').textContent = 'Entre au moins un prix plus grand que 0.'; return; }
-    try { await DB.doc('alerts/' + docId(s.ticker)).set({ t: s.ticker, below: b > 0 ? b : null, above: ab > 0 ? ab : null, createdAt: new Date().toISOString() }); $('#alMsg').textContent = '✅ Alerte enregistrée.'; }
+    try { await DB.doc('alerts/' + docId(s.ticker)).set({ t: s.ticker, below: b > 0 ? b : null, above: ab > 0 ? ab : null, createdAt: new Date().toISOString() }); $('#alMsg').textContent = 'Alerte enregistrée.'; }
     catch (e) { $('#alMsg').textContent = 'L\'alerte n\'a pas pu être enregistrée.'; }
   };
   const alDel = $('#alDel'); if (alDel) alDel.onclick = async () => { try { await DB.doc('alerts/' + docId(s.ticker)).delete(); } catch (e) {} };
@@ -1294,7 +1308,7 @@ function fundBox(s) {
   if (f?.rev) ratios.push(['Marge nette', pct(f.ni / f.rev, 1, false)]);
   if (f?.revGrowth != null) ratios.push(['Croissance revenus', pct(f.revGrowth, 1)]);
   if (f?.fcf != null) ratios.push(['Flux libre', (f.fcf < 0 ? '−' : '') + big(Math.abs(f.fcf))]);
-  return `<div class="box"><span class="lbl">❄️ Profil de l'entreprise</span>
+  return `<div class="box"><span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-profile"/></svg> Profil de l'entreprise</span>
     <div class="fund"><div class="snow"><canvas id="cSnow" aria-label="Profil en cinq axes"></canvas></div>
       <div class="axes">${ax.map(([n, v, t, est]) => `<div title="${esc(t)}"><span>${n}</span><span class="t"><i style="width:${v ?? 0}%;background:var(${v == null ? '--line' : v >= 60 ? '--good' : v >= 40 ? '--warn' : '--bad'})"></i></span><span class="num">${v == null ? '…' : Math.round(v)}${est ? '<span class="est">≈</span>' : ''}</span></div>`).join('')}
       <p class="note" style="margin:4px 0 0">Plus la forme est grande et ronde, plus l'entreprise est solide sur les cinq axes.${ax.some(a => a[3]) ? ' ≈ : estimé avec les scores de ton fichier Excel en attendant les états financiers.' : ''}${ax.some(a => a[1] == null) ? ' … : en cours de collecte.' : ''}</p></div></div>
@@ -1456,7 +1470,7 @@ async function saveTx() {
   if (!(qty > 0)) return err('Le nombre d\'actions doit être plus grand que 0.');
   if (!(price > 0)) return err('Le prix par action doit être plus grand que 0.');
   if (!date) return err('Choisis la date de la transaction.');
-  if (!DB) return err('Déverrouille d\'abord tes données (🔒 en haut).');
+  if (!DB) return err('Déverrouille d\'abord tes données (cadenas en haut).');
   const list = (state.positions || []).map(p => ({ ...p }));
   const i = list.findIndex(p => p.t === t && p.account === account);
   const prev = i >= 0 ? { ...list[i] } : null;
@@ -1478,7 +1492,7 @@ async function saveTx() {
     msg.innerHTML = `<div class="msg ok">${type === 'sell' ? 'Vente' : 'Achat'} de ${nf(qty, 4)} ${esc(t)} enregistré${realized != null ? ` · gain réalisé ${realized >= 0 ? '+' : ''}${nf(realized)} ${esc(cur)}` : ''}.</div>`;
     $('#txQty').value = ''; delete $('#txPrice').dataset.touched;
   } catch (e) {
-    err(e?.code === 'no_token' ? 'Ajoute ton jeton GitHub dans ⚙️ Réglages pour pouvoir enregistrer.' : e?.code === 'not_allowed' ? 'Le jeton GitHub n\'a pas la permission d\'écrire dans le dépôt.' : 'L\'enregistrement a échoué. Réessaie dans un moment.');
+    err(e?.code === 'no_token' ? 'Ajoute ton jeton GitHub dans Réglages pour pouvoir enregistrer.' : e?.code === 'not_allowed' ? 'Le jeton GitHub n\'a pas la permission d\'écrire dans le dépôt.' : 'L\'enregistrement a échoué. Réessaie dans un moment.');
   } finally { $('#txSave').disabled = false; }
 }
 async function undoLast() {
@@ -1523,7 +1537,7 @@ function renderPlan() {
   picks = picks.slice(0, n);
   const W = picks.reduce((a, p) => a + p.w, 0) || 1;
   picks.forEach(p => { p.amt = planAmt * p.w / W; const r = p.s.cur === 'CAD' || /\.(TO|V)$/.test(p.s.ticker) || p.s.etf && /\.TO$/.test(p.s.ticker) ? 1 : fx; p.qty = p.amt / (p.s.price * r); p.curr = r === 1 ? 'CAD' : 'USD'; });
-  out.innerHTML = picks.length ? `<div class="tw" style="margin-top:6px"><table class="plan" style="min-width:640px"><thead><tr><th>Titre</th><th class="r">Montant</th><th class="r">≈ Actions</th><th>Pourquoi</th><th>Verdict</th></tr></thead><tbody>${picks.map(p => `<tr data-t="${esc(p.s.ticker)}"><td><b>${esc(p.s.ticker)}</b> <span class="muted">${esc(nice(p.s.name))}</span></td><td class="r num">${money(p.amt, 0)}</td><td class="r num">${nf(p.qty, p.qty < 10 ? 3 : 1)} <span class="muted">à ${nf(p.s.price)} ${p.curr}</span></td><td style="white-space:normal;min-width:220px">${esc(p.why)}</td><td><span class="pill ${p.a.verdict.c}">${p.a.verdict.t}</span></td></tr>`).join('')}</tbody></table></div>
+  out.innerHTML = picks.length ? `<div class="tw" style="margin-top:6px"><table class="plan" style="min-width:640px"><thead><tr><th>Titre</th><th class="r">Montant</th><th class="r">≈ Actions</th><th>Pourquoi</th><th>Verdict</th></tr></thead><tbody>${picks.map(p => `<tr data-t="${esc(p.s.ticker)}"><td><b>${esc(p.s.ticker)}</b> <span class="muted">${esc(nice(p.s.name))}</span></td><td class="r num">${money(p.amt, 0)}</td><td class="r num">${nf(p.qty, p.qty < 10 ? 3 : 1)} <span class="muted">à ${nf(p.s.price)} ${p.curr}</span></td><td style="white-space:normal;min-width:220px">${esc(p.why)}</td><td><span class="pill ${p.a.verdict.c}">${p.a.verdict.h}</span></td></tr>`).join('')}</tbody></table></div>
     <p class="note" style="margin:6px 0 0">Wealthsimple permet d'acheter des fractions d'actions pour la plupart des titres. Les titres en USD sont convertis au taux du jour (${nf(fx, 4)}); les frais de conversion de change ne sont pas inclus. Suggestion seulement : vérifie chaque fiche avant d'acheter.</p>` : '<p class="note">Aucun titre ne correspond à ces critères.</p>';
 }
 $('#planForm').addEventListener('submit', e => { e.preventDefault(); const v = parseFloat($('#planAmt').value); planAmt = v > 0 ? v : null; try { localStorage.setItem('radar-plan', planAmt || ''); } catch (err) {} renderPlan(); });
@@ -1571,8 +1585,8 @@ function interpret(rows) {
 function isDup(x) { return (Store.priv?.transactions || []).some(y => y.t === x.t && y.date === x.date && Math.abs((y.qty || 0) - x.qty) < 1e-6 && (y.type === x.type || (x.type === 'drip' && y.type === 'drip')) && (!x.account || y.account === x.account)); }
 let impData = null;
 function openImport() {
-  openPanel(`<div class="dh"><div><div class="lbl">📥 Wealthsimple</div><h2 id="dName">Importer un relevé d'activités</h2></div><button class="close" id="xClose" aria-label="Fermer">×</button></div>
-    <div class="box"><span class="lbl">🛡️ Sécurité</span><p style="margin:0">Le fichier est lu <b>seulement dans ton navigateur</b> : il n'est jamais envoyé ni enregistré. Seules les transactions que tu coches sont ajoutées à ton coffre chiffré. Dès l'import terminé, la page oublie le fichier. Tu peux ensuite le supprimer de ton dossier Téléchargements.</p></div>
+  openPanel(`<div class="dh"><div><div class="lbl"><svg class="i" aria-hidden="true"><use href="#i-import"/></svg> Wealthsimple</div><h2 id="dName">Importer un relevé d'activités</h2></div><button class="close" id="xClose" aria-label="Fermer">×</button></div>
+    <div class="box"><span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-shield"/></svg> Sécurité</span><p style="margin:0">Le fichier est lu <b>seulement dans ton navigateur</b> : il n'est jamais envoyé ni enregistré. Seules les transactions que tu coches sont ajoutées à ton coffre chiffré. Dès l'import terminé, la page oublie le fichier. Tu peux ensuite le supprimer de ton dossier Téléchargements.</p></div>
     <div class="box"><span class="lbl">1. Télécharge le relevé</span><p class="note" style="margin:0">Dans Wealthsimple : onglet Activité (icône d'horloge) → « Télécharger les activités » → choisis la période et le compte → fichier CSV.</p>
       <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">2. Choisis le fichier CSV<input type="file" id="impFile" accept=".csv,text/csv"></label>
       <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Compte (si le fichier ne l'indique pas)<select id="impAcc">${ACCOUNTS.map(a => `<option>${a}</option>`).join('')}</select></label></div>
@@ -1621,8 +1635,8 @@ async function doImport(rows) {
     const missing = [...new Set(list.map(x => x.t))].filter(t => !Store.uni[t]);
     for (const t of missing) await DB.doc('stocks/' + docId(t)).set({ ticker: t, name: t, sector: 'Autre', cur: list.find(x => x.t === t).cur, etf: false, addedBy: 'Import Wealthsimple' });
     impData = null;
-    $('#impOut').innerHTML = `<div class="msg ok">✅ ${list.length} transaction(s) importée(s). Le fichier a été oublié par la page; tu peux le supprimer de ton ordinateur.</div>`;
-  } catch (err) { $('#impGo').disabled = false; $('#impMsg').textContent = err?.code === 'no_token' ? 'Ajoute ton jeton GitHub dans ⚙️ Réglages.' : 'L\'import a échoué. Réessaie.'; }
+    $('#impOut').innerHTML = `<div class="msg ok"><svg class="i up" aria-hidden="true"><use href="#i-check"/></svg> ${list.length} transaction(s) importée(s). Le fichier a été oublié par la page; tu peux le supprimer de ton ordinateur.</div>`;
+  } catch (err) { $('#impGo').disabled = false; $('#impMsg').textContent = err?.code === 'no_token' ? 'Ajoute ton jeton GitHub dans les Réglages.' : 'L\'import a échoué. Réessaie.'; }
 }
 $('#impOpen').onclick = openImport;
 
@@ -1681,7 +1695,7 @@ $('#addForm').addEventListener('submit', async e => {
   const t = $('#addT').value.trim().toUpperCase();
   if (!/^[A-Z0-9][A-Z0-9.\-]{0,11}$/.test(t)) return say('Entre un symbole boursier valide, par exemple COST, RY.TO ou BRK.B.');
   if (state.raw[t]) { say(`${t} est déjà dans ta liste.`, true); openDrawer(t); return; }
-  if (!DB) return say('Déverrouille d\'abord tes données (🔒 en haut).');
+  if (!DB) return say('Déverrouille d\'abord tes données (cadenas en haut).');
   const btn = $('#addGo'); btn.disabled = true;
   let name = $('#addName').value.trim(), sector = $('#addSect').value, region = null, cur = /\.(TO|V|NE|CN)$/.test(t) ? 'CAD' : 'USD', etf = sector === 'ETF';
   if ((!name || !sector) && sampleFn) {
@@ -1697,7 +1711,7 @@ $('#addForm').addEventListener('submit', async e => {
     say(`${name || t} (${t}) est ajouté à ta liste. Une mise à jour de ses données est lancée : il sera complet dans environ 15 minutes.`, true);
     $('#addT').value = ''; $('#addName').value = ''; $('#addSect').value = '';
   } catch (err) {
-    say(err?.code === 'no_token' ? 'Ajoute ton jeton GitHub dans ⚙️ Réglages pour pouvoir enregistrer.' : 'L\'ajout a échoué. Réessaie dans un moment.');
+    say(err?.code === 'no_token' ? 'Ajoute ton jeton GitHub dans Réglages pour pouvoir enregistrer.' : 'L\'ajout a échoué. Réessaie dans un moment.');
   } finally { btn.disabled = false; }
 });
 let delArm = null;
@@ -1840,7 +1854,7 @@ function merge(t, u, m) {
   const L = state.lang || 'fr';
   const claudeFresh = u.updatedAt && Date.now() - Date.parse(u.updatedAt) < 30 * 864e5;
   const freshNews = (u.news || []).filter(n => n.d && Date.now() - Date.parse(n.d) < 21 * 864e5);
-  const yNews = (m.newsAuto || []).map(n => ({ d: n.d, t: n.t + (L === 'fr' && n.lang === 'en' ? ' 🇬🇧' : '') }));
+  const yNews = (m.newsAuto || []).map(n => ({ d: n.d, t: n.t + (L === 'fr' && n.lang === 'en' ? ' (EN)' : '') }));
   s.news = L === 'fr' ? (freshNews.length ? freshNews : yNews.length ? yNews : (u.news || [])) : (yNews.length ? yNews : (u.news || []));
   const ap = m.autoPros?.[L] || [], ac = m.autoCons?.[L] || [];
   s.pros = L === 'fr' ? [...(claudeFresh ? (u.pros || []) : []), ...ap] : ap;
@@ -1916,12 +1930,12 @@ function showOffline(msg) { $('#status').innerHTML = `<span class="dot"></span><
 /* ---------- verrou, réglages ---------- */
 function updateLockUi() {
   const b = $('#lockBtn'); if (!b) return;
-  b.innerHTML = state.unlocked ? '🔓' : '🔒<span class="hide-sm"> Déverrouiller</span>';
+  b.innerHTML = state.unlocked ? '<svg class="i" aria-hidden="true"><use href="#i-unlock"/></svg>' : '<svg class="i" aria-hidden="true"><use href="#i-lock"/></svg><span class="hide-sm"> Déverrouiller</span>';
   b.title = state.unlocked ? 'Tes données personnelles sont déverrouillées sur cet appareil' : 'Entre ton mot de passe pour voir ton portefeuille';
 }
 function openPanel(html) { state.form = true; state.open = null; const d = $('#drawer'); d.dataset.t = ''; d.innerHTML = html; d.hidden = false; $('#scrim').hidden = false; $('#xClose').onclick = closeDrawer; }
 function openUnlock() {
-  openPanel(`<div class="dh"><div><div class="lbl">🔐 Coffre chiffré</div><h2 id="dName">Déverrouiller mes données</h2></div><button class="close" id="xClose" aria-label="Fermer">×</button></div>
+  openPanel(`<div class="dh"><div><div class="lbl"><svg class="i" aria-hidden="true"><use href="#i-vault"/></svg> Coffre chiffré</div><h2 id="dName">Déverrouiller mes données</h2></div><button class="close" id="xClose" aria-label="Fermer">×</button></div>
     <p class="note" style="margin:0">Tes positions, transactions, dividendes et alertes sont chiffrés (AES-256) dans ton dépôt GitHub. Seul ce mot de passe permet de les lire. Il n'est jamais envoyé nulle part.</p>
     <form class="form box" id="ulForm" novalidate><label class="full">Mot de passe<input type="password" id="ulPw" autocomplete="current-password" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX"></label>
       <label class="full" style="flex-direction:row;align-items:center;gap:8px;font-weight:400"><input type="checkbox" id="ulRem" checked> Se souvenir sur cet appareil</label>
@@ -1936,29 +1950,29 @@ function openUnlock() {
 }
 function openSettings() {
   const m = Store.market;
-  openPanel(`<div class="dh"><div><div class="lbl">⚙️ Réglages</div><h2 id="dName">Réglages du radar</h2></div><button class="close" id="xClose" aria-label="Fermer">×</button></div>
-    <div class="box"><span class="lbl">🔄 Données</span>
+  openPanel(`<div class="dh"><div><div class="lbl"><svg class="i" aria-hidden="true"><use href="#i-gear"/></svg> Réglages</div><h2 id="dName">Réglages du radar</h2></div><button class="close" id="xClose" aria-label="Fermer">×</button></div>
+    <div class="box"><span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-refresh"/></svg> Données</span>
       <p style="margin:0">Dernière mise à jour automatique : <b>${esc(fmtDate(m.generatedAt))}</b>${m.note ? ' · ' + esc(m.note) : ''}</p>
       ${(m.fails || []).length ? `<p class="note" style="margin:0">Titres non trouvés : ${esc(m.fails.join(', '))}</p>` : ''}
       <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" id="stRun">Mettre à jour maintenant</button><a class="btn" href="https://github.com/${GH.owner}/${GH.repo}/actions" target="_blank" rel="noopener">Voir les mises à jour sur GitHub</a></div>
       <span class="note" id="stRunMsg">La mise à jour prend environ 10 à 20 minutes; recharge ensuite la page.</span></div>
-    <div class="box"><span class="lbl">🔑 Jeton GitHub (pour enregistrer depuis cette page)</span>
+    <div class="box"><span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-key"/></svg> Jeton GitHub (pour enregistrer depuis cette page)</span>
       <p class="note" style="margin:0">Sans jeton, la page est en lecture seule. Avec un jeton, tes achats, ventes, alertes et ajouts de titres sont enregistrés dans ton dépôt. Crée un jeton « fine-grained » limité au dépôt <b>${GH.repo}</b>, avec les permissions <b>Contents : Read and write</b> et <b>Actions : Read and write</b>.</p>
       <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Créer un jeton sur GitHub ↗</a>
       <label style="display:flex;flex-direction:column;gap:4px;font-size:13px">Jeton<input type="password" id="stTok" placeholder="github_pat_…" value="${token() ? '••••••••••••' : ''}"></label>
-      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" id="stTokSave">Enregistrer le jeton</button><button class="btn" id="stTokDel">Retirer le jeton de cet appareil</button></div><span class="note" id="stTokMsg">${token() ? '✅ Un jeton est enregistré sur cet appareil.' : 'Aucun jeton sur cet appareil.'}</span></div>
-    <div class="box"><span class="lbl">🔐 Mot de passe du coffre</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" id="stTokSave">Enregistrer le jeton</button><button class="btn" id="stTokDel">Retirer le jeton de cet appareil</button></div><span class="note" id="stTokMsg">${token() ? '<svg class="i up" aria-hidden="true"><use href="#i-check"/></svg> Un jeton est enregistré sur cet appareil.' : 'Aucun jeton sur cet appareil.'}</span></div>
+    <div class="box"><span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-vault"/></svg> Mot de passe du coffre</span>
       ${state.unlocked ? `<p class="note" style="margin:0">Après un changement, mets aussi à jour le secret <b>RADAR_PASSWORD</b> dans ton dépôt GitHub (Settings → Secrets and variables → Actions), sinon les dividendes ne seront plus réinvestis automatiquement.</p>
       <label style="display:flex;flex-direction:column;gap:4px;font-size:13px">Nouveau mot de passe (12 caractères ou plus)<input type="password" id="stPw" autocomplete="new-password"></label>
       <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="stPwSave">Changer le mot de passe</button><button class="btn" id="stForget">Oublier le mot de passe sur cet appareil</button></div><span class="note" id="stPwMsg"></span>` : '<p class="note" style="margin:0">Déverrouille d\'abord tes données.</p>'}</div>`);
-  $('#stRun').onclick = async () => { try { $('#stRunMsg').textContent = (await dispatchUpdate([])) ? '✅ Mise à jour lancée. Recharge la page dans environ 15 minutes.' : 'Enregistre d\'abord un jeton GitHub ci-dessous.'; } catch (e) { $('#stRunMsg').textContent = 'Le lancement a échoué : vérifie que le jeton a la permission Actions.'; } };
-  $('#stTokSave').onclick = async () => { const v = $('#stTok').value.trim(); if (!v || v.startsWith('••')) return; LS.set('radar-gh-token', v); try { await gh(''); $('#stTokMsg').textContent = '✅ Jeton valide et enregistré sur cet appareil.'; applyStores(); } catch (e) { $('#stTokMsg').textContent = '❌ Ce jeton ne donne pas accès au dépôt. Vérifie le dépôt choisi et les permissions.'; LS.set('radar-gh-token', null); } };
+  $('#stRun').onclick = async () => { try { $('#stRunMsg').textContent = (await dispatchUpdate([])) ? 'Mise à jour lancée. Recharge la page dans environ 15 minutes.' : 'Enregistre d\'abord un jeton GitHub ci-dessous.'; } catch (e) { $('#stRunMsg').textContent = 'Le lancement a échoué : vérifie que le jeton a la permission Actions.'; } };
+  $('#stTokSave').onclick = async () => { const v = $('#stTok').value.trim(); if (!v || v.startsWith('••')) return; LS.set('radar-gh-token', v); try { await gh(''); $('#stTokMsg').textContent = 'Jeton valide et enregistré sur cet appareil.'; applyStores(); } catch (e) { $('#stTokMsg').textContent = 'Ce jeton ne donne pas accès au dépôt. Vérifie le dépôt choisi et les permissions.'; LS.set('radar-gh-token', null); } };
   $('#stTokDel').onclick = () => { LS.set('radar-gh-token', null); $('#stTokMsg').textContent = 'Jeton retiré de cet appareil.'; applyStores(); };
   const pwS = $('#stPwSave'); if (pwS) pwS.onclick = async () => {
     const v = $('#stPw').value; if (v.length < 12) { $('#stPwMsg').textContent = 'Choisis au moins 12 caractères.'; return; }
     if (!token()) { $('#stPwMsg').textContent = 'Un jeton GitHub est nécessaire pour enregistrer.'; return; }
-    try { const cur = await ghRead('data/private.enc.json'); const obj = await decryptBlob(JSON.parse(cur.text), Store.pw); await ghWrite('data/private.enc.json', JSON.stringify(await encryptObj(obj, v)), cur.sha, 'Nouveau mot de passe du coffre'); Store.pw = v; if (LS.get('radar-pw')) LS.set('radar-pw', v); $('#stPwMsg').textContent = '✅ Mot de passe changé. Pense à mettre à jour le secret RADAR_PASSWORD sur GitHub.'; }
-    catch (e) { $('#stPwMsg').textContent = '❌ Le changement a échoué.'; }
+    try { const cur = await ghRead('data/private.enc.json'); const obj = await decryptBlob(JSON.parse(cur.text), Store.pw); await ghWrite('data/private.enc.json', JSON.stringify(await encryptObj(obj, v)), cur.sha, 'Nouveau mot de passe du coffre'); Store.pw = v; if (LS.get('radar-pw')) LS.set('radar-pw', v); $('#stPwMsg').textContent = 'Mot de passe changé. Pense à mettre à jour le secret RADAR_PASSWORD sur GitHub.'; }
+    catch (e) { $('#stPwMsg').textContent = 'Le changement a échoué.'; }
   };
   const fg = $('#stForget'); if (fg) fg.onclick = () => { LS.set('radar-pw', null); $('#stPwMsg').textContent = 'Le mot de passe sera demandé à la prochaine visite.'; };
 }

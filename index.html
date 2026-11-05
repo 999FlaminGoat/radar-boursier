@@ -439,7 +439,7 @@ h1{font-weight:800}.part h2{font-weight:700}
 /* recherche globale */
 .srchbtn .kbd{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:13px}
 .srchbtn kbd,.cmdk kbd{font:600 11px/1 var(--f-mono);padding:3px 6px;border-radius:6px;background:var(--surface-2);color:var(--muted);box-shadow:0 0 0 1px var(--ln) inset}
-#searchBtn{width:auto;padding:0 12px}
+#searchBtn{width:auto;padding:0 12px;height:36px}
 .cmdk{position:fixed;inset:0;z-index:90;background:rgba(10,12,20,.45);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:flex;justify-content:center;align-items:flex-start;padding:12vh 16px 16px;animation:fadeIn .18s ease}
 .cmdk .box2{width:min(620px,100%);background:var(--surface);border-radius:18px;box-shadow:0 30px 60px -20px rgba(0,0,0,.45);border:1px solid var(--ln);overflow:hidden;animation:axIn .22s cubic-bezier(.2,.7,.2,1)}
 .cmdk .in{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--ln)}
@@ -466,6 +466,28 @@ h1{font-weight:800}.part h2{font-weight:700}
 .cmdk li .nm2{display:block}
 .cmdk li>span:nth-child(2){min-width:0;overflow:hidden}
 @media (max-width:760px){.srchbtn .kbd{display:none}#searchBtn{width:38px;padding:0}}
+
+/* barre du haut : tout tient sans être coupé */
+.barin{max-width:1320px}
+.toc a{padding:6px 9px}
+@media (max-width:1240px){.brand-txt{display:none}.toc a[data-go="titres"]{font-size:0}.toc a[data-go="titres"]::after{content:"Titres";font-size:13px}}
+@media (max-width:960px) and (min-width:761px){.toc{visibility:hidden}.brand-txt{display:inline}}
+@media (max-width:1060px) and (min-width:761px){.srchbtn .kbd{display:none}#privLbl{display:none}.privsw{padding-right:6px}}
+
+/* easter egg */
+.egg{position:fixed;left:max(16px,env(safe-area-inset-left,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));z-index:70;width:260px;background:var(--surface);border:1px solid var(--ln);border-radius:16px;overflow:hidden;box-shadow:0 18px 40px -14px rgba(0,0,0,.35);animation:eggIn .45s cubic-bezier(.2,.8,.2,1.15)}
+.egg img{display:block;width:100%;height:auto}
+.egg .et{padding:9px 12px 11px}.egg p{margin:0;font-size:12.5px;line-height:1.4;color:var(--muted)}
+.egg .ei{margin-top:6px;font-size:11.5px;display:flex;flex-wrap:wrap;gap:6px;color:var(--muted)}
+.egg .ex{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:16px;line-height:1;cursor:pointer;display:grid;place-items:center}
+.egg .ex:hover{background:rgba(0,0,0,.75)}.egg .ex:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.egg .eb{position:absolute;left:0;bottom:0;height:3px;width:100%;transform-origin:left;background:var(--accent);opacity:.7;animation:eggBar 60s linear forwards}
+.egg.crash .eb{background:var(--bad)}.egg.stonks .eb{background:var(--good)}
+.egg.out{opacity:0;transform:translateY(12px) scale(.97);transition:.3s}
+@keyframes eggIn{from{opacity:0;transform:translateY(24px) scale(.94)}}
+@keyframes eggBar{to{transform:scaleX(0)}}
+@media (max-width:760px){.egg .ei{display:none}.egg p{font-size:12px}.egg{width:200px;bottom:calc(78px + env(safe-area-inset-bottom,0px));left:12px}}
+@media (prefers-reduced-motion:reduce){.egg{animation:none}}
 /* ---------- visiteurs ---------- */
 .guest .owner{display:none!important}
 .guestonly{display:none}.guest .guestonly{display:block}
@@ -555,10 +577,10 @@ h1{font-weight:800}.part h2{font-weight:700}
     <a class="brand" href="#top" data-go="top"><span class="brand-ico"><svg class="i" aria-hidden="true"><use href="#i-radar"/></svg></span><span class="brand-txt"> Radar Boursier</span></a>
     <div class="toc" id="toc">
       <a href="#aujourdhui" data-go="aujourdhui">Aujourd'hui</a>
-      <a href="#portefeuille" data-go="portefeuille" class="priv">Mon portefeuille</a>
+      <a href="#portefeuille" data-go="portefeuille" class="priv" title="Mon portefeuille">Portefeuille</a>
       <a href="#occasions" data-go="occasions">Occasions</a>
-      <a href="#investisseurs" data-go="investisseurs">Grands investisseurs</a>
-      <a href="#titres" data-go="titres">Tous les titres</a>
+      <a href="#investisseurs" data-go="investisseurs" title="Grands investisseurs">Investisseurs</a>
+      <a href="#titres" data-go="titres" title="Tous les titres suivis">Tous les titres</a>
     </div>
     <button class="btn srchbtn" id="searchBtn" type="button" aria-label="Rechercher un titre" title="Rechercher un titre (/ ou Ctrl+K)"><svg class="i" aria-hidden="true"><use href="#i-search"/></svg><span class="kbd"><kbd>/</kbd></span></button>
     <div class="pop"><button class="btn icon" id="palBtn" type="button" aria-haspopup="true" aria-expanded="false" title="Couleurs"><svg class="i" aria-hidden="true"><use href="#i-palette"/></svg></button>
@@ -567,7 +589,7 @@ h1{font-weight:800}.part h2{font-weight:700}
         <button type="button" role="menuitemradio" data-pal=""><span class="sw sw-classique"></span>Classique</button><button type="button" role="menuitemradio" data-pal="nuit"><span class="sw sw-nuit"></span>Nuit</button><button type="button" role="menuitemradio" data-pal="ocean"><span class="sw sw-ocean"></span>Océan</button><button type="button" role="menuitemradio" data-pal="foret"><span class="sw sw-foret"></span>Forêt</button><button type="button" role="menuitemradio" data-pal="mauve"><span class="sw sw-mauve"></span>Mauve</button><button type="button" role="menuitemradio" data-pal="daltonien"><span class="sw sw-daltonien"></span>Daltonien</button><button type="button" role="menuitemradio" data-pal="contraste"><span class="sw sw-contraste"></span>Contraste élevé</button>
       </div></div>
     <button class="btn icon" id="langBtn" type="button" title="Langue des analyses et des nouvelles">FR</button>
-    <button class="btn" id="tocBtn" aria-expanded="false" aria-controls="tocPanel"><svg class="i" aria-hidden="true"><use href="#i-menu"/></svg> <span class="hide-sm">Sommaire</span></button>
+    <button class="btn icon" id="tocBtn" title="Sommaire détaillé" aria-label="Sommaire détaillé" aria-expanded="false" aria-controls="tocPanel"><svg class="i" aria-hidden="true"><use href="#i-menu"/></svg></button>
     <button class="btn" id="lockBtn" type="button"><svg class="i" aria-hidden="true"><use href="#i-lock"/></svg></button>
     <button class="btn icon" id="helpBtn" type="button" aria-label="Aide et visite guidée" title="Aide et visite guidée"><svg class="i" aria-hidden="true"><use href="#i-help"/></svg></button>
     <button class="btn icon owner" id="gearBtn" type="button" aria-label="Réglages" title="Réglages"><svg class="i" aria-hidden="true"><use href="#i-gear"/></svg></button>

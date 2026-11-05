@@ -290,7 +290,7 @@ function list() {
 }
 function render() {
   const { pf, items } = list();
-  renderStatus(); renderHero(pf, items); renderKpis(pf, items); renderOpps(items); renderAvoid(items);
+  renderStatus(); renderHero(pf, items); maybeEgg(); renderKpis(pf, items); renderOpps(items); renderAvoid(items);
   renderHold(pf, items); renderAll(items); renderCharts(pf, items);
   renderInvestors(); renderDivs(pf); renderTx(); renderDay(pf); renderSplits(); renderPriceAlerts(); renderPlan(); renderVerdicts(); renderDiscover();
   $('#txOpen').hidden = state.canWrite === false;
@@ -1684,4 +1684,47 @@ function startTour(i = 0) {
   go(i);
 }
 document.addEventListener('click', e => { if (e.target.closest('#helpBtn')) { if (!isOwner()) { LS.set('radar-welcome', null); renderWelcome(); scrollTo({ top: 0, behavior: 'smooth' }); } else startTour(); } });
+
+/* ---------- easter egg : un mème discret lors des très grosses journées ---------- */
+const EGG = { crash: ['img/egg-crash.jpg', 'Mème : Warren Buffett qui conseille de tout vendre en panique', T => T('Très mauvaise journée en bourse. Respire : à long terme, ce n\'est presque jamais fini.', 'Very bad day on the market. Breathe: in the long run, it is almost never over.')],
+  stonks: ['img/egg-stonks.jpg', 'Mème : Stonks, un homme en complet devant une flèche boursière qui monte', T => T('Très bonne journée en bourse.', 'Very good day on the market.')] };
+function marketMove() {
+  const fresh = Object.values(state.stocks).filter(s => s.chg != null && freshDate(s));
+  if (!fresh.length) return null;
+  const last = fresh.reduce((m, s) => freshDate(s) > m ? freshDate(s) : m, '');
+  const d0 = state.status?.day;
+  if (d0?.date === last && d0.indices?.length) return { date: last, chg: avgOf(d0.indices.map(i => i.chg)), idx: d0.indices };
+  const v = fresh.filter(s => freshDate(s) === last).map(s => s.chg).sort((a, b) => a - b);
+  return v.length >= 20 ? { date: last, chg: v[v.length >> 1], idx: [] } : null;
+}
+function maybeEgg() {
+  if (state.eggChecked) return; const m = marketMove(); if (!m) return; state.eggChecked = true;
+  const kind = m.chg <= -0.015 ? 'crash' : m.chg >= 0.015 ? 'stonks' : null;
+  if (!kind || LS.get('radar-egg') === m.date) return;
+  LS.set('radar-egg', m.date);
+  setTimeout(() => showEgg(kind, m), 2500);
+}
+function showEgg(kind, m) {
+  $('#egg')?.remove();
+  const [src, alt, txt] = EGG[kind];
+  const idx = (m?.idx || []).map(i => `${esc(i.n)} ${cp(i.chg)}`).join(' ');
+  const el = document.createElement('aside'); el.id = 'egg'; el.className = 'egg ' + kind; el.setAttribute('role', 'status');
+  el.innerHTML = `<button class="ex" type="button" aria-label="${T('Fermer', 'Close')}">×</button><img src="${src}" alt="${esc(alt)}" width="560" height="${kind === 'crash' ? 277 : 315}"><div class="et"><p>${esc(txt(T))}</p>${idx ? `<div class="ei num">${idx}</div>` : ''}</div><i class="eb"></i>`;
+  document.body.appendChild(el);
+  let left = 60000, t0 = performance.now(), timer;
+  const bar = el.querySelector('.eb');
+  const close = () => { clearTimeout(timer); el.classList.add('out'); setTimeout(() => el.remove(), 300); };
+  const run = () => { t0 = performance.now(); timer = setTimeout(close, left); bar.style.animationPlayState = 'running'; };
+  const pause = () => { clearTimeout(timer); left -= performance.now() - t0; bar.style.animationPlayState = 'paused'; };
+  el.querySelector('.ex').onclick = close;
+  el.onmouseenter = pause; el.onmouseleave = run;
+  run();
+}
+// codes secrets : tape « stonks » ou « buffett » n'importe où sur la page
+(() => { let buf = ''; document.addEventListener('keydown', e => {
+  if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName) || e.key.length !== 1) return;
+  buf = (buf + e.key.toLowerCase()).slice(-7);
+  if (buf.endsWith('stonks')) { buf = ''; showEgg('stonks', marketMove()); } else if (buf.endsWith('buffett')) { buf = ''; showEgg('crash', marketMove()); }
+}); })();
+
 })();

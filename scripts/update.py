@@ -186,6 +186,56 @@ def news_of(y) -> list:
     return out
 
 
+LOGOS = ROOT / "logos"
+
+
+def _domain(url):
+    from urllib.parse import urlparse
+    h = urlparse(url if "://" in url else "https://" + url).hostname or ""
+    return h[4:] if h.startswith("www.") else h
+
+
+def update_logos(stocks: dict, discover: dict):
+    """Télécharge le logo de chaque entreprise une fois par mois (64 × 64 px, PNG)."""
+    from io import BytesIO
+    from PIL import Image
+    LOGOS.mkdir(exist_ok=True)
+    idx = jload(DATA / "logos.json", {})
+    today = dt.date.today()
+    webs = {t: m.get("web") for t, m in stocks.items() if m and m.get("web")}
+    for it in (discover or {}).get("items", []):
+        if it.get("web"):
+            webs.setdefault(it["t"], it["web"])
+    n = 0
+    for t, web in webs.items():
+        fid = t.replace(".", "_")
+        rec = idx.get(t)
+        if rec and (today - dt.date.fromisoformat(rec["d"])).days < 30:
+            continue
+        dom = _domain(web)
+        if not dom or not re.fullmatch(r"[a-z0-9.-]+", dom):
+            continue
+        ok = False
+        try:
+            req = urllib.request.Request(f"https://www.google.com/s2/favicons?domain={dom}&sz=128", headers={"User-Agent": UA})
+            with urllib.request.urlopen(req, timeout=15) as r:
+                im = Image.open(BytesIO(r.read())).convert("RGBA")
+            if min(im.size) >= 48:  # le service renvoie un petit globe générique quand il n'a pas de logo
+                im.thumbnail((64, 64), Image.LANCZOS)
+                canvas = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
+                canvas.paste(im, ((64 - im.width) // 2, (64 - im.height) // 2))
+                canvas.save(LOGOS / f"{fid}.png", optimize=True)
+                ok = True
+                n += 1
+        except Exception:
+            pass
+        idx[t] = {"d": today.isoformat(), "ok": ok}
+        time.sleep(0.2)
+    jdump(DATA / "logos.json", idx)
+    if n:
+        log(f"{n} logo(s) mis à jour.")
+
+
 def balance_extras(y) -> dict:
     """Bilan : actifs et passifs, endettement il y a ~5 ans, couverture des intérêts."""
     out = {}
@@ -302,6 +352,8 @@ def fetch_one(t: str, prev: dict, want_fin: bool, ysym_override: str | None = No
         out["mcap"] = num(info.get("marketCap"))
         out["beta"] = num(info.get("beta"), 3)
         out["target"] = num(info.get("targetMeanPrice"), 2)
+        if info.get("website"):
+            out["web"] = str(info["website"])[:120]
         # ratios bruts pour les critères du profil (valeur, futur, passé, santé, dividende)
         RX = {"roe": "returnOnEquity", "roa": "returnOnAssets", "pm": "profitMargins", "eg": "earningsGrowth", "rg": "revenueGrowth",
               "de": "debtToEquity", "cr": "currentRatio", "cash": "totalCash", "debt": "totalDebt", "fcf": "freeCashflow",
@@ -689,6 +741,11 @@ def main():
                 smart.enrich(t, m, universe.get(t, {}))
         except Exception as e:
             log("  enrichissement impossible", t, e)
+    # logos des entreprises (hébergés dans le dépôt : la page ne contacte aucun service externe)
+    try:
+        update_logos(out, jload(DATA / "discover.json", {}))
+    except Exception:
+        traceback.print_exc()
     # profil en 5 axes : 30 critères comparés au marché et au secteur
     try:
         smart.snowflake_all(out, universe)

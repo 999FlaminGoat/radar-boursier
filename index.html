@@ -19,7 +19,7 @@
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,"Segoe UI",sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Radar Boursier</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Inter:wght@500;600;700;800&display=swap">
 <style>
 /* Layout: un "terminal de veille" clair — bandeau état, occasions en tête, carte, portefeuille, liste complète; fiche détaillée en panneau latéral */
 :root{
@@ -369,6 +369,103 @@ h3>.i:first-child,.lbl>.i:first-child,.kpi .lbl .i,.ico .i,.sh h3 .i,.note>.i:fi
 #plan{background:var(--grad)}
 #tAll thead th,.tw thead th{background:color-mix(in srgb,var(--accent-soft) 35%,var(--surface-2))}
 nav.tabbar{background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 82%,transparent),color-mix(in srgb,var(--accent-soft) 70%,var(--surface)))}
+
+/* ---------- design moderne : respiration, chiffres, cartes, mouvement ---------- */
+:root{--r:16px;--f-num:"Inter",var(--f-body);--sh:0 1px 2px rgba(16,24,40,.04),0 6px 20px -8px rgba(16,24,40,.10);--sh-h:0 2px 4px rgba(16,24,40,.05),0 16px 32px -12px rgba(16,24,40,.18);--ln:color-mix(in srgb,var(--line) 55%,transparent)}
+.card,.panel,.box,.day,.ic,.kpis,.tw,.empty,.welcome{border-color:var(--ln)!important;box-shadow:var(--sh)}
+.kpis{gap:0;background:var(--ln)}
+.part>.lbl{display:none}
+.part{margin-top:14px;padding-top:14px}
+h1,h2,h3{letter-spacing:-.02em}
+h1{font-weight:800}.part h2{font-weight:700}
+.num,.kpi .v,.ring span,.cp,.hero .big{font-family:var(--f-num);font-variant-numeric:tabular-nums;font-feature-settings:"tnum","cv11"}
+.num{font-weight:500}
+.tk{letter-spacing:.02em}
+/* pastilles de variation */
+.cp{display:inline-flex;align-items:center;padding:1px 8px;border-radius:99px;font-size:.88em;font-weight:600;white-space:nowrap}
+.cp.up{background:var(--good-soft);color:var(--good)}.cp.down{background:var(--bad-soft);color:var(--bad)}
+/* logos */
+.logo{width:36px;height:36px;flex:none;border-radius:11px;background:#fff;display:grid;place-items:center;overflow:hidden;box-shadow:0 0 0 1px var(--ln) inset}
+.logo img{width:26px;height:26px;object-fit:contain}
+.logo.mono{background:var(--grad);color:var(--accent);font:700 13px/1 var(--f-display);letter-spacing:.02em}
+.logo.sm{width:28px;height:28px;border-radius:9px}.logo.sm img{width:20px;height:20px}.logo.sm.mono{font-size:11px}
+.logo.lg{width:52px;height:52px;border-radius:15px}.logo.lg img{width:38px;height:38px}.logo.lg.mono{font-size:17px}
+.idn{display:flex;gap:10px;align-items:flex-start;min-width:0}.idn>div{min-width:0}
+/* mini-courbe */
+.spark{display:flex;align-items:center;gap:10px}
+.spark svg{flex:1;height:34px;min-width:0;overflow:visible}
+.spark path{fill:none;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.spark path.a{stroke:none;opacity:.14}
+.spark.up path{stroke:var(--good)}.spark.up path.a{fill:var(--good)}
+.spark.down path{stroke:var(--bad)}.spark.down path.a{fill:var(--bad)}
+.spark .num{font-size:12px;color:var(--muted);white-space:nowrap}.spark.up b{color:var(--good)}.spark.down b{color:var(--bad)}
+.card .reasons li{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* héros */
+.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;padding:22px;border-radius:22px;background:var(--grad);border:1px solid var(--ln);box-shadow:var(--sh);position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-80px;top:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--accent) 18%,transparent),transparent);pointer-events:none}
+.hero-l,.hero-r{display:flex;flex-direction:column;gap:8px;min-width:0;position:relative;z-index:1}
+.hero .big{font-size:clamp(34px,5.2vw,52px);font-weight:800;letter-spacing:-.03em;line-height:1.05}
+.hero .sub{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px;color:var(--muted)}
+.hero .stats{display:flex;flex-wrap:wrap;gap:16px;margin-top:6px}
+.hero .stats div{display:flex;flex-direction:column}.hero .stats b{font:700 18px/1.2 var(--f-num);font-variant-numeric:tabular-nums}.hero .stats span{font-size:12px;color:var(--muted)}
+.hero .hspark{height:64px;margin-top:4px}
+.hero .hspark svg{width:100%;height:64px}
+.hero-pick{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:10px;background:var(--surface);border-radius:18px;padding:16px;box-shadow:var(--sh);border:1px solid var(--ln);transition:transform .2s,box-shadow .2s}
+.hero-pick:hover{transform:translateY(-2px);box-shadow:var(--sh-h)}.hero-pick:active{transform:scale(.985)}
+.hero-pick:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:760px){.hero{grid-template-columns:1fr;padding:18px;border-radius:20px}}
+/* squelettes */
+.sk{display:block;height:12px;border-radius:8px;background:linear-gradient(90deg,var(--surface-2) 25%,color-mix(in srgb,var(--surface-2) 40%,var(--surface)) 45%,var(--surface-2) 65%);background-size:300% 100%;animation:skim 1.3s ease-in-out infinite}
+.skc{gap:12px;cursor:default;min-height:170px}.skr td{padding:12px}
+@keyframes skim{from{background-position:100% 0}to{background-position:0 0}}
+/* filtres en pastilles */
+.fchips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 0 10px;-webkit-overflow-scrolling:touch}
+.fchips::-webkit-scrollbar{display:none}
+.fchips button{all:unset;cursor:pointer;white-space:nowrap;font-size:13px;font-weight:600;padding:6px 12px;border-radius:99px;background:var(--surface);color:var(--muted);box-shadow:0 0 0 1px var(--ln) inset;transition:background .2s,color .2s,box-shadow .2s}
+.fchips button:hover{color:var(--ink)}
+.fchips button[aria-pressed="true"]{background:var(--accent);color:#fff;box-shadow:none}
+.fchips button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* retours tactiles */
+.card{transition:transform .2s cubic-bezier(.2,.7,.2,1),box-shadow .2s}
+.card:hover{transform:translateY(-3px);box-shadow:var(--sh-h)}
+.card:active,.btn:active,.fchips button:active{transform:scale(.97)}
+#tAll tbody tr,.mv .r{transition:background .15s}
+/* transition carte → fiche */
+::view-transition-group(pick){animation-duration:.38s;animation-timing-function:cubic-bezier(.2,.7,.2,1)}
+::view-transition-old(pick),::view-transition-new(pick){height:100%;object-fit:cover}
+/* états vides */
+.empty{display:flex;flex-direction:column;align-items:center;gap:10px;border-style:solid!important;background:var(--grad-soft)}
+.empty::before{content:"";width:44px;height:44px;background:var(--accent);opacity:.75;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cpath d='M12 12 18.4 5.6'/%3E%3Ccircle cx='12' cy='12' r='1.2' fill='black'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cpath d='M12 12 18.4 5.6'/%3E%3Ccircle cx='12' cy='12' r='1.2' fill='black'/%3E%3C/svg%3E") center/contain no-repeat}
+/* recherche globale */
+.srchbtn .kbd{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:13px}
+.srchbtn kbd,.cmdk kbd{font:600 11px/1 var(--f-mono);padding:3px 6px;border-radius:6px;background:var(--surface-2);color:var(--muted);box-shadow:0 0 0 1px var(--ln) inset}
+#searchBtn{width:auto;padding:0 12px}
+.cmdk{position:fixed;inset:0;z-index:90;background:rgba(10,12,20,.45);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:flex;justify-content:center;align-items:flex-start;padding:12vh 16px 16px;animation:fadeIn .18s ease}
+.cmdk .box2{width:min(620px,100%);background:var(--surface);border-radius:18px;box-shadow:0 30px 60px -20px rgba(0,0,0,.45);border:1px solid var(--ln);overflow:hidden;animation:axIn .22s cubic-bezier(.2,.7,.2,1)}
+.cmdk .in{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--ln)}
+.cmdk .in .i{width:20px;height:20px;color:var(--muted)}
+.cmdk input{all:unset;flex:1;font-size:17px;color:var(--ink)}
+.cmdk ul{list-style:none;margin:0;padding:6px;max-height:min(60vh,460px);overflow:auto}
+.cmdk li{display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center;padding:9px 10px;border-radius:12px;cursor:pointer}
+.cmdk li[aria-selected="true"]{background:var(--accent-soft)}
+.cmdk li .nm2{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cmdk li .tk{display:block}
+.cmdk li .sc{font:700 13px var(--f-num);color:var(--muted);min-width:28px;text-align:right}
+.cmdk .hint{padding:8px 14px;font-size:12px;color:var(--muted);border-top:1px solid var(--ln);display:flex;gap:14px}
+.cmdk .lbl{padding:8px 12px 2px;display:block}
+@keyframes fadeIn{from{opacity:0}}
+@media (max-width:760px){.cmdk{padding:calc(env(safe-area-inset-top,0px) + 10px) 10px 10px}.cmdk .hint{display:none}.cmdk li{grid-template-columns:auto 1fr auto}.cmdk li .sc{display:none}}
+@media (prefers-reduced-motion:reduce){.sk{animation:none}.card:hover{transform:none}}
+
+.srchbtn{display:inline-flex;align-items:center;gap:8px}
+.fchips{flex-wrap:nowrap!important}
+.hero-pick .row,.card .row{flex-wrap:nowrap}
+.hero-pick .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.hero-pick .idn,.card .idn{flex:1;min-width:0}
+.card .row .num{white-space:nowrap}
+.card .row:nth-child(2){flex-wrap:wrap;gap:6px}
+.cmdk li .nm2{display:block}
+.cmdk li>span:nth-child(2){min-width:0;overflow:hidden}
+@media (max-width:760px){.srchbtn .kbd{display:none}#searchBtn{width:38px;padding:0}}
 /* ---------- visiteurs ---------- */
 .guest .owner{display:none!important}
 .guestonly{display:none}.guest .guestonly{display:block}
@@ -463,6 +560,7 @@ nav.tabbar{background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 82
       <a href="#investisseurs" data-go="investisseurs">Grands investisseurs</a>
       <a href="#titres" data-go="titres">Tous les titres</a>
     </div>
+    <button class="btn srchbtn" id="searchBtn" type="button" aria-label="Rechercher un titre" title="Rechercher un titre (/ ou Ctrl+K)"><svg class="i" aria-hidden="true"><use href="#i-search"/></svg><span class="kbd"><kbd>/</kbd></span></button>
     <div class="pop"><button class="btn icon" id="palBtn" type="button" aria-haspopup="true" aria-expanded="false" title="Couleurs"><svg class="i" aria-hidden="true"><use href="#i-palette"/></svg></button>
       <div class="popmenu" id="palMenu" hidden role="menu">
         <span class="lbl">Style de couleurs</span>
@@ -501,6 +599,7 @@ nav.tabbar{background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 82
   </header>
 
   <section class="welcome" id="welcome" hidden aria-label="Bienvenue"></section>
+  <section class="hero" id="hero" aria-label="En bref"><div class="hero-l"><span class="sk" style="width:40%;height:12px"></span><span class="sk" style="width:70%;height:44px;margin-top:10px"></span><span class="sk" style="width:55%;height:14px;margin-top:10px"></span></div><div class="hero-r"><span class="sk" style="height:100%;min-height:150px"></span></div></section>
   <div class="part" id="aujourdhui"><span class="lbl">Partie 1</span><h2><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg></span> Aujourd'hui</h2></div>
   <div class="alert anchor" id="splits" hidden></div>
   <div class="alert anchor" id="verdicts" hidden style="background:var(--good-soft);border-color:var(--good)"></div>
@@ -571,7 +670,8 @@ nav.tabbar{background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 82
       <p>Les titres suivis les mieux classés<span class="priv"> que tu ne détiens pas encore</span>. Le score combine la qualité (cinq modèles inspirés de Buffett, Burry, Duckett, Fink et Jensen), le prix par rapport à la valeur, l'écart avec le sommet de l'année, le risque et l'avis des analystes<span class="priv">, plus ce dont ton portefeuille manque</span>.</p>
     </div>
     <span class="swipehint"><svg class="i" aria-hidden="true"><use href="#i-swipe"/></svg> Glisse pour voir les autres titres</span>
-    <div class="cards" id="opps"><div class="empty">Chargement des titres…</div></div>
+    <div class="chips fchips" id="oppChips" role="toolbar" aria-label="Filtrer les occasions"></div>
+    <div class="cards" id="opps"><div class="card skc"><span class="sk" style="width:60%"></span><span class="sk" style="width:85%;height:20px"></span><span class="sk" style="width:40%"></span><span class="sk" style="height:34px"></span></div><div class="card skc"><span class="sk" style="width:60%"></span><span class="sk" style="width:85%;height:20px"></span><span class="sk" style="width:40%"></span><span class="sk" style="height:34px"></span></div><div class="card skc"><span class="sk" style="width:60%"></span><span class="sk" style="width:85%;height:20px"></span><span class="sk" style="width:40%"></span><span class="sk" style="height:34px"></span></div></div>
   </section>
 
   <section class="anchor" id="decouvertes">
@@ -612,7 +712,7 @@ nav.tabbar{background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 82
       <p>Leurs plus grosses positions selon leurs dernières déclarations 13F à la SEC. Ces déclarations arrivent environ 45 jours après la fin du trimestre : ce sont des photos du passé, pas leurs positions d'aujourd'hui.<span class="priv"> En bleu foncé, les titres que tu détiens aussi.</span></p>
     </div>
     <div class="panel" style="margin-bottom:14px"><span class="lbl">Titres choisis par plusieurs de ces investisseurs</span><div class="chips" id="consensus"></div></div>
-    <div class="invgrid" id="investors"><div class="empty">Chargement des portefeuilles…</div></div>
+    <div class="invgrid" id="investors"><div class="ic skc"><span class="sk" style="width:50%;height:20px"></span><span class="sk" style="width:70%"></span><span class="sk"></span><span class="sk"></span><span class="sk"></span></div><div class="ic skc"><span class="sk" style="width:50%;height:20px"></span><span class="sk" style="width:70%"></span><span class="sk"></span><span class="sk"></span><span class="sk"></span></div><div class="ic skc"><span class="sk" style="width:50%;height:20px"></span><span class="sk" style="width:70%"></span><span class="sk"></span><span class="sk"></span><span class="sk"></span></div></div>
   </section>
 
   <div class="part" id="titres"><span class="lbl">Partie 5</span><h2><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg></span> Tous les titres suivis</h2></div>
@@ -640,7 +740,7 @@ nav.tabbar{background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 82
     </div>
     <div class="tw"><table id="tAll"><thead><tr>
       <th data-k="name">Titre</th><th class="r" data-k="price">Prix</th><th class="r" data-k="chg">Jour</th><th class="r" data-k="score">Score</th><th data-k="verdict">Verdict</th><th class="r" data-k="pe">P/E</th><th class="r" data-k="disc">Sous sommet</th><th class="r" data-k="up">Potentiel analystes</th>
-    </tr></thead><tbody></tbody></table></div>
+    </tr></thead><tbody><tr class="skr"><td colspan="8"><span class="sk"></span></td></tr><tr class="skr"><td colspan="8"><span class="sk"></span></td></tr><tr class="skr"><td colspan="8"><span class="sk"></span></td></tr><tr class="skr"><td colspan="8"><span class="sk"></span></td></tr><tr class="skr"><td colspan="8"><span class="sk"></span></td></tr><tr class="skr"><td colspan="8"><span class="sk"></span></td></tr></tbody></table></div>
   </section>
 
   <p class="disc">Outil d'aide à la réflexion, pas un conseil financier. Les scores sont calculés à partir de règles simples et de données publiques qui peuvent comporter des erreurs ou des délais. Vérifie toujours avant d'acheter ou de vendre.</p>

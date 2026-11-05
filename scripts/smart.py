@@ -380,7 +380,7 @@ def discover(universe: dict, fetch_one, sector_fr: dict, limit=12):
                 continue
             u = {"name": m.get("name") or members[s].get("name"), "sector": m.get("sectorAuto")}
             enrich(s, m, u)
-            res.append({"t": to_radar_symbol(s), "name": u["name"], "sector": u["sector"], "region": m.get("regionAuto"), "cur": m.get("cur"),
+            res.append({"t": to_radar_symbol(s), "name": u["name"], "sector": u["sector"], "region": m.get("regionAuto"), "cur": m.get("cur"), "web": m.get("web"),
                         "index": members[s]["idx"], "price": m.get("price"), "chg": m.get("chg"), "pe": m.get("pe"), "target": m.get("target"),
                         "hi52": m.get("hi52"), "score": m.get("radarScore"), "verdict": verdict(m.get("radarScore", 0)),
                         "pros": m.get("autoPros"), "cons": m.get("autoCons"), "fair": (m.get("fairValueAuto") or {}).get("value")})

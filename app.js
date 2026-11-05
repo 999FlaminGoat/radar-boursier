@@ -106,8 +106,8 @@ function renderDiscover() {
   const L = state.lang || 'fr';
   el.innerHTML = d.map((x, i) => { const v = verdictOf(x.score || 0); const added = !!Store.uni[x.t];
     return `<div class="card" style="--i:${i};cursor:default">
-      <div class="row"><div><div class="tk">${esc(x.t)} · ${esc(x.index || '')}</div><div class="nm">${esc(x.name || x.t)}</div><div class="note">${esc(x.sector || '')}${x.region ? ' · ' + esc(x.region) : ''}</div></div>${ring(x.score || 0, v.col)}</div>
-      <div class="row" style="align-items:center"><span class="pill ${v.c}">${v.h}</span><span class="num">${nf(x.price)} <span class="${x.chg >= 0 ? 'up' : 'down'}">${pct(x.chg)}</span></span></div>
+      <div class="row"><div class="idn">${logo(x.t, x.name)}<div><div class="tk">${esc(x.t)} · ${esc(x.index || '')}</div><div class="nm">${esc(x.name || x.t)}</div><div class="note">${esc(x.sector || '')}${x.region ? ' · ' + esc(x.region) : ''}</div></div></div>${ring(x.score || 0, v.col)}</div>
+      <div class="row" style="align-items:center"><span class="pill ${v.c}">${v.h}</span><span class="num">${nf(x.price)} ${cp(x.chg)}</span></div>
       <ul class="reasons">${((x.pros || {})[L] || []).slice(0, 2).map(r => `<li>${esc(r)}</li>`).join('')}${((x.cons || {})[L] || []).slice(0, 1).map(r => `<li class="c">${esc(r)}</li>`).join('')}</ul>
       ${added ? '<span class="note"><svg class="i up" aria-hidden="true"><use href="#i-check"/></svg> ' + T('Déjà suivi', 'Already tracked') + '</span>' : `<button class="btn owner" data-add="${esc(x.t)}" data-name="${esc(x.name || '')}" data-sector="${esc(x.sector || '')}" data-region="${esc(x.region || '')}" data-cur="${esc(x.cur || '')}"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg> Ajouter à ma liste</button>`}
     </div>`; }).join('');
@@ -290,7 +290,7 @@ function list() {
 }
 function render() {
   const { pf, items } = list();
-  renderStatus(); renderKpis(pf, items); renderOpps(items); renderAvoid(items);
+  renderStatus(); renderHero(pf, items); renderKpis(pf, items); renderOpps(items); renderAvoid(items);
   renderHold(pf, items); renderAll(items); renderCharts(pf, items);
   renderInvestors(); renderDivs(pf); renderTx(); renderDay(pf); renderSplits(); renderPriceAlerts(); renderPlan(); renderVerdicts(); renderDiscover();
   $('#txOpen').hidden = state.canWrite === false;
@@ -369,7 +369,6 @@ function renderKpis(pf, items) {
   const best = items.filter(x => !x.s.owned && !x.s.etf).sort((a, b) => b.a.score - a.a.score)[0];
   const n = items.filter(x => !x.s.owned).length;
   $('#resume').innerHTML = `
-   <div class="kpi"><span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-wallet"/></svg> Valeur estimée</span><span class="v" data-count="${Math.round(pf.total)}" data-suffix=" $">${money(pf.total)}</span><span class="s">${pf.rows.length} titres, prix à jour × tes quantités</span></div>
    <div class="kpi"><span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-chart"/></svg> Gain latent</span><span class="v ${gain >= 0 ? 'up' : 'down'}">${gain >= 0 ? '+' : ''}${money(gain)}</span><span class="s">${pct(gain / pf.cost)} sur le coût</span></div>
    <div class="kpi"><span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-cpu"/></svg> Poids techno</span><span class="v ${tech > 0.35 ? 'down' : ''}">${pct(tech, 0, false)}</span><span class="s">cible ${pct(state.meta.sectorTargets?.Technologie ?? .3, 0, false)} · ${tech > 0.35 ? 'surpondéré' : 'équilibré'}</span></div>
    <div class="kpi"><span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-star"/></svg> Meilleure occasion</span><span class="v">${best ? esc(best.s.ticker.replace('_', '.')) : '–'}</span><span class="s">${best ? `score ${best.a.score} parmi ${n} titres surveillés` : ''}</span></div>`;
@@ -412,21 +411,49 @@ function alertState(s) {
   if (a.below != null && s.price <= a.below * 1.03) return { short: 'Presque au prix visé', msg: `${s.ticker} est à ${nf(s.price)}, à moins de 3 % de ton prix visé de ${nf(a.below)}`, hit: false };
   return null;
 }
+function logo(t, name, size = '') {
+  const rec = (Store.logos || {})[t];
+  if (rec && rec.ok) return `<span class="logo ${size}"><img src="logos/${esc(String(t).replace(/\./g, '_'))}.png" alt="" loading="lazy" decoding="async"></span>`;
+  const ini = (nice(name || t).replace(/[^A-Za-zÀ-ÿ0-9 &]/g, ' ').split(/\s+/).filter(w => w && !/^(inc|corp|ltd|the|de|du|la|le|plc|co|sa|nv|ag|&)$/i.test(w)).slice(0, 2).map(w => w[0]).join('') || String(t)[0]).toUpperCase();
+  return `<span class="logo mono ${size}" aria-hidden="true">${esc(ini)}</span>`;
+}
+function sparkPath(v, W, H) {
+  const mn = Math.min(...v), mx = Math.max(...v);
+  return v.map((y, i) => `${i ? 'L' : 'M'}${(i / (v.length - 1) * W).toFixed(1)},${(H - 2 - (mx === mn ? .5 : (y - mn) / (mx - mn)) * (H - 4)).toFixed(1)}`).join('');
+}
+function spark(s, days = 30) {
+  const h = (s.hist || []).filter(p => p && p.p > 0); if (h.length < 5) return '';
+  const cut = new Date(Date.now() - days * 864e5).toISOString().slice(0, 10);
+  let pts = h.filter(p => p.d >= cut); if (pts.length < 5) pts = h.slice(-22);
+  const v = pts.map(p => p.p); const W = 120, H = 32, path = sparkPath(v, W, H);
+  const ch = v[v.length - 1] / v[0] - 1;
+  return `<div class="spark ${ch >= 0 ? 'up' : 'down'}"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path class="a" d="${path}L${W},${H}L0,${H}Z"/><path d="${path}"/></svg><span class="num">${T('1 mois', '1 mo')} <b>${pct(ch, 1)}</b></span></div>`;
+}
+const cp = v => v == null ? '' : `<span class="cp ${v >= 0 ? 'up' : 'down'}">${pct(v)}</span>`;
 function ring(sc, col) { return `<div class="ring" style="--p:${sc};--c:var(${col})"><span>${sc}</span></div>`; }
 function rangeBar(s) {
   if (!s.hi52 || !s.lo52 || !s.price) return '';
   const p = Math.max(0, Math.min(1, (s.price - s.lo52) / (s.hi52 - s.lo52)));
   return `<div><div class="range"><i style="left:${p * 100}%"></i></div><div class="rl"><span>${nf(s.lo52)}</span><span>52 sem.</span><span>${nf(s.hi52)}</span></div></div>`;
 }
+const OPPF = () => [['all', T('Tous', 'All')], ['s70', T('Score 70+', 'Score 70+')], ['Technologie', T('Technologie', 'Tech')], ['Finance & Assurance', 'Finance'], ['Santé', T('Santé', 'Health')], ['Consommation', T('Consommation', 'Consumer')], ['Industrie', T('Industrie', 'Industrials')], ['Énergie', T('Énergie', 'Energy')], ['Matériaux', T('Matériaux', 'Materials')], ['ca', 'Canada'], ['div', T('Dividende 2 %+', 'Dividend 2 %+')], ['etf', 'FNB']];
+function oppMatch(f, s, a) {
+  if (f === 'all') return true; if (f === 's70') return a.score >= 70; if (f === 'ca') return /\.(TO|V|NE|CN)$/i.test(s.ticker) || /canada/i.test(s.region || '');
+  if (f === 'div') return s.divAnnual && s.price && s.divAnnual / s.price >= .02; if (f === 'etf') return !!s.etf; return s.sector === f;
+}
 function renderOpps(items) {
-  const top = items.filter(x => state.priv || !x.s.owned).sort((a, b) => b.a.score - a.a.score).slice(0, 6);
-  if (!top.length) { $('#opps').innerHTML = '<div class="empty">Aucun titre surveillé pour l\'instant.</div>'; return; }
+  const base = items.filter(x => state.priv || !x.s.owned);
+  const f = state.oppF || 'all';
+  const chips = OPPF().filter(([k]) => k === 'all' || base.some(x => oppMatch(k, x.s, x.a)));
+  const ch = $('#oppChips'); if (ch) ch.innerHTML = chips.map(([k, l]) => `<button type="button" data-of="${esc(k)}" aria-pressed="${k === f}">${esc(l)} <span class="muted">${k === 'all' ? base.length : base.filter(x => oppMatch(k, x.s, x.a)).length}</span></button>`).join('');
+  const top = base.filter(x => oppMatch(f, x.s, x.a)).sort((a, b) => b.a.score - a.a.score).slice(0, 6);
+  if (!top.length) { $('#opps').innerHTML = `<div class="empty">${f === 'all' ? T('Aucun titre suivi pour l\'instant.', 'No tracked stock yet.') : T('Aucun titre dans ce filtre pour l\'instant.', 'No stock in this filter yet.')}</div>`; return; }
   $('#opps').innerHTML = top.map(({ s, a }, i) => `
     <button class="card" style="--i:${i}" data-t="${esc(s.ticker)}">
-      <div class="row"><div><div class="tk">${esc(s.ticker)} · ${esc(s.sector || '')}</div><div class="nm">${esc(nice(s.name))}</div><div>${badges(s)}</div></div>${ring(a.score, a.verdict.col)}</div>
-      <div class="row" style="align-items:center"><span class="pill ${a.verdict.c}">${a.verdict.h}</span><span class="num">${nf(s.price)} <span class="${s.chg >= 0 ? 'up' : 'down'}">${pct(s.chg)}</span></span></div>
-      <ul class="reasons">${a.pros.slice(0, 2).map(r => `<li>${esc(r)}</li>`).join('')}${a.cons.slice(0, 1).map(r => `<li class="c">${esc(r)}</li>`).join('')}</ul>
-      ${rangeBar(s)}
+      <div class="row"><div class="idn">${logo(s.ticker, s.name)}<div><div class="tk">${esc(s.ticker)} · ${esc(s.sector || '')}</div><div class="nm">${esc(nice(s.name))}</div><div>${badges(s)}</div></div></div>${ring(a.score, a.verdict.col)}</div>
+      <div class="row" style="align-items:center"><span class="pill ${a.verdict.c}">${a.verdict.h}</span><span class="num">${nf(s.price)} ${cp(s.chg)}</span></div>
+      <ul class="reasons">${a.pros.length ? `<li>${esc(a.pros[0])}</li>` : a.cons.slice(0, 1).map(r => `<li class="c">${esc(r)}</li>`).join('')}</ul>
+      ${spark(s) || rangeBar(s)}
     </button>`).join('');
 }
 function renderAvoid(items) {
@@ -481,8 +508,8 @@ function renderAll(items) {
   let rows = items.filter(({ s }) => (flt === 'all' || (flt === 'own') === !!s.owned) && (!state.sect || (s.etf ? 'ETF' : s.sector) === state.sect) && (!state.reg || regionOf(s) === state.reg) && (!q || s.name.toLowerCase().includes(q) || s.ticker.toLowerCase().includes(q)));
   sortRows(rows, state.sortAll, (x, k) => ({ name: nice(x.s.name), price: x.s.price, chg: x.s.chg, score: x.a.score, verdict: x.a.score, pe: x.s.fpe || x.s.pe, disc: x.a.disc, up: x.a.up }[k]));
   $('#tAll tbody').innerHTML = rows.map(({ s, a }) => `<tr data-t="${esc(s.ticker)}">
-    <td><b>${esc(nice(s.name))}</b> <span class="tk">${esc(s.ticker)}</span>${badges(s)}${s.owned ? ' <span class="pill v-con priv" style="padding:1px 7px">détenu</span>' : ''}</td>
-    <td class="r num">${nf(s.price)}</td><td class="r num ${s.chg >= 0 ? 'up' : 'down'}">${pct(s.chg)}</td>
+    <td><div class="idn" style="align-items:center">${logo(s.ticker, s.name, 'sm')}<div><b>${esc(nice(s.name))}</b> <span class="tk">${esc(s.ticker)}</span>${badges(s)}${s.owned ? ' <span class="pill v-con priv" style="padding:1px 7px">détenu</span>' : ''}</div></div></td>
+    <td class="r num">${nf(s.price)}</td><td class="r num">${cp(s.chg)}</td>
     <td class="r num"><b>${a.score}</b></td><td><span class="pill ${a.verdict.c}">${a.verdict.h}</span></td>
     <td class="r num">${s.etf ? '–' : nf(s.fpe || s.pe, 1)}</td><td class="r num">${pct(a.disc, 0, false)}</td><td class="r num ${a.up > 0 ? 'up' : a.up < 0 ? 'down' : ''}">${a.up == null ? '–' : pct(a.up, 0)}</td></tr>`).join('') || '<tr><td colspan="8" class="muted">Aucun titre ne correspond.</td></tr>';
 }
@@ -559,6 +586,87 @@ const crosshair = {
 if (window.Chart) Chart.register(crosshair);
 
 function freshDate(s) { return s.chgDate || (s.hist && s.hist.length ? s.hist[s.hist.length - 1].d : null); }
+function renderHero(pf, items) {
+  const el = $('#hero'); if (!el) return;
+  const all = Object.values(state.stocks);
+  const fresh = all.filter(s => s.chg != null);
+  const up = fresh.filter(s => s.chg > 0).length, down = fresh.filter(s => s.chg < 0).length;
+  const avg = Math.round(avgOf(items.map(x => x.a.score)) || 0);
+  const pick = items.filter(x => !x.s.etf && (state.priv || !x.s.owned)).sort((a, b) => b.a.score - a.a.score)[0];
+  const d0 = state.status?.day;
+  let left;
+  if (pf && !state.priv) {
+    let dv = 0, base = 0; pf.rows.forEach(r => { const s = r.s; if (!s || s.chg == null) return; const prev = r.value / (1 + s.chg); dv += r.value - prev; base += prev; });
+    const gain = pf.total - pf.cost;
+    const hist = (state.meta.history || []).filter(p => p && p.d < '2026-11-03' && p.wallet > 0).slice(-120).map(p => p.wallet);
+    hist.push(pf.total);
+    const W = 300, H = 60, path = hist.length > 4 ? sparkPath(hist, W, H) : '';
+    left = `<span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-wallet"/></svg> Valeur du portefeuille</span>
+      <div class="big" data-count="${Math.round(pf.total)}" data-suffix=" $">${money(pf.total)}</div>
+      <div class="sub">${base ? `<span class="cp ${dv >= 0 ? 'up' : 'down'}">${dv >= 0 ? '+' : '−'}${money(Math.abs(dv))} · ${pct(dv / base, 2)}</span> aujourd'hui` : ''}<span>·</span><span>Gain total <b class="${gain >= 0 ? 'up' : 'down'}">${gain >= 0 ? '+' : '−'}${money(Math.abs(gain))} (${pct(gain / pf.cost, 1)})</b></span></div>
+      ${path ? `<div class="hspark spark ${hist[hist.length - 1] >= hist[0] ? 'up' : 'down'}"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path class="a" d="${path}L${W},${H}L0,${H}Z"/><path d="${path}"/></svg></div>` : ''}`;
+  } else {
+    const mood = d0?.verdict && !/portefeuille/i.test(d0.verdict) ? d0.verdict : (up > down * 1.3 ? T('Bonne journée', 'Good day') : down > up * 1.3 ? T('Journée difficile', 'Tough day') : T('Journée tranquille', 'Quiet day'));
+    left = `<span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-radar"/></svg> ${T('Le marché en bref', 'Market at a glance')}</span>
+      <div class="big">${esc(state.lang === 'en' ? mood.replace('Bonne journée', 'Good day').replace('Journée difficile', 'Tough day').replace('Journée tranquille', 'Quiet day') : mood)}</div>
+      <div class="sub">${(d0?.indices || []).map(i => `<span>${esc(i.n)} ${cp(i.chg)}</span>`).join('')}</div>`;
+  }
+  left += `<div class="stats"><div><b data-count="${all.length}">${all.length}</b><span>${T('titres suivis', 'stocks tracked')}</span></div><div><b class="up">${up}</b><span>${T('en hausse', 'up')}</span></div><div><b class="down">${down}</b><span>${T('en baisse', 'down')}</span></div><div><b>${avg}</b><span>${T('score moyen', 'avg score')}</span></div></div>`;
+  const right = pick ? `<span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-star"/></svg> ${T('Le titre le mieux noté', 'Top-rated stock')}</span>
+    <button class="hero-pick" data-t="${esc(pick.s.ticker)}">
+      <div class="row"><div class="idn">${logo(pick.s.ticker, pick.s.name, 'lg')}<div><div class="tk">${esc(pick.s.ticker)} · ${esc(pick.s.sector || '')}</div><div class="nm">${esc(nice(pick.s.name))}</div></div></div>${ring(pick.a.score, pick.a.verdict.col)}</div>
+      <div class="row" style="align-items:center"><span class="pill ${pick.a.verdict.c}">${pick.a.verdict.h}</span><span class="num">${nf(pick.s.price)} ${cp(pick.s.chg)}</span></div>
+      ${spark(pick.s)}
+      ${pick.a.pros[0] ? `<p class="note" style="margin:0">${esc(pick.a.pros[0])}</p>` : ''}
+    </button>` : '';
+  el.innerHTML = `<div class="hero-l">${left}</div><div class="hero-r">${right}</div>`;
+  if (!REDUCED) el.querySelectorAll('[data-count]').forEach(n => { const to = +n.dataset.count, suf = n.dataset.suffix || '', t0 = performance.now(); const st = now => { const k = Math.min(1, (now - t0) / 900), e = 1 - Math.pow(1 - k, 3); n.textContent = nf(to * e, 0) + suf; if (k < 1) requestAnimationFrame(st); }; if (!el.dataset.done) requestAnimationFrame(st); });
+  el.dataset.done = '1';
+}
+function openWithTransition(t) {
+  const src = t.closest('.card, .hero-pick');
+  if (!document.startViewTransition || REDUCED || !src || innerWidth < 761) { openDrawer(t.dataset.t); return; }
+  src.style.viewTransitionName = 'pick';
+  const vt = document.startViewTransition(() => { src.style.viewTransitionName = ''; $('#drawer').style.viewTransitionName = 'pick'; openDrawer(t.dataset.t); });
+  vt.finished.finally(() => { $('#drawer').style.viewTransitionName = ''; });
+}
+/* recherche globale : / ou Ctrl+K */
+function openSearch() {
+  if ($('#cmdk')) return;
+  const ov = document.createElement('div'); ov.className = 'cmdk'; ov.id = 'cmdk';
+  ov.innerHTML = `<div class="box2" role="dialog" aria-modal="true" aria-label="${T('Rechercher un titre', 'Search a stock')}"><div class="in"><svg class="i" aria-hidden="true"><use href="#i-search"/></svg><input id="qIn" type="search" autocomplete="off" spellcheck="false" placeholder="${T('Nom ou symbole : Apple, RY.TO, Nvidia…', 'Name or symbol: Apple, RY.TO, Nvidia…')}" aria-controls="qList"><kbd>Esc</kbd></div><ul id="qList" role="listbox"></ul><div class="hint"><span><kbd>↑</kbd> <kbd>↓</kbd> ${T('choisir', 'move')}</span><span><kbd>Entrée</kbd> ${T('ouvrir', 'open')}</span></div></div>`;
+  document.body.appendChild(ov);
+  const inp = $('#qIn'), list = $('#qList'); let sel = 0, res = [];
+  const norm = x => String(x || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const scoreOf = s => { try { return analyze(s).score; } catch (e) { return 0; } };
+  const all = Object.values(state.stocks).map(s => ({ s, sc: scoreOf(s) }));
+  const draw = () => {
+    const q = norm(inp.value.trim());
+    res = (q ? all.map(x => { const t = norm(x.s.ticker), n = norm(nice(x.s.name)); const r = t === q ? 0 : t.startsWith(q) ? 1 : n.startsWith(q) ? 2 : n.includes(' ' + q) ? 3 : (t.includes(q) || n.includes(q)) ? 4 : 9; return { ...x, r }; }).filter(x => x.r < 9).sort((a, b) => a.r - b.r || b.sc - a.sc)
+      : all.slice().sort((a, b) => b.sc - a.sc)).slice(0, 8);
+    sel = Math.min(sel, Math.max(0, res.length - 1));
+    list.innerHTML = (q ? '' : `<span class="lbl">${T('Les mieux notés', 'Top rated')}</span>`) + (res.map((x, i) => `<li role="option" data-i="${i}" aria-selected="${i === sel}">${logo(x.s.ticker, x.s.name, 'sm')}<span style="min-width:0"><span class="nm2">${esc(nice(x.s.name))}</span><span class="tk">${esc(x.s.ticker)} · ${esc(x.s.sector || '')}</span></span><span class="num">${nf(x.s.price)} ${cp(x.s.chg)}</span><span class="sc">${x.sc}</span></li>`).join('') || `<li class="note" style="display:block">${T('Aucun titre ne correspond.', 'No match.')}</li>`);
+  };
+  const close = () => { ov.remove(); document.removeEventListener('keydown', key, true); };
+  const go = i => { const x = res[i]; if (!x) return; close(); openDrawer(x.s.ticker); };
+  const key = e => {
+    if (e.key === 'Escape') { e.preventDefault(); close(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); sel = Math.min(res.length - 1, sel + 1); draw(); list.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' }); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); sel = Math.max(0, sel - 1); draw(); list.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' }); }
+    else if (e.key === 'Enter') { e.preventDefault(); go(sel); }
+  };
+  document.addEventListener('keydown', key, true);
+  inp.oninput = () => { sel = 0; draw(); };
+  list.onclick = e => { const li = e.target.closest('li[data-i]'); if (li) go(+li.dataset.i); };
+  list.onmousemove = e => { const li = e.target.closest('li[data-i]'); if (li && +li.dataset.i !== sel) { sel = +li.dataset.i; list.querySelectorAll('li[data-i]').forEach(l => l.setAttribute('aria-selected', String(+l.dataset.i === sel))); } };
+  ov.onclick = e => { if (e.target === ov) close(); };
+  draw(); setTimeout(() => inp.focus(), 30);
+}
+document.addEventListener('keydown', e => {
+  const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName) || document.activeElement?.isContentEditable;
+  if ((e.key === 'k' && (e.metaKey || e.ctrlKey)) || (e.key === '/' && !typing)) { e.preventDefault(); openSearch(); }
+});
+document.addEventListener('click', e => { if (e.target.closest('#searchBtn')) openSearch(); });
 function renderDay(pf) {
   const all = Object.values(state.stocks).filter(s => s.chg != null && freshDate(s));
   if (!all.length) { $('#journee').hidden = true; return; }
@@ -575,7 +683,7 @@ function renderDay(pf) {
   const up = mine.filter(s => s.chg > 0).length, down = mine.filter(s => s.chg < 0).length;
   const dateTxt = new Date(last + 'T12:00').toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long' });
   const list = (arr, dir) => arr.slice().sort((a, b) => dir * (b.chg - a.chg)).filter(s => dir > 0 ? s.chg > 0 : s.chg < 0).slice(0, 3)
-    .map(s => `<div class="r" data-t="${esc(s.ticker)}"><span><b>${esc(s.ticker)}</b> <span class="muted">${esc(nice(s.name))}</span></span><span class="num ${s.chg >= 0 ? 'up' : 'down'}">${pct(s.chg, 2)}</span></div>`).join('') || '<span class="note">Aucun</span>';
+    .map(s => `<div class="r" data-t="${esc(s.ticker)}"><span><b>${esc(s.ticker)}</b> <span class="muted">${esc(nice(s.name))}</span></span><span class="num">${cp(s.chg)}</span></div>`).join('') || '<span class="note">Aucun</span>';
   $('#journee').innerHTML = `
     <div><span class="lbl">${state.unlocked ? 'Ta journée' : T('La journée', 'The day')} · ${esc(dateTxt)}</span>
       <h2 class="${moodCls}" style="margin-top:4px">${moodCls === 'up' ? '<svg class="i" aria-hidden="true"><use href="#i-sun"/></svg>' : moodCls === 'down' ? '<svg class="i" aria-hidden="true"><use href="#i-rain"/></svg>' : '<svg class="i" aria-hidden="true"><use href="#i-partly"/></svg>'} ${esc(mood)}</h2>
@@ -1249,8 +1357,10 @@ async function removeWatch(t, btn) {
 
 /* ---------- events ---------- */
 document.addEventListener('click', e => {
+  const of = e.target.closest('[data-of]');
+  if (of) { state.oppF = of.dataset.of; render(); return; }
   const t = e.target.closest('[data-t]');
-  if (t && !e.target.closest('#drawer')) { openDrawer(t.dataset.t); return; }
+  if (t && !e.target.closest('#drawer')) { openWithTransition(t); return; }
   const f = e.target.closest('.seg button[data-f]');
   if (f) { state.filter = f.dataset.f; document.querySelectorAll('.seg button[data-f]').forEach(b => b.setAttribute('aria-pressed', b === f)); render(); return; }
   const th = e.target.closest('th[data-k]');
@@ -1428,6 +1538,7 @@ async function loadPublic() {
   Store.uni = u; Store.market = m; state.investors = inv; invKey = null;
   const [sc, dv] = await Promise.all([fetch('data/scores.json' + bust).then(r => r.ok ? r.json() : {}).catch(() => ({})), fetch('data/discover.json' + bust).then(r => r.ok ? r.json() : {}).catch(() => ({}))]);
   Store.scores = sc; Store.discover = dv;
+  Store.logos = await fetch('data/logos.json' + bust).then(r => r.ok ? r.json() : {}).catch(() => ({}));
 }
 async function loadPrivateBlob() {
   if (token()) { try { const r = await ghRead('data/private.enc.json'); return JSON.parse(r.text); } catch (e) { /* jeton invalide : lecture publique */ } }

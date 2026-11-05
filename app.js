@@ -109,7 +109,7 @@ function renderDiscover() {
       <div class="row"><div><div class="tk">${esc(x.t)} · ${esc(x.index || '')}</div><div class="nm">${esc(x.name || x.t)}</div><div class="note">${esc(x.sector || '')}${x.region ? ' · ' + esc(x.region) : ''}</div></div>${ring(x.score || 0, v.col)}</div>
       <div class="row" style="align-items:center"><span class="pill ${v.c}">${v.h}</span><span class="num">${nf(x.price)} <span class="${x.chg >= 0 ? 'up' : 'down'}">${pct(x.chg)}</span></span></div>
       <ul class="reasons">${((x.pros || {})[L] || []).slice(0, 2).map(r => `<li>${esc(r)}</li>`).join('')}${((x.cons || {})[L] || []).slice(0, 1).map(r => `<li class="c">${esc(r)}</li>`).join('')}</ul>
-      ${added ? '<span class="note"><svg class="i up" aria-hidden="true"><use href="#i-check"/></svg> Dans ta liste</span>' : `<button class="btn" data-add="${esc(x.t)}" data-name="${esc(x.name || '')}" data-sector="${esc(x.sector || '')}" data-region="${esc(x.region || '')}" data-cur="${esc(x.cur || '')}"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg> Ajouter à ma liste</button>`}
+      ${added ? '<span class="note"><svg class="i up" aria-hidden="true"><use href="#i-check"/></svg> ' + T('Déjà suivi', 'Already tracked') + '</span>' : `<button class="btn owner" data-add="${esc(x.t)}" data-name="${esc(x.name || '')}" data-sector="${esc(x.sector || '')}" data-region="${esc(x.region || '')}" data-cur="${esc(x.cur || '')}"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg> Ajouter à ma liste</button>`}
     </div>`; }).join('');
 }
 document.addEventListener('click', async e => {
@@ -360,6 +360,7 @@ function renderStatus() {
   const ageH = last ? (Date.now() - new Date(last)) / 36e5 : 999;
   const cls = !dbFresh ? '' : ageH < 30 ? 'live' : 'stale';
   el.innerHTML = `<span class="dot ${cls}"></span><span>Données au ${esc(fmtDate(last))}</span><span>·</span><span>Mise à jour auto : ${esc(st?.schedule || 'jours ouvrables')}</span>${state.unlocked ? '' : '<span>·</span><span><svg class="i" aria-hidden="true"><use href="#i-lock"/></svg> portefeuille verrouillé</span>'}`;
+  if (!isOwner()) el.innerHTML = `<span class="dot ${cls}"></span><span>${T('Données au', 'Data as of')} ${esc(fmtDate(last))}</span>`;
 }
 function renderKpis(pf, items) {
   if (!pf) { $('#resume').innerHTML = ''; return; }
@@ -576,7 +577,7 @@ function renderDay(pf) {
   const list = (arr, dir) => arr.slice().sort((a, b) => dir * (b.chg - a.chg)).filter(s => dir > 0 ? s.chg > 0 : s.chg < 0).slice(0, 3)
     .map(s => `<div class="r" data-t="${esc(s.ticker)}"><span><b>${esc(s.ticker)}</b> <span class="muted">${esc(nice(s.name))}</span></span><span class="num ${s.chg >= 0 ? 'up' : 'down'}">${pct(s.chg, 2)}</span></div>`).join('') || '<span class="note">Aucun</span>';
   $('#journee').innerHTML = `
-    <div><span class="lbl">Ta journée · ${esc(dateTxt)}</span>
+    <div><span class="lbl">${state.unlocked ? 'Ta journée' : T('La journée', 'The day')} · ${esc(dateTxt)}</span>
       <h2 class="${moodCls}" style="margin-top:4px">${moodCls === 'up' ? '<svg class="i" aria-hidden="true"><use href="#i-sun"/></svg>' : moodCls === 'down' ? '<svg class="i" aria-hidden="true"><use href="#i-rain"/></svg>' : '<svg class="i" aria-hidden="true"><use href="#i-partly"/></svg>'} ${esc(mood)}</h2>
       ${dp != null ? `<div class="priv"><div class="num" style="font-size:18px;margin-top:4px"><span class="${dv >= 0 ? 'up' : 'down'}">${dv >= 0 ? '+' : '−'}${money(Math.abs(dv))} (${pct(dp, 2)})</span></div><div class="note">${up} de tes titres en hausse, ${down} en baisse (${nMine} titres avec un prix du jour)</div></div>` : ''}
       ${d0?.indices?.length ? `<div class="idx">${d0.indices.map(i => `<span>${esc(i.n)} <b class="${i.chg >= 0 ? 'up' : 'down'}">${pct(i.chg, 2)}</b></span>`).join('')}</div>` : ''}
@@ -1179,7 +1180,7 @@ document.addEventListener('click', e => { if (!e.target.closest('.pop')) toggleP
 (() => { let p = ''; try { p = localStorage.getItem('radar-pal') || ''; } catch (e) {} if (p) document.documentElement.setAttribute('data-pal', p); document.querySelectorAll('#palMenu [data-pal]').forEach(b => b.setAttribute('aria-checked', (b.dataset.pal || '') === p)); })();
 /* language of analyses and news */
 state.lang = (() => { try { return localStorage.getItem('radar-lang') || 'fr'; } catch (e) { return 'fr'; } })();
-function setLang(l) { state.lang = l; try { localStorage.setItem('radar-lang', l); } catch (e) {} $('#langBtn').textContent = l.toUpperCase(); $('#langBtn').title = l === 'fr' ? 'Analyses en français (cliquer pour l\'anglais)' : 'Analyses in English (click for French)'; document.querySelectorAll('#tabbar b').forEach(b => b.textContent = b.dataset[l] || b.textContent); if (typeof applyStores === 'function' && Store.uni) applyStores(); }
+function setLang(l) { state.lang = l; setTimeout(() => { renderWelcome(); updateLockUi(); }, 0); try { localStorage.setItem('radar-lang', l); } catch (e) {} $('#langBtn').textContent = l.toUpperCase(); $('#langBtn').title = l === 'fr' ? 'Analyses en français (cliquer pour l\'anglais)' : 'Analyses in English (click for French)'; document.querySelectorAll('#tabbar b').forEach(b => b.textContent = b.dataset[l] || b.textContent); if (typeof applyStores === 'function' && Store.uni) applyStores(); }
 document.querySelectorAll('#tabbar b').forEach(b => b.textContent = b.dataset[state.lang] || b.textContent);
 $('#langBtn').onclick = () => setLang(state.lang === 'fr' ? 'en' : 'fr');
 $('#langBtn').textContent = state.lang.toUpperCase();
@@ -1432,16 +1433,21 @@ async function loadPrivateBlob() {
   if (token()) { try { const r = await ghRead('data/private.enc.json'); return JSON.parse(r.text); } catch (e) { /* jeton invalide : lecture publique */ } }
   return fetch('data/private.enc.json?t=' + Date.now()).then(r => r.json());
 }
+// Visiteur ou propriétaire : un appareil devient « propriétaire » après un déverrouillage réussi.
+const isOwner = () => !!(LS.get('radar-owner') || LS.get('radar-pw') || LS.get('radar-gh-token'));
+function applyGuest() { document.documentElement.classList.toggle('guest', !isOwner()); }
 async function unlock(pw, remember) {
   const blob = await loadPrivateBlob();
   const p = await decryptBlob(blob, pw); // lève une erreur si le mot de passe est mauvais
   Store.pw = pw; Store.priv = p;
+  LS.set('radar-owner', '1'); applyGuest();
   if (remember) LS.set('radar-pw', pw); else LS.set('radar-pw', null);
   if (state.priv && LS.get('radar-priv') !== '1') setPrivQuiet(false);
   applyStores();
 }
 async function boot() {
   sampleFn = null;
+  applyGuest(); renderWelcome();
   try { await loadPublic(); }
   catch (e) { showOffline('Les données n\'ont pas pu être chargées. Vérifie ta connexion, puis recharge la page.'); return; }
   dbFresh = true;
@@ -1455,8 +1461,8 @@ function showOffline(msg) { $('#status').innerHTML = `<span class="dot"></span><
 /* ---------- verrou, réglages ---------- */
 function updateLockUi() {
   const b = $('#lockBtn'); if (!b) return;
-  b.innerHTML = state.unlocked ? '<svg class="i" aria-hidden="true"><use href="#i-unlock"/></svg>' : '<svg class="i" aria-hidden="true"><use href="#i-lock"/></svg><span class="hide-sm"> Déverrouiller</span>';
-  b.title = state.unlocked ? 'Tes données personnelles sont déverrouillées sur cet appareil' : 'Entre ton mot de passe pour voir ton portefeuille';
+  b.innerHTML = state.unlocked ? '<svg class="i" aria-hidden="true"><use href="#i-unlock"/></svg>' : '<svg class="i" aria-hidden="true"><use href="#i-lock"/></svg><span class="hide-sm"> ' + (isOwner() ? T('Déverrouiller', 'Unlock') : T('Propriétaire', 'Owner')) + '</span>';
+  b.title = state.unlocked ? 'Tes données personnelles sont déverrouillées sur cet appareil' : isOwner() ? 'Entre ton mot de passe pour voir ton portefeuille' : T('Accès réservé au propriétaire du radar', 'Owner access only');
 }
 function openPanel(html) { state.form = true; state.open = null; const d = $('#drawer'); d.dataset.t = ''; d.innerHTML = html; d.hidden = false; $('#scrim').hidden = false; $('#xClose').onclick = closeDrawer; }
 function openUnlock() {
@@ -1499,8 +1505,72 @@ function openSettings() {
     try { const cur = await ghRead('data/private.enc.json'); const obj = await decryptBlob(JSON.parse(cur.text), Store.pw); await ghWrite('data/private.enc.json', JSON.stringify(await encryptObj(obj, v)), cur.sha, 'Nouveau mot de passe du coffre'); Store.pw = v; if (LS.get('radar-pw')) LS.set('radar-pw', v); $('#stPwMsg').textContent = 'Mot de passe changé. Pense à mettre à jour le secret RADAR_PASSWORD sur GitHub.'; }
     catch (e) { $('#stPwMsg').textContent = 'Le changement a échoué.'; }
   };
-  const fg = $('#stForget'); if (fg) fg.onclick = () => { LS.set('radar-pw', null); $('#stPwMsg').textContent = 'Le mot de passe sera demandé à la prochaine visite.'; };
+  const fg = $('#stForget'); if (fg) fg.onclick = () => { LS.set('radar-pw', null); LS.set('radar-owner', null); $('#stPwMsg').textContent = 'Le mot de passe sera demandé à la prochaine visite.'; };
 }
 document.addEventListener('click', e => { if (e.target.closest('#lockBtn')) { state.unlocked ? openSettings() : openUnlock(); } if (e.target.closest('#gearBtn')) openSettings(); });
 boot();
+
+/* ---------- accueil des visiteurs et visite guidée ---------- */
+function renderWelcome() {
+  const w = $('#welcome'); if (!w) return;
+  const hide = isOwner() || LS.get('radar-welcome') === 'hidden';
+  w.hidden = hide; if (hide) return;
+  const V = (ic, cls, t) => `<span class="pill ${cls}"><svg class="i" aria-hidden="true"><use href="#i-${ic}"/></svg> ${t}</span>`;
+  w.innerHTML = `<button class="close wx" id="wClose" aria-label="${T('Fermer', 'Close')}">×</button>
+    <span class="lbl">${T('Bienvenue', 'Welcome')}</span>
+    <h2>${T('Un radar qui analyse la bourse tout seul', 'A radar that analyses the market on its own')}</h2>
+    <p class="lead">${T('Ce site suit environ 130 entreprises du Canada, des États-Unis et d\'ailleurs. Chaque soir de semaine, il récupère leurs prix et leurs états financiers, les compare entre elles et donne à chacune un score de 0 à 100. Il ne s\'agit pas de conseils financiers : c\'est un projet personnel pour apprendre à analyser des entreprises.',
+      'This site tracks about 130 companies from Canada, the US and elsewhere. Every weekday evening it fetches their prices and financial statements, compares them and gives each one a score from 0 to 100. This is not financial advice: it is a personal project to learn how to analyse companies.')}</p>
+    <div class="wgrid">
+      <div><svg class="i" aria-hidden="true"><use href="#i-binoculars"/></svg><b>${T('Ouvre une entreprise', 'Open a company')}</b><span>${T('Touche une carte ou une ligne du tableau : graphique du prix, profil en 5 axes, raisons d\'investir ou non.', 'Tap a card or a table row: price chart, five-axis profile, reasons to invest or not.')}</span></div>
+      <div><svg class="i" aria-hidden="true"><use href="#i-profile"/></svg><b>${T('Lis le profil', 'Read the profile')}</b><span>${T('Survole ou touche chaque pointe de la forme pour voir les 30 critères réussis ou échoués.', 'Hover or tap each point of the shape to see the 30 passed or failed checks.')}</span></div>
+      <div><svg class="i" aria-hidden="true"><use href="#i-landmark"/></svg><b>${T('Suis les grands investisseurs', 'Follow great investors')}</b><span>${T('Les positions déclarées de Buffett, Ackman, Burry et d\'autres, plus des découvertes chaque lundi.', 'Reported holdings of Buffett, Ackman, Burry and others, plus new finds every Monday.')}</span></div>
+    </div>
+    <div class="wlegend"><span class="lbl">${T('Les verdicts', 'Verdicts')}</span>${V('buy', 'v-buy', T('Achat intéressant', 'Attractive'))}${V('thumb', 'v-con', T('À considérer', 'Consider'))}${V('eye', 'v-watch', T('À surveiller', 'Watch'))}${V('alert', 'v-care', T('Prudence', 'Caution'))}${V('ban', 'v-avoid', T('Éviter', 'Avoid'))}</div>
+    <div class="wact"><button class="btn primary" id="wTour">${T('Faire la visite guidée (1 min)', 'Take the guided tour (1 min)')}</button><button class="btn" id="wSkip">${T('Explorer tout seul', 'Explore on my own')}</button></div>
+    <p class="note">${T('Le portefeuille personnel du propriétaire est chiffré et n\'est jamais visible ici.', 'The owner\'s personal portfolio is encrypted and never visible here.')}</p>`;
+  const close = () => { LS.set('radar-welcome', 'hidden'); w.classList.add('bye'); setTimeout(() => { w.hidden = true; w.classList.remove('bye'); }, 250); };
+  $('#wClose').onclick = close; $('#wSkip').onclick = close;
+  $('#wTour').onclick = () => { close(); startTour(); };
+}
+const TOUR = () => [
+  ['#journee', T('La journée', 'The day'), T('Comment le marché a bougé, et les plus fortes hausses et baisses parmi les titres suivis.', 'How the market moved, and the biggest gainers and losers among tracked stocks.')],
+  ['#opps > :first-child', T('Une carte = une entreprise', 'One card = one company'), T('Le cercle est le score radar sur 100, la pastille le verdict. Touche la carte pour ouvrir sa fiche complète.', 'The ring is the radar score out of 100, the badge the verdict. Tap the card to open its full page.')],
+  ['#decouvertes', T('Découvertes de la semaine', 'Weekly finds'), T('Chaque lundi, le radar fouille le S&P 500 et le TSX 60 et propose les meilleures entreprises qu\'il ne suit pas encore.', 'Every Monday the radar scans the S&P 500 and TSX 60 and suggests the best companies it does not track yet.')],
+  ['#carte', T('Carte des occasions', 'Opportunity map'), T('En haut à droite : bon score et prix loin de son sommet. Touche un point pour ouvrir l\'entreprise.', 'Top right: good score and price far below its high. Tap a dot to open the company.')],
+  ['#investisseurs + section', T('Les grands investisseurs', 'Great investors'), T('Ce que détiennent des investisseurs célèbres selon leurs déclarations officielles à la SEC.', 'What famous investors hold according to their official SEC filings.')],
+  ['#tAll', T('Tous les titres', 'All stocks'), T('Cherche, trie par score ou par variation du jour, et touche une ligne pour la fiche.', 'Search, sort by score or daily change, and tap a row for details.')],
+  ['#palBtn', T('À ton goût', 'Your way'), T('Change les couleurs ici, et la langue avec le bouton FR/EN juste à côté.', 'Change colours here, and the language with the FR/EN button next to it.')]
+];
+function startTour(i = 0) {
+  const steps = TOUR().filter(([sel]) => { const e = $(sel); return e && e.offsetParent !== null; });
+  let ov = $('#tour'); if (!ov) { ov = document.createElement('div'); ov.id = 'tour'; ov.innerHTML = '<div class="thole"></div><div class="tbub" role="dialog" aria-live="polite"></div>'; document.body.appendChild(ov); }
+  const hole = ov.querySelector('.thole'), bub = ov.querySelector('.tbub');
+  const end = () => { ov.remove(); removeEventListener('resize', place); document.removeEventListener('keydown', key); };
+  const key = e => { if (e.key === 'Escape') end(); if (e.key === 'ArrowRight') go(i + 1); if (e.key === 'ArrowLeft') go(i - 1); };
+  document.addEventListener('keydown', key);
+  let el = null;
+  function place() {
+    if (!el) return; const r = el.getBoundingClientRect(), pad = 6;
+    const top = Math.max(r.top - pad, 8), h = Math.min(r.height + pad * 2, innerHeight - top - 8);
+    Object.assign(hole.style, { left: (r.left - pad) + 'px', top: top + 'px', width: (r.width + pad * 2) + 'px', height: h + 'px' });
+    if (innerWidth <= 760) { Object.assign(bub.style, { left: '12px', right: '12px', top: '', bottom: 'calc(84px + env(safe-area-inset-bottom,0px))', width: '' }); return; }
+    const bw = 340, below = top + h + 12 + 190 < innerHeight;
+    Object.assign(bub.style, { width: bw + 'px', right: '', bottom: '', left: Math.min(Math.max(12, r.left), innerWidth - bw - 12) + 'px', top: (below ? top + h + 12 : Math.max(12, top - 12 - bub.offsetHeight)) + 'px' });
+  }
+  function go(n) {
+    if (n < 0) return; if (n >= steps.length) return end(); i = n;
+    const [sel, title, txt] = steps[i]; el = $(sel);
+    const rect = el.getBoundingClientRect(); const fixed = getComputedStyle(el.closest('.topbar') || document.body).position === 'sticky' || el.closest('.topbar');
+    if (!fixed) scrollTo({ top: scrollY + rect.top - Math.max(80, (innerHeight - Math.min(rect.height, innerHeight * .55)) / 3), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    bub.innerHTML = `<span class="lbl">${i + 1} / ${steps.length}</span><b>${esc(title)}</b><p>${esc(txt)}</p><div class="tnav"><button class="btn" id="tSkip">${T('Quitter', 'Skip')}</button><span></span>${i ? `<button class="btn" id="tPrev">${T('Retour', 'Back')}</button>` : ''}<button class="btn primary" id="tNext">${i === steps.length - 1 ? T('Terminer', 'Done') : T('Suivant', 'Next')}</button></div>`;
+    $('#tSkip').onclick = end; $('#tNext').onclick = () => go(i + 1); if ($('#tPrev')) $('#tPrev').onclick = () => go(i - 1);
+    bub.classList.remove('in'); void bub.offsetWidth; bub.classList.add('in');
+    setTimeout(place, 380); place(); $('#tNext').focus({ preventScroll: true });
+  }
+  addEventListener('resize', place); addEventListener('scroll', place, { passive: true });
+  ov.onclick = e => { if (e.target === ov) end(); };
+  go(i);
+}
+document.addEventListener('click', e => { if (e.target.closest('#helpBtn')) { if (!isOwner()) { LS.set('radar-welcome', null); renderWelcome(); scrollTo({ top: 0, behavior: 'smooth' }); } else startTour(); } });
 })();

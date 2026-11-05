@@ -44,7 +44,8 @@ jobs:
           RADAR_PASSWORD: ${{ secrets.RADAR_PASSWORD }}
           FORCE_13F: ${{ github.event.inputs.force13f }}
           FORCE_DISCOVER: ${{ github.event.inputs.discover }}
-        run: python scripts/update.py ${{ github.event.inputs.symbols }}
+          RADAR_SYMBOLS: ${{ github.event.inputs.symbols }}
+        run: python scripts/update.py
       - name: Enregistrer les changements
         run: |
           git config user.name "radar-bot"
@@ -67,8 +68,8 @@ jobs:
             echo
             cat .notify.md
             echo
-            echo "👉 Ouvre ton radar : https://999flamingoat.github.io/radar-boursier/"
+            echo "Ouvre ton radar : https://999flamingoat.github.io/radar-boursier/"
             echo
             echo "_Le détail reste dans ta page, déverrouillée avec ton mot de passe._"
           } > body.md
-          gh issue create --title "📡 Radar du $(date +%Y-%m-%d)" --body-file body.md --label radar
+          gh issue create --title "Radar du $(date +%Y-%m-%d)" --body-file body.md --label radar

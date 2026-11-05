@@ -339,6 +339,9 @@ def index_members():
     return out
 
 
+_SYM = __import__("re").compile(r"[A-Z0-9][A-Z0-9.\-]{0,11}")
+
+
 def to_radar_symbol(y: str) -> str:
     if y.endswith(".TO"):
         return y[:-3].replace("-", ".") + ".TO"
@@ -348,7 +351,7 @@ def to_radar_symbol(y: str) -> str:
 def discover(universe: dict, fetch_one, sector_fr: dict, limit=12):
     import yfinance as yf
 
-    members = index_members()
+    members = {k: v for k, v in index_members().items() if _SYM.fullmatch(str(k))}
     known = {k.replace(".", "-") for k in universe} | set(universe)
     cands = [s for s in members if s not in known and to_radar_symbol(s) not in universe]
     if not cands:

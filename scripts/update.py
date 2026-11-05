@@ -70,19 +70,19 @@ def log(*a):
 
 
 # ---------------------------------------------------------------- chiffrement (compatible WebCrypto)
-ITER = 250_000
+ITER = 600_000  # OWASP 2023 pour PBKDF2-SHA256
 
 
-def _key(password: str, salt: bytes) -> bytes:
+def _key(password: str, salt: bytes, iterations: int = ITER) -> bytes:
     from cryptography.hazmat.primitives import hashes
     from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-    return PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=ITER).derive(password.encode())
+    return PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=iterations).derive(password.encode())
 
 
 def decrypt(blob: dict, password: str) -> dict:
     from cryptography.hazmat.primitives.ciphers.aead import AESGCM
     salt, iv, ct = (base64.b64decode(blob[k]) for k in ("salt", "iv", "ct"))
-    return json.loads(AESGCM(_key(password, salt)).decrypt(iv, ct, None).decode("utf-8"))
+    return json.loads(AESGCM(_key(password, salt, int(blob.get("iter") or 250_000))).decrypt(iv, ct, None).decode("utf-8"))
 
 
 def encrypt(obj: dict, password: str) -> dict:
@@ -327,6 +327,24 @@ def _get(url, timeout):
             time.sleep(10 * (attempt + 1))
 
 
+SYM_OK = re.compile(r"[A-Z0-9][A-Z0-9.\-]{0,11}")
+# phrases qui parlent du portefeuille d'Evan : jamais dans les fichiers publics
+PERSONAL = re.compile(r"\b(ton|ta|tes|tu|t')\s*(portefeuille|secteur|techno|détiens|possèdes|positions?|compte|CELI)|portefeuille déjà|que tu détiens", re.I)
+
+
+def scrub_personal(u):
+    n = 0
+    for v in u.values():
+        for f in ("pros", "cons", "green", "red"):
+            if isinstance(v.get(f), list):
+                keep = [x for x in v[f] if not (isinstance(x, str) and PERSONAL.search(x))]
+                n += len(v[f]) - len(keep); v[f] = keep
+        for f in ("summary",):
+            if isinstance(v.get(f), str) and PERSONAL.search(v[f]):
+                v.pop(f); n += 1
+    return n
+
+
 def http_json(url):
     return json.loads(_get(url, 30))
 
@@ -542,9 +560,13 @@ def apply_private(priv, market, fx):
 
 def main():
     universe = jload(DATA / "universe.json", {})
+    if scrub_personal(universe):
+        jdump(DATA / "universe.json", universe)
+        log("Phrases personnelles retirées des données publiques.")
     prev = jload(DATA / "market.json", {"stocks": {}})
     pstocks = prev.get("stocks", {})
-    only = set(sys.argv[1:])  # option : symboles précis
+    raw = (os.environ.get("RADAR_SYMBOLS") or " ".join(sys.argv[1:])).split()
+    only = {x.upper() for x in raw if SYM_OK.fullmatch(x.upper())}  # option : symboles précis (validés)
     out = {}
     fails = []
     monday = TODAY.weekday() == 0

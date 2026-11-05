@@ -656,7 +656,7 @@ def main():
             notify_priv = priv.pop("_notify", {})
             jdump(pfile, encrypt(priv, pw))
             note = f", {n_div} dividende(s) réinvesti(s), {n_sp} fractionnement(s) appliqué(s)"
-            log(f"Portefeuille : {total:,.0f} $ CAD{note}")
+            log(f"Portefeuille privé traité{note}")
         except Exception as e:
             log("Portefeuille privé non traité (mot de passe ou fichier) :", e)
             note = " — portefeuille privé non traité (vérifie le secret RADAR_PASSWORD)"

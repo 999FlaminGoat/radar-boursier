@@ -353,6 +353,22 @@ h3>.i:first-child,.lbl>.i:first-child,.kpi .lbl .i,.ico .i,.sh h3 .i,.note>.i:fi
 .i.up,.up .i{color:var(--good)!important}.i.down,.down .i{color:var(--bad)!important}
 .box.g h3 .i{color:var(--good)}.box.b h3 .i{color:var(--bad)}
 
+
+/* ---------- dégradés décoratifs (couleurs du thème) ---------- */
+:root{--grad:linear-gradient(135deg,var(--accent-soft),var(--surface) 60%);--grad-soft:linear-gradient(160deg,color-mix(in srgb,var(--accent-soft) 75%,var(--surface)),var(--surface) 45%)}
+.part{border-top:0;position:relative}
+.part::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--ink),var(--accent) 35%,color-mix(in srgb,var(--accent) 25%,transparent) 75%,transparent)}
+.day{background:var(--grad)}
+.ic{background:var(--grad-soft)}
+#consensus{position:relative}
+#investisseurs+section>.panel{background:var(--grad-soft)}
+.kpis{background:var(--line)}
+.kpi{background:var(--grad-soft)}
+.kpi:first-child{background:var(--grad)}
+.brief{background:linear-gradient(135deg,var(--accent-soft),color-mix(in srgb,var(--accent-soft) 35%,var(--surface)))}
+#plan{background:var(--grad)}
+#tAll thead th,.tw thead th{background:color-mix(in srgb,var(--accent-soft) 35%,var(--surface-2))}
+nav.tabbar{background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 82%,transparent),color-mix(in srgb,var(--accent-soft) 70%,var(--surface)))}
 /* ---------- visiteurs ---------- */
 .guest .owner{display:none!important}
 .guestonly{display:none}.guest .guestonly{display:block}

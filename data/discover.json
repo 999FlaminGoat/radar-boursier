@@ -1,111 +1,143 @@
 {
- "generatedAt": "2026-11-04T23:04:03Z",
+ "generatedAt": "2026-11-11T01:19:31Z",
  "items": [
+  {
+   "t": "EME",
+   "name": "EMCOR Group, Inc.",
+   "sector": "Industrie",
+   "region": "États-Unis",
+   "cur": "USD",
+   "web": "https://emcorgroup.com",
+   "index": "S&P 500",
+   "price": 652.89,
+   "chg": 0.073038,
+   "pe": 18.66,
+   "target": 884.11,
+   "hi52": 943.75,
+   "score": 78,
+   "verdict": "Achat intéressant",
+   "pros": {
+    "fr": [
+     "Revenus en forte hausse : +17 % sur un an",
+     "Génère beaucoup de cash : 1,5 G$ de flux libre (5,2 % de sa valeur)",
+     "Les analystes prévoient des profits en hausse d'environ 18 %"
+    ],
+    "en": [
+     "Strong revenue growth: +17% year over year",
+     "Strong cash generation: $1.5B free cash flow (5.2% yield)",
+     "Analysts expect earnings to grow about 18%"
+    ]
+   },
+   "cons": {
+    "fr": [],
+    "en": []
+   },
+   "fair": 714.61
+  },
   {
    "t": "K.TO",
    "name": "Kinross Gold Corporation",
    "sector": "Matériaux",
    "region": "Canada",
    "cur": "CAD",
+   "web": "https://www.kinross.com",
    "index": "TSX 60",
-   "price": 29.91,
-   "chg": 0.075126,
-   "pe": 8.17,
-   "target": 50.56,
+   "price": 30.57,
+   "chg": -0.051505,
+   "pe": 8.35,
+   "target": 50.38,
    "hi52": 51.92,
-   "score": 80,
+   "score": 77,
    "verdict": "Achat intéressant",
    "pros": {
     "fr": [
      "Revenus en forte hausse : +37 % sur un an",
      "Très rentable : garde 38 % de ses revenus en profit",
      "Génère beaucoup de cash : 3,7 G$ de flux libre (10,4 % de sa valeur)",
-     "Notre estimation DCF (152,08 $) est 408 % au-dessus du prix"
+     "Le prix est sous toute la fourchette de valeur estimée (38,30 $ à 48,88 $)"
     ],
     "en": [
      "Strong revenue growth: +37% year over year",
      "Highly profitable: 38% net margin",
      "Strong cash generation: $3.7B free cash flow (10.4% yield)",
-     "Our DCF estimate ($152.08) is 408% above the price"
+     "Price is below the whole estimated value range ($38.30 to $48.88)"
     ]
    },
    "cons": {
     "fr": [],
     "en": []
    },
-   "fair": 152.08
+   "fair": 42.97
   },
   {
-   "t": "EXE",
-   "name": "Expand Energy Corporation",
+   "t": "BKNG",
+   "name": "Booking Holdings Inc.",
+   "sector": "Consommation",
+   "region": "États-Unis",
+   "cur": "USD",
+   "web": "https://www.bookingholdings.com",
+   "index": "S&P 500",
+   "price": 163.49,
+   "chg": 0.017552,
+   "pe": 17.27,
+   "target": 215.8,
+   "hi52": 219.6844,
+   "score": 76,
+   "verdict": "Achat intéressant",
+   "pros": {
+    "fr": [
+     "Revenus en forte hausse : +13 % sur un an",
+     "Très rentable : garde 26 % de ses revenus en profit",
+     "Génère beaucoup de cash : 9,2 G$ de flux libre (7,8 % de sa valeur)",
+     "Les analystes prévoient des profits en hausse d'environ 33 %"
+    ],
+    "en": [
+     "Strong revenue growth: +13% year over year",
+     "Highly profitable: 26% net margin",
+     "Strong cash generation: $9.2B free cash flow (7.8% yield)",
+     "Analysts expect earnings to grow about 33%"
+    ]
+   },
+   "cons": {
+    "fr": [],
+    "en": []
+   },
+   "fair": 183.83
+  },
+  {
+   "t": "EQT",
+   "name": "EQT Corporation",
    "sector": "Énergie",
    "region": "États-Unis",
    "cur": "USD",
+   "web": "https://www.eqt.com",
    "index": "S&P 500",
-   "price": 87.31,
-   "chg": -0.029134,
-   "pe": 7.53,
-   "target": 123.33,
-   "hi52": 122.89,
-   "score": 80,
+   "price": 49.91,
+   "chg": 0.010324,
+   "pe": 12.32,
+   "target": 67.0,
+   "hi52": 67.93,
+   "score": 76,
    "verdict": "Achat intéressant",
    "pros": {
     "fr": [
-     "Revenus en forte hausse : +189 % sur un an",
-     "Génère beaucoup de cash : 2,5 G$ de flux libre (12,2 % de sa valeur)",
-     "Dividende de 2,6 % par année, bien couvert par les profits",
-     "Notre estimation DCF (517,75 $) est 493 % au-dessus du prix"
+     "Revenus en forte hausse : +60 % sur un an",
+     "Très rentable : garde 28 % de ses revenus en profit",
+     "Génère beaucoup de cash : 3,8 G$ de flux libre (11,7 % de sa valeur)",
+     "Le prix est sous toute la fourchette de valeur estimée (74,97 $ à 106,62 $)"
     ],
     "en": [
-     "Strong revenue growth: +189% year over year",
-     "Strong cash generation: $2.5B free cash flow (12.2% yield)",
-     "2.6% dividend yield, well covered by earnings",
-     "Our DCF estimate ($517.75) is 493% above the price"
+     "Strong revenue growth: +60% year over year",
+     "Highly profitable: 28% net margin",
+     "Strong cash generation: $3.8B free cash flow (11.7% yield)",
+     "Price is below the whole estimated value range ($74.97 to $106.62)"
     ]
    },
    "cons": {
     "fr": [],
     "en": []
    },
-   "fair": 517.75
-  },
-  {
-   "t": "TMUS",
-   "name": "T-Mobile US, Inc.",
-   "sector": "Technologie",
-   "region": "États-Unis",
-   "cur": "USD",
-   "index": "S&P 500",
-   "price": 159.17,
-   "chg": 0.030827,
-   "pe": 15.35,
-   "target": 225.64,
-   "hi52": 221.98,
-   "score": 78,
-   "verdict": "Achat intéressant",
-   "pros": {
-    "fr": [
-     "Génère beaucoup de cash : 17,8 G$ de flux libre (10,5 % de sa valeur)",
-     "Les analystes prévoient des profits en hausse d'environ 37 %",
-     "Dividende de 2,9 % par année, bien couvert par les profits",
-     "Notre estimation DCF (430,48 $) est 170 % au-dessus du prix"
-    ],
-    "en": [
-     "Strong cash generation: $17.8B free cash flow (10.5% yield)",
-     "Analysts expect earnings to grow about 37%",
-     "2.9% dividend yield, well covered by earnings",
-     "Our DCF estimate ($430.48) is 170% above the price"
-    ]
-   },
-   "cons": {
-    "fr": [
-     "Dette élevée : 122,3 G$, soit 73 % de sa valeur en Bourse"
-    ],
-    "en": [
-     "High debt: $122.3B, 73% of market value"
-    ]
-   },
-   "fair": 430.48
+   "fair": 88.13
   },
   {
    "t": "LVS",
@@ -113,26 +145,27 @@
    "sector": "Consommation",
    "region": "États-Unis",
    "cur": "USD",
+   "web": "https://www.sands.com",
    "index": "S&P 500",
-   "price": 40.74,
-   "chg": 0.06482,
-   "pe": 16.7,
+   "price": 40.18,
+   "chg": -0.013504,
+   "pe": 16.73,
    "target": 49.57,
    "hi52": 69.49,
-   "score": 75,
+   "score": 72,
    "verdict": "Achat intéressant",
    "pros": {
     "fr": [
      "Revenus en forte hausse : +15 % sur un an",
      "Génère beaucoup de cash : 2,4 G$ de flux libre (9,1 % de sa valeur)",
      "Les analystes prévoient des profits en hausse d'environ 27 %",
-     "Dividende de 2,9 % par année, bien couvert par les profits"
+     "Dividende de 3,0 % par année, bien couvert par les profits"
     ],
     "en": [
      "Strong revenue growth: +15% year over year",
      "Strong cash generation: $2.4B free cash flow (9.1% yield)",
      "Analysts expect earnings to grow about 27%",
-     "2.9% dividend yield, well covered by earnings"
+     "3.0% dividend yield, well covered by earnings"
     ]
    },
    "cons": {
@@ -143,169 +176,7 @@
      "High debt: $15.8B, 60% of market value"
     ]
    },
-   "fair": 138.9
-  },
-  {
-   "t": "CVS",
-   "name": "CVS Health Corporation",
-   "sector": "Santé",
-   "region": "États-Unis",
-   "cur": "USD",
-   "index": "S&P 500",
-   "price": 79.96,
-   "chg": -0.12526,
-   "pe": 21.04,
-   "target": 115.52,
-   "hi52": 110.6,
-   "score": 74,
-   "verdict": "Achat intéressant",
-   "pros": {
-    "fr": [
-     "Génère beaucoup de cash : 11,8 G$ de flux libre (11,5 % de sa valeur)",
-     "Les analystes prévoient des profits en hausse d'environ 125 %",
-     "Dividende de 3,3 % par année, bien couvert par les profits",
-     "Notre estimation DCF (227,65 $) est 185 % au-dessus du prix"
-    ],
-    "en": [
-     "Strong cash generation: $11.8B free cash flow (11.5% yield)",
-     "Analysts expect earnings to grow about 125%",
-     "3.3% dividend yield, well covered by earnings",
-     "Our DCF estimate ($227.65) is 185% above the price"
-    ]
-   },
-   "cons": {
-    "fr": [
-     "Dette élevée : 80,0 G$, soit 78 % de sa valeur en Bourse"
-    ],
-    "en": [
-     "High debt: $80.0B, 78% of market value"
-    ]
-   },
-   "fair": 227.65
-  },
-  {
-   "t": "AEM.TO",
-   "name": "Agnico Eagle Mines Limited",
-   "sector": "Matériaux",
-   "region": "Canada",
-   "cur": "CAD",
-   "index": "TSX 60",
-   "price": 256.31,
-   "chg": 0.094453,
-   "pe": 15.05,
-   "target": 295.19,
-   "hi52": 344.78,
-   "score": 73,
-   "verdict": "Achat intéressant",
-   "pros": {
-    "fr": [
-     "Revenus en forte hausse : +44 % sur un an",
-     "Très rentable : garde 41 % de ses revenus en profit",
-     "Notre estimation DCF (565,70 $) est 121 % au-dessus du prix"
-    ],
-    "en": [
-     "Strong revenue growth: +44% year over year",
-     "Highly profitable: 41% net margin",
-     "Our DCF estimate ($565.70) is 121% above the price"
-    ]
-   },
-   "cons": {
-    "fr": [],
-    "en": []
-   },
-   "fair": 565.7
-  },
-  {
-   "t": "PCG",
-   "name": "PG&E Corporation",
-   "sector": "Énergie",
-   "region": "États-Unis",
-   "cur": "USD",
-   "index": "S&P 500",
-   "price": 13.4,
-   "chg": 0.008277,
-   "pe": 9.93,
-   "target": 17.62,
-   "hi52": 19.11,
-   "score": 71,
-   "verdict": "Achat intéressant",
-   "pros": {
-    "fr": [
-     "Les analystes prévoient des profits en hausse d'environ 33 %"
-    ],
-    "en": [
-     "Analysts expect earnings to grow about 33%"
-    ]
-   },
-   "cons": {
-    "fr": [
-     "Flux de trésorerie libre négatif (-5,0 G$) : dépense plus qu'elle n'encaisse",
-     "Dette élevée : 61,3 G$, soit 152 % de sa valeur en Bourse"
-    ],
-    "en": [
-     "Negative free cash flow ($-5.0B): spending more cash than it brings in",
-     "High debt: $61.3B, 152% of market value"
-    ]
-   },
-   "fair": null
-  },
-  {
-   "t": "LDOS",
-   "name": "Leidos Holdings, Inc.",
-   "sector": "Technologie",
-   "region": "États-Unis",
-   "cur": "USD",
-   "index": "S&P 500",
-   "price": 135.68,
-   "chg": 0.007126,
-   "pe": 12.13,
-   "target": 151.73,
-   "hi52": 199.55,
-   "score": 70,
-   "verdict": "Achat intéressant",
-   "pros": {
-    "fr": [
-     "Génère beaucoup de cash : 2,2 G$ de flux libre (13,1 % de sa valeur)",
-     "Notre estimation DCF (333,39 $) est 146 % au-dessus du prix"
-    ],
-    "en": [
-     "Strong cash generation: $2.2B free cash flow (13.1% yield)",
-     "Our DCF estimate ($333.39) is 146% above the price"
-    ]
-   },
-   "cons": {
-    "fr": [],
-    "en": []
-   },
-   "fair": 333.39
-  },
-  {
-   "t": "XYL",
-   "name": "Xylem Inc.",
-   "sector": "Industrie",
-   "region": "États-Unis",
-   "cur": "USD",
-   "index": "S&P 500",
-   "price": 101.05,
-   "chg": 0.049652,
-   "pe": 22.41,
-   "target": 125.44,
-   "hi52": 151.31,
-   "score": 70,
-   "verdict": "Achat intéressant",
-   "pros": {
-    "fr": [
-     "Les analystes prévoient des profits en hausse d'environ 31 %"
-    ],
-    "en": [
-     "Analysts expect earnings to grow about 31%"
-    ]
-   },
-   "cons": {
-    "fr": [],
-    "en": []
-   },
-   "fair": 87.01
+   "fair": 55.68
   },
   {
    "t": "JBL",
@@ -313,61 +184,67 @@
    "sector": "Technologie",
    "region": "États-Unis",
    "cur": "USD",
+   "web": "https://www.jabil.com",
    "index": "S&P 500",
-   "price": 258.56,
-   "chg": -0.048362,
-   "pe": 26.52,
+   "price": 252.56,
+   "chg": 0.056339,
+   "pe": 25.62,
    "target": 425.0,
    "hi52": 385.63,
-   "score": 70,
+   "score": 71,
    "verdict": "Achat intéressant",
    "pros": {
     "fr": [
      "Revenus en forte hausse : +21 % sur un an",
-     "Génère beaucoup de cash : 1,4 G$ de flux libre (5,2 % de sa valeur)",
-     "Les analystes prévoient des profits en hausse d'environ 127 %",
-     "Notre estimation DCF (649,39 $) est 151 % au-dessus du prix"
+     "Génère beaucoup de cash : 1,4 G$ de flux libre (5,3 % de sa valeur)",
+     "Les analystes prévoient des profits en hausse d'environ 127 %"
     ],
     "en": [
      "Strong revenue growth: +21% year over year",
-     "Strong cash generation: $1.4B free cash flow (5.2% yield)",
-     "Analysts expect earnings to grow about 127%",
-     "Our DCF estimate ($649.39) is 151% above the price"
+     "Strong cash generation: $1.4B free cash flow (5.3% yield)",
+     "Analysts expect earnings to grow about 127%"
     ]
    },
    "cons": {
     "fr": [],
     "en": []
    },
-   "fair": 649.39
+   "fair": 268.3
   },
   {
-   "t": "NOC",
-   "name": "Northrop Grumman Corporation",
+   "t": "GEV",
+   "name": "GE Vernova Inc.",
    "sector": "Industrie",
    "region": "États-Unis",
    "cur": "USD",
+   "web": "https://www.gevernova.com",
    "index": "S&P 500",
-   "price": 525.35,
-   "chg": -0.045339,
-   "pe": 16.58,
-   "target": 636.0,
-   "hi52": 768.02,
-   "score": 69,
+   "price": 829.34,
+   "chg": 0.071347,
+   "pe": 20.93,
+   "target": 1182.83,
+   "hi52": 1174.86,
+   "score": 71,
    "verdict": "Achat intéressant",
    "pros": {
     "fr": [
-     "Génère beaucoup de cash : 3,8 G$ de flux libre (5,1 % de sa valeur)"
+     "Très rentable : garde 24 % de ses revenus en profit",
+     "Génère beaucoup de cash : 17,1 G$ de flux libre (8,1 % de sa valeur)"
     ],
     "en": [
-     "Strong cash generation: $3.8B free cash flow (5.1% yield)"
+     "Highly profitable: 24% net margin",
+     "Strong cash generation: $17.1B free cash flow (8.1% yield)"
     ]
    },
    "cons": {
-    "fr": [],
-    "en": []
+    "fr": [
+     "Profits au sommet d'un cycle : la valeur estimée les ramène vers leur moyenne"
+    ],
+    "en": [
+     "Earnings at a cyclical peak: the estimate pulls them back toward their average"
+    ]
    },
-   "fair": 504.75
+   "fair": 946.15
   },
   {
    "t": "CMI",
@@ -375,29 +252,168 @@
    "sector": "Industrie",
    "region": "États-Unis",
    "cur": "USD",
+   "web": "https://www.cummins.com",
    "index": "S&P 500",
-   "price": 471.84,
-   "chg": -0.05762,
-   "pe": 24.11,
-   "target": 708.66,
+   "price": 466.47,
+   "chg": 0.036439,
+   "pe": 18.95,
+   "target": 650.4,
    "hi52": 727.59,
    "score": 69,
    "verdict": "Achat intéressant",
    "pros": {
     "fr": [
-     "Génère beaucoup de cash : 3,4 G$ de flux libre (5,2 % de sa valeur)",
-     "Les analystes prévoient des profits en hausse d'environ 78 %"
+     "Génère beaucoup de cash : 3,5 G$ de flux libre (5,6 % de sa valeur)",
+     "Les analystes prévoient des profits en hausse d'environ 42 %"
     ],
     "en": [
-     "Strong cash generation: $3.4B free cash flow (5.2% yield)",
-     "Analysts expect earnings to grow about 78%"
+     "Strong cash generation: $3.5B free cash flow (5.6% yield)",
+     "Analysts expect earnings to grow about 42%"
     ]
    },
    "cons": {
     "fr": [],
     "en": []
    },
-   "fair": 458.03
+   "fair": 422.89
+  },
+  {
+   "t": "EXE",
+   "name": "Expand Energy Corporation",
+   "sector": "Énergie",
+   "region": "États-Unis",
+   "cur": "USD",
+   "web": "https://www.expandenergy.com",
+   "index": "S&P 500",
+   "price": 85.96,
+   "chg": 0.016076,
+   "pe": 7.59,
+   "target": 123.33,
+   "hi52": 122.89,
+   "score": 69,
+   "verdict": "Achat intéressant",
+   "pros": {
+    "fr": [
+     "Revenus en forte hausse : +189 % sur un an",
+     "Génère beaucoup de cash : 2,5 G$ de flux libre (12,1 % de sa valeur)",
+     "Dividende de 2,7 % par année, bien couvert par les profits",
+     "Le prix est sous toute la fourchette de valeur estimée (139,10 $ à 198,21 $)"
+    ],
+    "en": [
+     "Strong revenue growth: +189% year over year",
+     "Strong cash generation: $2.5B free cash flow (12.1% yield)",
+     "2.7% dividend yield, well covered by earnings",
+     "Price is below the whole estimated value range ($139.10 to $198.21)"
+    ]
+   },
+   "cons": {
+    "fr": [],
+    "en": []
+   },
+   "fair": 163.42
+  },
+  {
+   "t": "OTEX.TO",
+   "name": "Open Text Corporation",
+   "sector": "Technologie",
+   "region": "Canada",
+   "cur": "CAD",
+   "web": "https://www.opentext.com",
+   "index": "TSX 60",
+   "price": 34.86,
+   "chg": -0.009096,
+   "pe": 9.52,
+   "target": 34.06,
+   "hi52": 48.96,
+   "score": 69,
+   "verdict": "Achat intéressant",
+   "pros": {
+    "fr": [
+     "Génère beaucoup de cash : 1,2 G$ de flux libre (14,2 % de sa valeur)",
+     "Les analystes prévoient des profits en hausse d'environ 63 %",
+     "Dividende de 4,5 % par année, bien couvert par les profits",
+     "Le prix est sous toute la fourchette de valeur estimée (50,83 $ à 68,24 $)"
+    ],
+    "en": [
+     "Strong cash generation: $1.2B free cash flow (14.2% yield)",
+     "Analysts expect earnings to grow about 63%",
+     "4.5% dividend yield, well covered by earnings",
+     "Price is below the whole estimated value range ($50.83 to $68.24)"
+    ]
+   },
+   "cons": {
+    "fr": [
+     "Dette élevée : 8,5 G$, soit 101 % de sa valeur en Bourse"
+    ],
+    "en": [
+     "High debt: $8.5B, 101% of market value"
+    ]
+   },
+   "fair": 58.28
+  },
+  {
+   "t": "MKC",
+   "name": "McCormick & Company, Incorporated",
+   "sector": "Consommation",
+   "region": "États-Unis",
+   "cur": "USD",
+   "web": "https://www.mccormickcorporation.com",
+   "index": "S&P 500",
+   "price": 47.88,
+   "chg": -0.010744,
+   "pe": 8.45,
+   "target": 54.45,
+   "hi52": 71.65,
+   "score": 67,
+   "verdict": "Achat intéressant",
+   "pros": {
+    "fr": [
+     "Génère beaucoup de cash : 926 M$ de flux libre (7,4 % de sa valeur)",
+     "Dividende de 4,0 % par année, bien couvert par les profits",
+     "Le prix est sous toute la fourchette de valeur estimée (59,50 $ à 83,55 $)"
+    ],
+    "en": [
+     "Strong cash generation: $926M free cash flow (7.4% yield)",
+     "4.0% dividend yield, well covered by earnings",
+     "Price is below the whole estimated value range ($59.50 to $83.55)"
+    ]
+   },
+   "cons": {
+    "fr": [],
+    "en": []
+   },
+   "fair": 69.51
+  },
+  {
+   "t": "DECK",
+   "name": "Deckers Outdoor Corporation",
+   "sector": "Consommation",
+   "region": "États-Unis",
+   "cur": "USD",
+   "web": "https://www.deckers.com",
+   "index": "S&P 500",
+   "price": 90.43,
+   "chg": 0.042902,
+   "pe": 11.89,
+   "target": 96.39,
+   "hi52": 120.94,
+   "score": 67,
+   "verdict": "Achat intéressant",
+   "pros": {
+    "fr": [
+     "Génère beaucoup de cash : 1,1 G$ de flux libre (8,8 % de sa valeur)",
+     "Le prix est sous toute la fourchette de valeur estimée (106,68 $ à 141,34 $)"
+    ],
+    "en": [
+     "Strong cash generation: $1.1B free cash flow (8.8% yield)",
+     "Price is below the whole estimated value range ($106.68 to $141.34)"
+    ]
+   },
+   "cons": {
+    "fr": [],
+    "en": []
+   },
+   "fair": 121.63
   }
  ]
 }

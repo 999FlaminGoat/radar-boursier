@@ -277,6 +277,15 @@ def fetch_logo(dom, t=None):
     return best
 
 
+def _is_light(im):
+    """Logo blanc ou très pâle sur fond transparent : invisible sur une tuile blanche."""
+    px = [p for p in im.getdata() if p[3] > 128]
+    if not px or len(px) > 0.92 * im.width * im.height:
+        return False  # logo opaque : il a déjà son propre fond
+    lum = sum(0.2126 * r + 0.7152 * g + 0.0722 * b for r, g, b, _ in px) / len(px) / 255
+    return lum > 0.86
+
+
 def update_logos(stocks: dict, discover: dict):
     """Logo de chaque entreprise (64 × 64 px, PNG) : plusieurs sources, rafraîchi chaque mois, réessayé chaque semaine s'il manque."""
     from PIL import Image
@@ -308,20 +317,21 @@ def update_logos(stocks: dict, discover: dict):
         if not re.fullmatch(r"[a-z0-9.-]+\.[a-z]{2,}", dom):
             continue
         im = fetch_logo(dom, t if not (stocks.get(t) or {}).get("etf") else None)
-        ok = False
+        ok = dark = False
         if im is not None:
             bbox = im.getbbox()  # retire les marges transparentes
             if bbox:
                 im = im.crop(bbox)
             im.thumbnail((64, 64), Image.LANCZOS)
-            canvas = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
+            dark = _is_light(im)
+            canvas = Image.new("RGBA", (64, 64), (17, 24, 39, 255) if dark else (0, 0, 0, 0))
             canvas.paste(im, ((64 - im.width) // 2, (64 - im.height) // 2))
             canvas.save(LOGOS / f"{t.replace('.', '_')}.png", optimize=True)
             ok = True
             n += 1
         else:
             miss += 1
-        idx[t] = {"d": today.isoformat(), "ok": ok, "v": LOGO_V, "dom": dom}
+        idx[t] = {"d": today.isoformat(), "ok": ok, "v": LOGO_V, "dom": dom, **({"dark": True} if ok and dark else {})}
         time.sleep(0.2)
     jdump(DATA / "logos.json", idx)
     log(f"Logos : {n} ajouté(s) ou rafraîchi(s), {miss} introuvable(s), {sum(1 for r in idx.values() if r.get('ok'))} au total.")

@@ -414,7 +414,7 @@ function alertState(s) {
 }
 function logo(t, name, size = '') {
   const rec = (Store.logos || {})[t];
-  if (rec && rec.ok) return `<span class="logo ${size}"><img src="logos/${esc(String(t).replace(/\./g, '_'))}.png" alt="" loading="lazy" decoding="async"></span>`;
+  if (rec && rec.ok) return `<span class="logo ${size}${rec.dark ? ' dk' : ''}"><img src="logos/${esc(String(t).replace(/\./g, '_'))}.png" alt="" loading="lazy" decoding="async"></span>`;
   const ini = (nice(name || t).replace(/[^A-Za-zÀ-ÿ0-9 &]/g, ' ').split(/\s+/).filter(w => w && !/^(inc|corp|ltd|the|de|du|la|le|plc|co|sa|nv|ag|&)$/i.test(w)).slice(0, 2).map(w => w[0]).join('') || String(t)[0]).toUpperCase();
   return `<span class="logo mono ${size}" aria-hidden="true">${esc(ini)}</span>`;
 }

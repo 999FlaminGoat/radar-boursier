@@ -106,7 +106,7 @@ function renderDiscover() {
   const L = state.lang || 'fr';
   el.innerHTML = d.map((x, i) => { const v = verdictOf(x.score || 0); const added = !!Store.uni[x.t];
     return `<div class="card" style="--i:${i};cursor:default">
-      <div class="row"><div class="idn">${logo(x.t, x.name)}<div><div class="tk">${esc(x.t)} · ${esc(x.index || '')}</div><div class="nm">${esc(x.name || x.t)}</div><div class="note">${esc(x.sector || '')}${x.region ? ' · ' + esc(x.region) : ''}</div></div></div>${ring(x.score || 0, v.col)}</div>
+      <div class="row"><div class="idn">${logo(x.t, x.name)}<div><div class="tk">${esc(x.t)} <span class="sec">${esc(x.index || '')}</span></div><div class="nm">${esc(x.name || x.t)}</div><div class="note">${esc(x.sector || '')}${x.region ? ' · ' + esc(x.region) : ''}</div></div></div>${ring(x.score || 0, v.col)}</div>
       <div class="row" style="align-items:center"><span class="pill ${v.c}">${v.h}</span><span class="num">${nf(x.price)} ${cp(x.chg)}</span></div>
       <ul class="reasons">${((x.pros || {})[L] || []).slice(0, 2).map(r => `<li>${esc(r)}</li>`).join('')}${((x.cons || {})[L] || []).slice(0, 1).map(r => `<li class="c">${esc(r)}</li>`).join('')}</ul>
       ${added ? '<span class="note"><svg class="i up" aria-hidden="true"><use href="#i-check"/></svg> ' + T('Déjà suivi', 'Already tracked') + '</span>' : `<button class="btn owner" data-add="${esc(x.t)}" data-name="${esc(x.name || '')}" data-sector="${esc(x.sector || '')}" data-region="${esc(x.region || '')}" data-cur="${esc(x.cur || '')}"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg> Ajouter à ma liste</button>`}
@@ -361,8 +361,8 @@ function renderStatus() {
   const last = st?.lastRun || Object.values(state.stocks).reduce((m, s) => s.updatedAt > m ? s.updatedAt : m, '');
   const ageH = last ? (Date.now() - new Date(last)) / 36e5 : 999;
   const cls = !dbFresh ? '' : ageH < 30 ? 'live' : 'stale';
-  el.innerHTML = `<span class="dot ${cls}"></span><span>Données au ${esc(fmtDate(last))}</span><span>·</span><span>Mise à jour auto : ${esc(st?.schedule || 'jours ouvrables')}</span>${state.unlocked ? '' : '<span>·</span><span><svg class="i" aria-hidden="true"><use href="#i-lock"/></svg> portefeuille verrouillé</span>'}`;
-  if (!isOwner()) el.innerHTML = `<span class="dot ${cls}"></span><span>${T('Données au', 'Data as of')} ${esc(fmtDate(last))}</span>`;
+  el.innerHTML = `<span class="dot ${cls}"></span><span>Chiffres du ${esc(fmtDate(last))}. Mis à jour tout seul chaque soir de semaine.</span>${state.unlocked ? '' : '<span>·</span><span><svg class="i" aria-hidden="true"><use href="#i-lock"/></svg> portefeuille verrouillé</span>'}`;
+  if (!isOwner()) el.innerHTML = `<span class="dot ${cls}"></span><span>${T('Chiffres du', 'Figures as of')} ${esc(fmtDate(last))}</span>`;
 }
 function renderKpis(pf, items) {
   if (!pf) { $('#resume').innerHTML = ''; return; }
@@ -452,7 +452,7 @@ function renderOpps(items) {
   if (!top.length) { $('#opps').innerHTML = `<div class="empty">${f === 'all' ? T('Aucun titre suivi pour l\'instant.', 'No tracked stock yet.') : T('Aucun titre dans ce filtre pour l\'instant.', 'No stock in this filter yet.')}</div>`; return; }
   $('#opps').innerHTML = top.map(({ s, a }, i) => `
     <button class="card" style="--i:${i}" data-t="${esc(s.ticker)}">
-      <div class="row"><div class="idn">${logo(s.ticker, s.name)}<div><div class="tk">${esc(s.ticker)} · ${esc(s.sector || '')}</div><div class="nm">${esc(nice(s.name))}</div><div>${badges(s)}</div></div></div>${ring(a.score, a.verdict.col)}</div>
+      <div class="row"><div class="idn">${logo(s.ticker, s.name)}<div><div class="tk">${esc(s.ticker)} <span class="sec">${esc(s.sector || '')}</span></div><div class="nm">${esc(nice(s.name))}</div><div>${badges(s)}</div></div></div>${ring(a.score, a.verdict.col)}</div>
       <div class="row" style="align-items:center"><span class="pill ${a.verdict.c}">${a.verdict.h}</span><span class="num">${nf(s.price)} ${cp(s.chg)}</span></div>
       <ul class="reasons">${a.pros.length ? `<li>${esc(a.pros[0])}</li>` : a.cons.slice(0, 1).map(r => `<li class="c">${esc(r)}</li>`).join('')}</ul>
       ${spark(s) || rangeBar(s)}
@@ -596,6 +596,21 @@ function renderHero(pf, items) {
   const avg = Math.round(avgOf(items.map(x => x.a.score)) || 0);
   const pick = items.filter(x => !x.s.etf && (state.priv || !x.s.owned)).sort((a, b) => b.a.score - a.a.score)[0];
   const d0 = state.status?.day;
+  const ch = v => `<span class="${v >= 0 ? 'up' : 'down'}">${v >= 0 ? '+' : '−'}${nf(Math.abs(v) * 100, 1)} %</span>`;
+  const list = xs => xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + T(' et ', ' and ') + xs[xs.length - 1];
+  const when = d0?.date ? new Date(d0.date + 'T12:00').toLocaleDateString(state.lang === 'en' ? 'en-CA' : 'fr-CA', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
+  const idx = (d0?.indices || []).map(i => `${esc(i.n)} ${ch(i.chg)}`);
+  // les indices dits en phrase : « le S&P 500 recule de 0,4 %, le Nasdaq de 0,7 % et le TSX gagne 0,2 % »
+  const said = (() => {
+    const xs = d0?.indices || []; if (!xs.length) return '';
+    const v = c => `<span class="${c >= 0 ? 'up' : 'down'}">${nf(Math.abs(c) * 100, 1)} %</span>`;
+    let prev = null;
+    const parts = xs.map((i, k) => { const sgn = i.chg >= 0; const verb = state.lang === 'en' ? (sgn ? 'gains ' : 'falls ') : (sgn ? 'gagne ' : 'recule de '); const same = prev === sgn; prev = sgn;
+      const art = state.lang === 'en' ? 'the ' : 'le '; return `${k ? art : (state.lang === 'en' ? 'The ' : 'Le ')}${esc(i.n)} ${same && k ? (state.lang === 'en' ? '' : (sgn ? '' : 'de ')) : verb}${v(i.chg)}`; });
+    return list(parts) + '.';
+  })();
+  const avgIdx = avgOf((d0?.indices || []).map(i => i.chg));
+  const mood = avgIdx == null ? '' : avgIdx >= 0.012 ? T('Belle journée.', 'A good day.') : avgIdx >= 0.003 ? T('Journée positive.', 'A positive day.') : avgIdx > -0.003 ? T('Journée tranquille.', 'A quiet day.') : avgIdx > -0.012 ? T('Journée dans le rouge.', 'A red day.') : T('Grosse journée de baisse.', 'A rough day.');
   let left;
   if (pf && !state.priv) {
     let dv = 0, base = 0; pf.rows.forEach(r => { const s = r.s; if (!s || s.chg == null) return; const prev = r.value / (1 + s.chg); dv += r.value - prev; base += prev; });
@@ -603,20 +618,21 @@ function renderHero(pf, items) {
     const hist = (state.meta.history || []).filter(p => p && p.d < '2026-11-03' && p.wallet > 0).slice(-120).map(p => p.wallet);
     hist.push(pf.total);
     const W = 300, H = 60, path = hist.length > 4 ? sparkPath(hist, W, H) : '';
-    left = `<span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-wallet"/></svg> Valeur du portefeuille</span>
-      <div class="big" data-count="${Math.round(pf.total)}" data-suffix=" $">${money(pf.total)}</div>
-      <div class="sub">${base ? `<span class="cp ${dv >= 0 ? 'up' : 'down'}">${dv >= 0 ? '+' : '−'}${money(Math.abs(dv))} · ${pct(dv / base, 2)}</span> aujourd'hui` : ''}<span>·</span><span>Gain total <b class="${gain >= 0 ? 'up' : 'down'}">${gain >= 0 ? '+' : '−'}${money(Math.abs(gain))} (${pct(gain / pf.cost, 1)})</b></span></div>
-      ${path ? `<div class="hspark spark ${hist[hist.length - 1] >= hist[0] ? 'up' : 'down'}"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path class="a" d="${path}L${W},${H}L0,${H}Z"/><path d="${path}"/></svg></div>` : ''}`;
+    left = `<p class="when">${esc(when)}</p>
+      <h2 class="say">Mon portefeuille vaut <span class="big" data-count="${Math.round(pf.total)}" data-suffix=" $">${money(pf.total)}</span>.</h2>
+      <p class="say-sub">${base ? `${dv >= 0 ? 'Il a pris' : 'Il a perdu'} <b class="${dv >= 0 ? 'up' : 'down'}">${money(Math.abs(dv))}</b> aujourd'hui (${ch(dv / base)}), ` : ''}et ${gain >= 0 ? 'il est en hausse de' : 'il est en baisse de'} <b class="${gain >= 0 ? 'up' : 'down'}">${money(Math.abs(gain))}</b> par rapport à ce que j'ai payé (${ch(gain / pf.cost)}).</p>
+      ${path ? `<div class="hspark spark ${hist[hist.length - 1] >= hist[0] ? 'up' : 'down'}"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path class="a" d="${path}L${W},${H}L0,${H}Z"/><path d="${path}"/></svg></div>` : ''}
+      <p class="say-note">${said ? `${esc(mood)} ${said}` : ''}</p>`;
   } else {
-    const mood = d0?.verdict && !/portefeuille/i.test(d0.verdict) ? d0.verdict : (up > down * 1.3 ? T('Bonne journée', 'Good day') : down > up * 1.3 ? T('Journée difficile', 'Tough day') : T('Journée tranquille', 'Quiet day'));
-    left = `<span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-radar"/></svg> ${T('Le marché en bref', 'Market at a glance')}</span>
-      <div class="big">${esc(state.lang === 'en' ? mood.replace('Bonne journée', 'Good day').replace('Journée difficile', 'Tough day').replace('Journée tranquille', 'Quiet day') : mood)}</div>
-      <div class="sub">${(d0?.indices || []).map(i => `<span>${esc(i.n)} ${cp(i.chg)}</span>`).join('')}</div>`;
+    left = `<p class="when">${esc(when)}</p>
+      <h2 class="say">${mood ? esc(mood) : T('Les marchés sont fermés.', 'Markets are closed.')}</h2>
+      ${said ? `<p class="say-sub">${said}</p>` : ''}`;
   }
-  left += `<div class="stats"><div><b data-count="${all.length}">${all.length}</b><span>${T('titres suivis', 'stocks tracked')}</span></div><div><b class="up">${up}</b><span>${T('en hausse', 'up')}</span></div><div><b class="down">${down}</b><span>${T('en baisse', 'down')}</span></div><div><b>${avg}</b><span>${T('score moyen', 'avg score')}</span></div></div>`;
-  const right = pick ? `<span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-star"/></svg> ${T('Le titre le mieux noté', 'Top-rated stock')}</span>
+  left += `<p class="say-sub">${T(`Sur les ${all.length} entreprises que je suis, <b class="up">${up}</b> montent et <b class="down">${down}</b> baissent. La note moyenne est de ${avg} sur 100.`,
+    `Of the ${all.length} companies I follow, <b class="up">${up}</b> are up and <b class="down">${down}</b> are down. The average score is ${avg} out of 100.`)}</p>`;
+  const right = pick ? `<p class="when">${T('La mieux notée en ce moment', 'Best rated right now')}</p>
     <button class="hero-pick" data-t="${esc(pick.s.ticker)}">
-      <div class="row"><div class="idn">${logo(pick.s.ticker, pick.s.name, 'lg')}<div><div class="tk">${esc(pick.s.ticker)} · ${esc(pick.s.sector || '')}</div><div class="nm">${esc(nice(pick.s.name))}</div></div></div>${ring(pick.a.score, pick.a.verdict.col)}</div>
+      <div class="row"><div class="idn">${logo(pick.s.ticker, pick.s.name, 'lg')}<div><div class="tk">${esc(pick.s.ticker)} <span class="sec">${esc(pick.s.sector || '')}</span></div><div class="nm">${esc(nice(pick.s.name))}</div></div></div>${ring(pick.a.score, pick.a.verdict.col)}</div>
       <div class="row" style="align-items:center"><span class="pill ${pick.a.verdict.c}">${pick.a.verdict.h}</span><span class="num">${nf(pick.s.price)} ${cp(pick.s.chg)}</span></div>
       ${spark(pick.s)}
       ${pick.a.pros[0] ? `<p class="note" style="margin:0">${esc(pick.a.pros[0])}</p>` : ''}
@@ -728,7 +744,7 @@ function renderDrawer(t, focus) {
   const keepAi = d.dataset.t === t && prevAi;
   d.dataset.t = t;
   d.innerHTML = `
-    <div class="dh"><div><div class="tk">${esc(s.ticker)} · ${esc(s.sector || '')} · ${esc(s.region && regionOf(s) === 'International' ? s.region : regionOf(s))}<span class="priv">${s.owned ? ' · détenu' : ' · surveillé'}</span></div><h2 id="dName">${esc(nice(s.name))}</h2>
+    <div class="dh"><div><div class="tk">${esc(s.ticker)} <span class="sec">${esc(s.sector || '')}, ${esc(s.region && regionOf(s) === 'International' ? s.region : regionOf(s))}</span><span class="priv">${s.owned ? ' · détenu' : ' · surveillé'}</span></div><h2 id="dName">${esc(nice(s.name))}</h2>
       <div class="num" style="font-size:20px;margin-top:4px">${nf(s.price)} <span style="font-size:14px" class="${s.chg >= 0 ? 'up' : 'down'}">${s.chg >= 0 ? '▲' : '▼'} ${pct(s.chg, 2)} aujourd'hui</span></div><div style="margin-top:4px">${badges(s)}</div></div>
       <button class="close" id="xClose" aria-label="Fermer">×</button></div>
     ${(() => { const x = splitList().find(z => z.t === s.ticker); return x ? `<div class="alert"><b>${esc(splitTxt(x))} · ${esc(x.date)}${x.recorded ? '' : ' (à confirmer)'}</b><span class="note">Après un fractionnement, tu as plus d'actions à un prix plus bas : la valeur de ta position ne change pas.${x.recorded ? ' Les prix passés du graphique sont ajustés.' : ''}</span></div>` : ''; })()}
@@ -1641,18 +1657,16 @@ function renderWelcome() {
   w.hidden = hide; if (hide) return;
   const V = (ic, cls, t) => `<span class="pill ${cls}"><svg class="i" aria-hidden="true"><use href="#i-${ic}"/></svg> ${t}</span>`;
   w.innerHTML = `<button class="close wx" id="wClose" aria-label="${T('Fermer', 'Close')}">×</button>
-    <span class="lbl">${T('Bienvenue', 'Welcome')}</span>
-    <h2>${T('Un radar qui analyse la bourse tout seul', 'A radar that analyses the market on its own')}</h2>
-    <p class="lead">${T('Ce site suit environ 130 entreprises du Canada, des États-Unis et d\'ailleurs. Chaque soir de semaine, il récupère leurs prix et leurs états financiers, les compare entre elles et donne à chacune un score de 0 à 100. Il ne s\'agit pas de conseils financiers : c\'est un projet personnel pour apprendre à analyser des entreprises.',
-      'This site tracks about 130 companies from Canada, the US and elsewhere. Every weekday evening it fetches their prices and financial statements, compares them and gives each one a score from 0 to 100. This is not financial advice: it is a personal project to learn how to analyse companies.')}</p>
-    <div class="wgrid">
-      <div><svg class="i" aria-hidden="true"><use href="#i-binoculars"/></svg><b>${T('Ouvre une entreprise', 'Open a company')}</b><span>${T('Touche une carte ou une ligne du tableau : graphique du prix, profil en 5 axes, raisons d\'investir ou non.', 'Tap a card or a table row: price chart, five-axis profile, reasons to invest or not.')}</span></div>
-      <div><svg class="i" aria-hidden="true"><use href="#i-profile"/></svg><b>${T('Lis le profil', 'Read the profile')}</b><span>${T('Survole ou touche chaque pointe de la forme pour voir les 30 critères réussis ou échoués.', 'Hover or tap each point of the shape to see the 30 passed or failed checks.')}</span></div>
-      <div><svg class="i" aria-hidden="true"><use href="#i-landmark"/></svg><b>${T('Suis les grands investisseurs', 'Follow great investors')}</b><span>${T('Les positions déclarées de Buffett, Ackman, Burry et d\'autres, plus des découvertes chaque lundi.', 'Reported holdings of Buffett, Ackman, Burry and others, plus new finds every Monday.')}</span></div>
+    <h2>${T('Salut, bienvenue sur mon radar', 'Hi, welcome to my radar')}</h2>
+    <div class="letter">
+      <p>${T('C\'est l\'outil que je me suis bâti pour suivre la bourse. Chaque soir de semaine, il va chercher les prix et les états financiers d\'environ 130 entreprises, les compare entre elles et donne une note sur 100 à chacune.',
+        'This is the tool I built to follow the stock market. Every weekday evening it pulls prices and financial statements for about 130 companies, compares them and gives each one a score out of 100.')}</p>
+      <p>${T('Clique sur n\'importe quelle entreprise pour voir pourquoi elle a sa note : son graphique, sa valeur estimée et les 30 critères de son profil. Mon propre portefeuille reste privé, il n\'apparaît pas ici.',
+        'Click any company to see why it got its score: its chart, its estimated value and the 30 checks of its profile. My own portfolio stays private and does not show up here.')}</p>
+      <p>${T('Ce n\'est pas un conseil financier, juste un projet perso pour apprendre.', 'This is not financial advice, just a personal project to learn.')}</p>
+      <p class="sign">E.</p>
     </div>
-    <div class="wlegend"><span class="lbl">${T('Les verdicts', 'Verdicts')}</span>${V('buy', 'v-buy', T('Achat intéressant', 'Attractive'))}${V('thumb', 'v-con', T('À considérer', 'Consider'))}${V('eye', 'v-watch', T('À surveiller', 'Watch'))}${V('alert', 'v-care', T('Prudence', 'Caution'))}${V('ban', 'v-avoid', T('Éviter', 'Avoid'))}</div>
-    <div class="wact"><button class="btn primary" id="wTour">${T('Faire la visite guidée (1 min)', 'Take the guided tour (1 min)')}</button><button class="btn" id="wSkip">${T('Explorer tout seul', 'Explore on my own')}</button></div>
-    <p class="note">${T('Le portefeuille personnel du propriétaire est chiffré et n\'est jamais visible ici.', 'The owner\'s personal portfolio is encrypted and never visible here.')}</p>`;
+    <div class="wact"><button class="btn primary" id="wTour">${T('Faire le tour (1 minute)', 'Take the tour (1 minute)')}</button><button class="btn" id="wSkip">${T('Je vais explorer', 'I\'ll explore')}</button></div>`;
   const close = () => { LS.set('radar-welcome', 'hidden'); w.classList.add('bye'); setTimeout(() => { w.hidden = true; w.classList.remove('bye'); }, 250); };
   $('#wClose').onclick = close; $('#wSkip').onclick = close;
   $('#wTour').onclick = () => { close(); startTour(); };

@@ -19,16 +19,16 @@
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,"Segoe UI",sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Radar Boursier</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Inter:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,600;7..72,700&family=Public+Sans:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: un "terminal de veille" clair — bandeau état, occasions en tête, carte, portefeuille, liste complète; fiche détaillée en panneau latéral */
 :root{
   --bg:#eef1f5; --surface:#ffffff; --surface-2:#f5f7fa; --line:#d9dee6; --ink:#141b26; --muted:#5c6779;
   --accent:#1f4fd1; --accent-soft:#e3eafc;
   --good:#0f8a5f; --good-soft:#dcf3ea; --warn:#b26a00; --warn-soft:#fbefd9; --bad:#c2352b; --bad-soft:#fae3e0; --mid:#4c6a9e; --mid-soft:#e4ebf6;
-  --f-display:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
-  --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --f-display:"Literata",Georgia,"Times New Roman",serif;
+  --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"Public Sans",system-ui,sans-serif;
   --r:10px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
@@ -372,7 +372,7 @@ h3>.i:first-child,.lbl>.i:first-child,.kpi .lbl .i,.ico .i,.sh h3 .i,.note>.i:fi
 nav.tabbar{background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 82%,transparent),color-mix(in srgb,var(--accent-soft) 70%,var(--surface)))}
 
 /* ---------- design moderne : respiration, chiffres, cartes, mouvement ---------- */
-:root{--r:16px;--f-num:"Inter",var(--f-body);--sh:0 1px 2px rgba(16,24,40,.04),0 6px 20px -8px rgba(16,24,40,.10);--sh-h:0 2px 4px rgba(16,24,40,.05),0 16px 32px -12px rgba(16,24,40,.18);--ln:color-mix(in srgb,var(--line) 55%,transparent)}
+:root{--r:16px;--f-num:var(--f-body);--sh:0 1px 2px rgba(16,24,40,.04),0 6px 20px -8px rgba(16,24,40,.10);--sh-h:0 2px 4px rgba(16,24,40,.05),0 16px 32px -12px rgba(16,24,40,.18);--ln:color-mix(in srgb,var(--line) 55%,transparent)}
 .card,.panel,.box,.day,.ic,.kpis,.tw,.empty,.welcome{border-color:var(--ln)!important;box-shadow:var(--sh)}
 .kpis{gap:0;background:var(--ln)}
 .part>.lbl{display:none}
@@ -490,6 +490,42 @@ h1{font-weight:800}.part h2{font-weight:700}
 @keyframes eggBar{to{transform:scaleX(0)}}
 @media (max-width:760px){.egg .ei{display:none}.egg p{font-size:12px}.egg{width:200px;bottom:calc(78px + env(safe-area-inset-bottom,0px));left:12px}}
 @media (prefers-reduced-motion:reduce){.egg{animation:none}}
+
+/* ---------- carnet personnel : moins « tableau de bord généré », plus humain ---------- */
+:root{--r:10px;--sh:none;--sh-h:none}
+body{font-size:15.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.welcome h2,.say{font-family:var(--f-display);letter-spacing:-.005em;font-weight:600}
+h1{font-size:34px;font-weight:700}
+.part h2{font-size:30px}
+h3{font-size:19px}
+.lbl{font-size:13px;text-transform:none;letter-spacing:0;font-weight:500}
+.lbl>.i:first-child,h2 .i,h3>.i:first-child,.part .ico{display:none}
+th{text-transform:none;letter-spacing:0;font-size:13px;font-weight:600}
+.top .lbl:first-child{display:none}
+.part::before{background:var(--line);height:1px}
+.card,.panel,.box,.day,.ic,.kpis,.tw,.empty,.welcome{box-shadow:none!important}
+.card:hover{transform:none;box-shadow:none;background:var(--surface-2)}
+.hero-pick{box-shadow:none}.hero-pick:hover{transform:none;box-shadow:none;border-color:var(--accent)}
+.hero::after{display:none}
+.hero{border-radius:14px;box-shadow:none}
+.tk{font-family:var(--f-body);font-weight:700;letter-spacing:.01em;font-size:12.5px;color:var(--ink)}
+.tk .sec{font-weight:400;color:var(--muted);letter-spacing:0;margin-left:4px}
+.num,.kpi .v,.ring span,.cp,.hero .big{font-family:var(--f-body)}
+.hero .when{margin:0;color:var(--muted);font-size:14px}
+.hero .when::first-letter{text-transform:uppercase}
+.say{margin:2px 0 0;font-size:clamp(24px,3vw,32px);line-height:1.25;font-weight:600;max-width:26ch}
+.say .big{font-size:inherit;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.say .up,.say .down{font-weight:600;font-family:var(--f-body);font-size:.8em;white-space:nowrap}
+.say-sub,.say-note{margin:6px 0 0;font-size:15.5px;line-height:1.6;max-width:56ch;color:var(--ink)}
+.say-note{color:var(--muted);font-size:14px}
+.say-sub b{font-variant-numeric:tabular-nums}
+.welcome h2{font-size:26px;margin:0}
+.letter{max-width:62ch}
+.letter p{margin:0 0 10px;line-height:1.65}
+.letter .sign{font-family:var(--f-display);font-style:italic;font-size:19px;margin-top:2px}
+.sh p{max-width:68ch}
+.status{flex-wrap:nowrap!important;align-items:baseline}
+.status .dot{flex:none;align-self:center}
 /* ---------- visiteurs ---------- */
 .guest .owner{display:none!important}
 .guestonly{display:none}.guest .guestonly{display:block}
@@ -580,7 +616,7 @@ h1{font-weight:800}.part h2{font-weight:700}
     <div class="toc" id="toc">
       <a href="#aujourdhui" data-go="aujourdhui">Aujourd'hui</a>
       <a href="#portefeuille" data-go="portefeuille" class="priv" title="Mon portefeuille">Portefeuille</a>
-      <a href="#occasions" data-go="occasions">Occasions</a>
+      <a href="#occasions" data-go="occasions">Où regarder</a>
       <a href="#investisseurs" data-go="investisseurs" title="Grands investisseurs">Investisseurs</a>
       <a href="#titres" data-go="titres" title="Tous les titres suivis">Tous les titres</a>
     </div>
@@ -617,7 +653,7 @@ h1{font-weight:800}.part h2{font-weight:700}
     <div>
       <div class="lbl priv">Wealthsimple · CELI · CELIAPP · Non-enregistré</div>
       <h1>Radar Boursier</h1>
-      <p class="lead guestonly">Analyse automatique d'environ 130 entreprises, mise à jour chaque soir de semaine.</p>
+      <p class="lead guestonly">Mon carnet pour suivre la bourse. Les chiffres se remettent à jour chaque soir de semaine.</p>
     </div>
     <div class="status" id="status"><span class="dot"></span><span>Connexion aux données…</span></div>
   </header>
@@ -635,8 +671,8 @@ h1{font-weight:800}.part h2{font-weight:700}
   <div class="part priv" id="portefeuille"><span class="lbl">Partie 2</span><h2><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-wallet"/></svg></span> Mon portefeuille</h2></div>
   <section class="priv anchor" id="positions">
     <div class="sh">
-      <div style="display:flex;flex-direction:column;gap:4px"><h3><svg class="i" aria-hidden="true"><use href="#i-bars"/></svg> Positions et suggestions</h3>
-      <p>Chaque position regroupée tous comptes confondus, avec ce que le radar suggère : renforcer, conserver, réévaluer ou vendre.</p></div>
+      <div style="display:flex;flex-direction:column;gap:4px"><h3><svg class="i" aria-hidden="true"><use href="#i-bars"/></svg> Mes positions</h3>
+      <p>Tous comptes confondus, avec ce que le radar en pense.</p></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="impOpen"><svg class="i" aria-hidden="true"><use href="#i-import"/></svg> Importer un relevé Wealthsimple</button><button class="btn primary" id="txOpen">+ Ajouter un achat ou une vente</button></div>
     </div>
     <div class="tw"><table id="tHold"><thead><tr>
@@ -651,7 +687,7 @@ h1{font-weight:800}.part h2{font-weight:700}
       <div id="sells"></div>
     </div>
     <div class="panel anchor" id="evolution">
-      <h3><svg class="i" aria-hidden="true"><use href="#i-chart"/></svg> Évolution du portefeuille Wealthsimple</h3>
+      <h3><svg class="i" aria-hidden="true"><use href="#i-chart"/></svg> Comment le portefeuille a évolué</h3>
       <div class="read" id="hRead"></div>
       <div class="chartbox sm"><canvas id="cHist" aria-label="Historique de la valeur du portefeuille"></canvas></div>
       <p class="note" style="margin:0">Valeur du compte Wealthsimple selon ta feuille Historique; le dernier point est calculé en direct.</p>
@@ -665,7 +701,7 @@ h1{font-weight:800}.part h2{font-weight:700}
       <div class="chartbox"><canvas id="cSect" aria-label="Répartition sectorielle actuelle et cible"></canvas></div>
     </div>
     <div class="panel">
-      <h3><svg class="i" aria-hidden="true"><use href="#i-globe"/></svg> Où est ton argent</h3>
+      <h3><svg class="i" aria-hidden="true"><use href="#i-globe"/></svg> Où est mon argent</h3>
       <p class="note" style="margin:0" id="geoNote"></p>
       <div id="geo" class="inv"></div>
       <span class="lbl" style="margin-top:6px">Prochains événements (45 jours)</span>
@@ -681,17 +717,17 @@ h1{font-weight:800}.part h2{font-weight:700}
       <div id="divList"></div>
     </div>
     <div class="panel">
-      <h3><svg class="i" aria-hidden="true"><use href="#i-receipt"/></svg> Journal des mouvements</h3>
+      <h3><svg class="i" aria-hidden="true"><use href="#i-receipt"/></svg> Mes achats et ventes</h3>
       <p class="note" style="margin:0">Tes achats et ventes entrés ici. Le plus récent peut être annulé.</p>
       <div id="txList"></div>
     </div>
   </section>
 
-  <div class="part" id="occasions"><span class="lbl">Partie 3</span><h2><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-binoculars"/></svg></span> Trouver des occasions</h2></div>
+  <div class="part" id="occasions"><span class="lbl">Partie 3</span><h2><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-binoculars"/></svg></span> Où regarder</h2></div>
   <section class="anchor" id="meilleures">
     <div class="sh">
-      <h3><svg class="i" aria-hidden="true"><use href="#i-star"/></svg> Meilleures occasions à l'étude</h3>
-      <p>Les titres suivis les mieux classés<span class="priv"> que tu ne détiens pas encore</span>. Le score combine la qualité (cinq modèles inspirés de Buffett, Burry, Duckett, Fink et Jensen), le prix par rapport à la valeur, l'écart avec le sommet de l'année, le risque et l'avis des analystes<span class="priv">, plus ce dont ton portefeuille manque</span>.</p>
+      <h3><svg class="i" aria-hidden="true"><use href="#i-star"/></svg> Ce qui ressort en ce moment</h3>
+      <p>Les mieux notés<span class="priv"> parmi ceux que je n'ai pas encore</span>. La note tient compte du prix par rapport à la valeur, de la croissance, de la santé financière et du dividende.</p>
     </div>
     <span class="swipehint"><svg class="i" aria-hidden="true"><use href="#i-swipe"/></svg> Glisse pour voir les autres titres</span>
     <div class="chips fchips" id="oppChips" role="toolbar" aria-label="Filtrer les occasions"></div>
@@ -699,13 +735,13 @@ h1{font-weight:800}.part h2{font-weight:700}
   </section>
 
   <section class="anchor" id="decouvertes">
-    <div class="sh"><h3><svg class="i" aria-hidden="true"><use href="#i-compass"/></svg> Découvertes de la semaine</h3><p>Chaque lundi, le Radar passe en revue les quelque 560 entreprises du S&P 500 et du TSX 60 que le radar ne suit pas encore. Il garde celles dont le score est le meilleur.</p></div>
+    <div class="sh"><h3><svg class="i" aria-hidden="true"><use href="#i-compass"/></svg> Nouvelles pistes</h3><p>Chaque lundi, le radar fouille le S&amp;P 500 et le TSX 60 pour trouver ce que je ne suis pas encore.</p></div>
     <span class="swipehint"><svg class="i" aria-hidden="true"><use href="#i-swipe"/></svg> Glisse pour voir les autres découvertes</span>
     <div class="disc-grid" id="discList"><div class="empty">Les découvertes apparaissent après le prochain balayage du lundi.</div></div>
   </section>
 
   <section class="panel anchor priv" id="plan">
-    <div class="sh" style="margin:0"><h3><svg class="i" aria-hidden="true"><use href="#i-bulb"/></svg> Planificateur : j'ai de l'argent à investir</h3><span class="lbl">selon tes cibles</span></div>
+    <div class="sh" style="margin:0"><h3><svg class="i" aria-hidden="true"><use href="#i-bulb"/></svg> J'ai de l'argent à placer</h3><span class="lbl">selon mes cibles</span></div>
     <p class="note" style="margin:0">Entre le montant que tu veux placer. Le radar le répartit d'abord vers les secteurs sous ta cible (feuille Analyse), puis choisit le titre au meilleur score dans chacun.</p>
     <form class="addrow" id="planForm" novalidate>
       <label>Montant (CAD)<input type="number" id="planAmt" min="1" step="any" inputmode="decimal" placeholder="ex. 500"></label>
@@ -718,13 +754,13 @@ h1{font-weight:800}.part h2{font-weight:700}
 
   <section class="grid2">
     <div class="panel anchor" id="carte">
-      <div class="sh" style="margin:0"><h3><svg class="i" aria-hidden="true"><use href="#i-map"/></svg> Carte des occasions</h3><span class="lbl">clique un point</span></div>
+      <div class="sh" style="margin:0"><h3><svg class="i" aria-hidden="true"><use href="#i-map"/></svg> Note et rabais</h3><span class="lbl">clique un point pour ouvrir le titre</span></div>
       <p class="note" style="margin:0">En haut à droite : bon score et prix bien sous le sommet de l'année. En bas à gauche : cher et peu attrayant.</p>
       <div class="chartbox"><canvas id="cMap" aria-label="Nuage de points score contre décote"></canvas></div>
       <div class="legend"><span class="priv"><b style="background:var(--accent)"></b>Je détiens</span><span><b style="background:var(--warn)"></b><span class="priv">Surveillé</span><span class="pubonly">Titre suivi</span></span></div>
     </div>
     <div class="panel anchor" id="eviter">
-      <h3><svg class="i" aria-hidden="true"><use href="#i-ban"/></svg> À éviter pour l'instant</h3>
+      <h3><svg class="i" aria-hidden="true"><use href="#i-ban"/></svg> Pas pour moi en ce moment</h3>
       <p class="note" style="margin:0">Les scores les plus faibles parmi les titres suivis, avec la raison principale.</p>
       <ul class="reasons" id="avoid" style="gap:9px"></ul>
     </div>
@@ -733,13 +769,13 @@ h1{font-weight:800}.part h2{font-weight:700}
   <div class="part" id="investisseurs"><span class="lbl">Partie 4</span><h2><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-landmark"/></svg></span> Ce que font les grands investisseurs</h2></div>
   <section>
     <div class="sh">
-      <p>Leurs plus grosses positions selon leurs dernières déclarations 13F à la SEC. Ces déclarations arrivent environ 45 jours après la fin du trimestre : ce sont des photos du passé, pas leurs positions d'aujourd'hui.<span class="priv"> En bleu foncé, les titres que tu détiens aussi.</span></p>
+      <p>Leurs plus grosses positions, d'après ce qu'ils déclarent à la SEC. Ces déclarations ont environ 45 jours de retard : c'est une photo du passé.</p>
     </div>
     <div class="panel" style="margin-bottom:14px"><span class="lbl">Titres choisis par plusieurs de ces investisseurs</span><div class="chips" id="consensus"></div></div>
     <div class="invgrid" id="investors"><div class="ic skc"><span class="sk" style="width:50%;height:20px"></span><span class="sk" style="width:70%"></span><span class="sk"></span><span class="sk"></span><span class="sk"></span></div><div class="ic skc"><span class="sk" style="width:50%;height:20px"></span><span class="sk" style="width:70%"></span><span class="sk"></span><span class="sk"></span><span class="sk"></span></div><div class="ic skc"><span class="sk" style="width:50%;height:20px"></span><span class="sk" style="width:70%"></span><span class="sk"></span><span class="sk"></span><span class="sk"></span></div></div>
   </section>
 
-  <div class="part" id="titres"><span class="lbl">Partie 5</span><h2><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg></span> Tous les titres suivis</h2></div>
+  <div class="part" id="titres"><span class="lbl">Partie 5</span><h2><span class="ico"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg></span> Tout ce que je suis</h2></div>
   <section>
     <div class="sh">
       <div class="tools">
@@ -752,7 +788,7 @@ h1{font-weight:800}.part h2{font-weight:700}
       </div>
     </div>
     <div class="panel anchor owner" id="ajout" style="margin-bottom:14px">
-      <div class="sh" style="margin:0"><h3><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg> Ajouter un titre à surveiller</h3><span class="lbl">manuel</span></div>
+      <div class="sh" style="margin:0"><h3><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg> Ajouter un titre à suivre</h3></div>
       <form class="addrow" id="addForm" novalidate>
         <label>Symbole<input type="text" id="addT" placeholder="ex. COST, RY.TO, NESN" autocomplete="off" maxlength="12"></label>
         <label>Nom (facultatif)<input type="text" id="addName" placeholder="Rempli automatiquement si vide" maxlength="80"></label>
@@ -773,7 +809,7 @@ h1{font-weight:800}.part h2{font-weight:700}
 <nav class="tabbar" id="tabbar" aria-label="Sections">
   <a href="#aujourdhui" data-go="aujourdhui"><span><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg></span><b data-fr="Aujourd'hui" data-en="Today">Aujourd'hui</b></a>
   <a href="#portefeuille" data-go="portefeuille" class="priv"><span><svg class="i" aria-hidden="true"><use href="#i-wallet"/></svg></span><b data-fr="Portefeuille" data-en="Portfolio">Portefeuille</b></a>
-  <a href="#occasions" data-go="occasions"><span><svg class="i" aria-hidden="true"><use href="#i-binoculars"/></svg></span><b data-fr="Occasions" data-en="Ideas">Occasions</b></a>
+  <a href="#occasions" data-go="occasions"><span><svg class="i" aria-hidden="true"><use href="#i-binoculars"/></svg></span><b data-fr="Où regarder" data-en="Ideas">Où regarder</b></a>
   <a href="#investisseurs" data-go="investisseurs"><span><svg class="i" aria-hidden="true"><use href="#i-landmark"/></svg></span><b data-fr="Investisseurs" data-en="Investors">Investisseurs</b></a>
   <a href="#titres" data-go="titres"><span><svg class="i" aria-hidden="true"><use href="#i-list"/></svg></span><b data-fr="Titres" data-en="Stocks">Titres</b></a>
 </nav>

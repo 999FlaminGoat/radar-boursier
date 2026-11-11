@@ -229,7 +229,8 @@ input[type=number],input[type=date],input[type=text],input[type=password]{font:i
 .axes .t i{display:block;height:100%;border-radius:4px}
 .fv{position:relative;height:74px;border-radius:8px;overflow:hidden;display:grid;grid-template-columns:40% 20% 40%}
 .fv .z1{background:var(--good-soft)} .fv .z2{background:var(--warn-soft)} .fv .z3{background:var(--bad-soft)}
-.fv .mk{position:absolute;top:0;bottom:0;width:2px;background:var(--ink)}
+.fv .mk{position:absolute;top:0;bottom:0;width:2px;background:var(--ink);z-index:2}
+.fv .band{position:absolute;top:22px;bottom:22px;background:color-mix(in srgb,var(--accent) 22%,transparent);border-radius:6px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 45%,transparent);z-index:1}
 .fv .mk b{position:absolute;top:4px;left:6px;white-space:nowrap;font-family:var(--f-mono);font-size:12px;font-weight:600}
 .fv .mk.flip b{left:auto;right:6px}
 .fv .mk.fair{background:var(--accent)} .fv .mk.fair b{top:auto;bottom:4px;color:var(--accent)}

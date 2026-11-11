@@ -108,31 +108,129 @@ def investor_scores(m: dict) -> dict | None:
     return s or None
 
 
-# ------------------------------------------------------------------ valeur DCF simplifiée
-DCF = {"r": 0.085, "g_term": 0.03, "years": 10}
+# ------------------------------------------------------------------ valeur estimée (modèle renforcé)
+# Deux méthodes combinées, puis contrôle de vraisemblance :
+#  1. flux de trésorerie disponibles NORMALISÉS (60 % l'année récente, 40 % la médiane des dernières années)
+#     pour ne pas extrapoler un sommet ou un creux de cycle ;
+#  2. « bénéfices du propriétaire » : profit net normalisé moins la part à réinvestir pour croître (g / ROE).
+#  Croissance de départ = prévisions des analystes (revenus et bénéfices), qui ralentit jusqu'à 2,5 % en 10 ans.
+#  Taux d'actualisation = taux sans risque (obligation 10 ans) + bêta ajusté × prime de risque de 4,5 %.
+#  Banques et assureurs : modèle valeur comptable × (ROE − g) / (r − g).
+ERP, GT = 0.045, 0.025
+RF_DEFAULT = 0.042
 FIN_SECT = ("Finance & Assurance",)
+DCF = {"r": None, "g_term": GT, "years": 10}
+_NOT_BANK = ("V", "MA", "PYPL", "COIN", "HOOD", "AXP", "BLK", "BN", "SPGI", "ICE", "MCO", "MSCI", "CME", "NDAQ")
 
 
-def dcf_value(m: dict) -> dict | None:
-    """Flux de trésorerie disponibles actualisés : croissance des 5 premières années = croissance
-    des revenus (bornée entre 0 et 20 %), qui ralentit jusqu'à 2,5 % en 10 ans, actualisation à 9 %."""
-    if m.get("etf") or m.get("_sector") in FIN_SECT:
-        return None  # les flux de trésorerie des banques et assureurs ne se prêtent pas à ce modèle
-    x = metrics(m)
-    if not x["fcf"] or x["fcf"] <= 0 or not x["shares"]:
+def _periods(m):
+    fh = [h for h in (m.get("finHist") or []) if h.get("rev")]
+    fis = [h for h in fh if str(h.get("y", "")).startswith("Ex.")]
+    ttm = m.get("fin") or {}
+    out = list(fis)
+    if ttm.get("rev") and not (fis and abs(fis[-1]["rev"] - ttm["rev"]) / ttm["rev"] < 0.005):
+        out.append({"y": "TTM", "rev": ttm["rev"], "ni": ttm.get("ni"), "fcf": ttm.get("fcf")})
+    return out
+
+
+def _norm_margin(ps, key):
+    ms = [p[key] / p["rev"] for p in ps if p.get(key) is not None and p["rev"] > 0]
+    if not ms:
+        return None, None, None
+    now = ms[-1]
+    med = sorted(ms)[len(ms) // 2] if len(ms) % 2 else sum(sorted(ms)[len(ms) // 2 - 1:len(ms) // 2 + 1]) / 2
+    return (0.6 * now + 0.4 * med if len(ms) >= 3 else now), now, med
+
+
+def discount_rate(m, rf):
+    b = m.get("beta")
+    b = 1.0 if b is None or b <= 0 else b
+    badj = clamp(0.67 * clamp(b, 0.3, 3.0) + 0.33, 0.7, 1.5)  # bêta « de Blume », borné comme un bêta de secteur
+    return clamp(rf + badj * ERP, 0.065, 0.13), badj
+
+
+def _growth1(m):
+    est, fin = m.get("est") or {}, m.get("fin") or {}
+    rg, eg = est.get("rg"), est.get("eg")
+    g, src = ((rg + clamp(eg, -0.1, 0.3)) / 2 if rg is not None and eg is not None else rg), "prévisions des analystes"
+    if g is None:
+        ps = [p for p in _periods(m) if p["rev"] > 0]
+        if len(ps) >= 3:
+            g, src = (ps[-1]["rev"] / ps[0]["rev"]) ** (1 / (len(ps) - 1)) - 1, "croissance des dernières années"
+        else:
+            g, src = fin.get("revGrowth"), "dernière année"
+    if g is None:
+        g, src = 0.04, "hypothèse par défaut"
+    hot = (fin.get("revGrowth") or 0) > 0.5  # année exceptionnelle : on modère la suite
+    return clamp(g, -0.05, 0.15 if hot else 0.25), src, hot
+
+
+def _two_stage(cf0, g1, r, years=10, roe=None):
+    pv, base = 0.0, cf0
+    keep = (lambda g: 1 - clamp(max(g, 0) / roe, 0.0, 0.6)) if roe else (lambda g: 1)
+    for t in range(1, years + 1):
+        g = g1 + (GT - g1) * (t - 1) / (years - 1)
+        base *= 1 + g
+        pv += base * keep(g) / (1 + r) ** t
+    pv += base * keep(GT) * (1 + GT) / (r - GT) / (1 + r) ** years
+    return pv
+
+
+def is_bank(m, sector, t=None):
+    ind = m.get("industry") or ""
+    if ind:
+        return bool(__import__("re").search(r"Bank|Insurance|Mortgage|Capital Markets|Financial Conglomerates", ind))
+    return sector in FIN_SECT and t not in _NOT_BANK
+
+
+def dcf_value(m: dict, t: str | None = None, rf: float | None = None) -> dict | None:
+    rf = RF_DEFAULT if rf is None else rf
+    price, rx = m.get("price"), m.get("rx") or {}
+    if not price or m.get("etf"):
         return None
-    g0 = clamp(x["growth"] if x["growth"] is not None else 0.04, 0.03, 0.20)
-    r, gt, n = DCF["r"], DCF["g_term"], DCF["years"]
-    cf, pv = x["fcf"], 0.0
-    for yr in range(1, n + 1):
-        g = g0 if yr <= 5 else g0 + (gt - g0) * (yr - 5) / 5
-        cf *= 1 + g
-        pv += cf / (1 + r) ** yr
-    pv += cf * (1 + gt) / (r - gt) / (1 + r) ** n
-    v = pv / x["shares"]
-    if not math.isfinite(v) or v <= 0:
+    sh = rx.get("shares") or ((m.get("mcap") or 0) / price or None)
+    if not sh:
         return None
-    return {"value": round(v, 2), "growth": round(g0, 4), "rate": r, "terminal": gt}
+    r, badj = discount_rate(m, rf)
+    g1, gsrc, hot = _growth1(m)
+    res = {"rate": round(r, 4), "rf": round(rf, 4), "beta": round(badj, 2), "growth": round(g1, 4), "gsrc": gsrc, "terminal": GT}
+    if is_bank(m, m.get("_sector"), t):
+        pb, roe = rx.get("pb"), rx.get("roe")
+        if not pb or not roe or roe <= 0:
+            return None
+        bvps, roe_n = price / pb, clamp(roe, 0.04, 0.25)
+        f = lambda rr: bvps * (roe_n - GT) / (rr - GT)
+        v = f(r) if roe_n > GT else bvps * 0.8
+        res.update(value=v, low=f(r + 0.01), high=f(max(r - 0.01, GT + 0.02)), method="bank", roe=round(roe_n, 4))
+    else:
+        ps = _periods(m)
+        if not ps:
+            return None
+        rev, parts = ps[-1]["rev"], {}
+        fm, fnow, fmed = _norm_margin(ps, "fcf")
+        if fm and fm > 0:
+            parts["fcf"] = _two_stage(fm * rev, g1, r) / sh
+            res["fcfMargin"] = round(fm, 4)
+        nm, _, _ = _norm_margin(ps, "ni")
+        if nm and nm > 0:
+            roe = rx.get("roe")
+            roe_n = clamp(roe if roe and roe > 0 else 0.12, 0.06, 0.40)
+            parts["earn"] = _two_stage(nm * rev, g1, r, roe=roe_n) / sh
+            res["niMargin"] = round(nm, 4)
+        if not parts:
+            return None
+        v = math.sqrt(parts["fcf"] * parts["earn"]) if len(parts) == 2 else next(iter(parts.values()))
+        k_lo = _two_stage(1, g1, min(r + 0.01, 0.15)) / _two_stage(1, g1, r)
+        k_hi = _two_stage(1, g1, max(r - 0.01, GT + 0.02)) / _two_stage(1, g1, r)
+        res.update(value=v, low=v * k_lo, high=v * k_hi, method="+".join(parts), parts={k: round(x, 2) for k, x in parts.items()})
+        res["peak"] = bool(fnow is not None and fmed is not None and fnow > 2 * max(fmed, 0.02))
+        res["hot"] = hot
+    v = res["value"]
+    if not math.isfinite(v) or v <= 0 or not (0.12 <= v / price <= 4):
+        return None  # hors des bornes de vraisemblance : données incohérentes ou profil que le modèle ne sait pas évaluer
+    for k in ("value", "low", "high"):
+        res[k] = round(res[k], 2)
+    return res
 
 
 # ------------------------------------------------------------------ raisons bilingues
@@ -197,12 +295,19 @@ def reasons(m: dict, fair: dict | None):
         ce.append("Dividend exceeds earnings: it could be cut")
     if fair and x["price"]:
         d = fair["value"] / x["price"] - 1
-        if d > 0.2:
-            pf.append(f"Notre estimation DCF ({fair['value']:.2f} $) est {pct(d)} au-dessus du prix".replace(".", ",", 1))
-            pe_.append(f"Our DCF estimate (${fair['value']:.2f}) is {pct_en(d)} above the price")
-        elif d < -0.3:
-            cf.append(f"Le prix dépasse de {pct(-d)} notre estimation DCF ({fair['value']:.2f} $)".replace(".", ","))
-            ce.append(f"Price is {pct_en(-d)} above our DCF estimate (${fair['value']:.2f})")
+        fr_v = lambda v: f"{v:,.2f}".replace(",", " ").replace(".", ",") + " $"
+        if fair.get("low") and x["price"] < fair["low"]:
+            pf.append(f"Le prix est sous toute la fourchette de valeur estimée ({fr_v(fair['low'])} à {fr_v(fair['high'])})")
+            pe_.append(f"Price is below the whole estimated value range (${fair['low']:,.2f} to ${fair['high']:,.2f})")
+        elif d > 0.15:
+            pf.append(f"Valeur estimée de {fr_v(fair['value'])}, {pct(d)} au-dessus du prix")
+            pe_.append(f"Estimated value ${fair['value']:,.2f}, {pct_en(d)} above the price")
+        if fair.get("high") and x["price"] > fair["high"] * 1.15:
+            cf.append(f"Le prix dépasse de {pct(x['price'] / fair['value'] - 1)} la valeur estimée ({fr_v(fair['value'])})")
+            ce.append(f"Price is {pct_en(x['price'] / fair['value'] - 1)} above the estimated value (${fair['value']:,.2f})")
+    if fair and fair.get("peak"):
+        cf.append("Profits au sommet d'un cycle : la valeur estimée les ramène vers leur moyenne")
+        ce.append("Earnings at a cyclical peak: the estimate pulls them back toward their average")
     return {"fr": pf[:4], "en": pe_[:4]}, {"fr": cf[:4], "en": ce[:4]}
 
 
@@ -234,7 +339,46 @@ def auto_summary(name, sector, m):
 
 
 # ------------------------------------------------------------------ score radar public (sans ton portefeuille)
-def radar_score(m: dict, consensus):
+AX_W = {"value": 0.30, "future": 0.20, "past": 0.20, "health": 0.20, "dividend": 0.10}
+
+
+def radar_score(m: dict, consensus, snow: dict | None = None):
+    """Score radar 0-100 : 75 % profil (30 critères pondérés par axe) + 25 % modèles d'investisseurs,
+    puis petits ajustements de risque. Sans profil (FNB, données manquantes) : ancienne grille de règles."""
+    if m.get("etf") or not snow:
+        return _rule_score(m, consensus)
+    num = den = 0.0
+    for k, w in AX_W.items():
+        a = snow.get(k) or {}
+        if a.get("s") is None:
+            continue
+        if k == "dividend" and (a.get("c") or [[None, None, None, None]])[0][3] == "none":
+            continue  # pas de dividende : on ne pénalise pas une entreprise de croissance
+        num += w * a["s"] / 6 * 100
+        den += w
+    if den < 0.5:
+        return _rule_score(m, consensus)
+    core = num / den
+    x = metrics(m)
+    adj = 0
+    if x["beta"] is not None:
+        adj += -4 if x["beta"] > 1.6 else 2 if 0 < x["beta"] < 0.8 else 0
+    fv = (m.get("fairValueAuto") or {}).get("value")
+    if fv and x["price"]:
+        adj += clamp((fv / x["price"] - 1) * 20, -12, 6)  # ampleur de la sous- ou surévaluation
+    if (m.get("fairValueAuto") or {}).get("peak"):
+        adj -= 5  # bénéfices au sommet d'un cycle : prudence
+    if x["disc"] is not None:
+        adj += 3 if 0.15 <= x["disc"] <= 0.45 else -3 if x["disc"] > 0.45 else 0
+    base = clamp(core + adj)
+    sc = 0.75 * base + 0.25 * consensus if consensus is not None else base
+    return round(clamp(SCALE[0] + SCALE[1] * (sc - 50)))
+
+
+SCALE = (53.3, 0.8)  # recentrage de la distribution (calibré sur l'univers suivi)
+
+
+def _rule_score(m: dict, consensus):
     x = metrics(m)
     pts = 50
     if m.get("etf"):
@@ -279,16 +423,18 @@ def verdict(sc):
     return "Achat intéressant" if sc >= 66 else "À considérer" if sc >= 57 else "À surveiller" if sc >= 46 else "Prudence" if sc >= 36 else "Éviter"
 
 
-def enrich(t: str, m: dict, u: dict) -> dict:
+def enrich(t: str, m: dict, u: dict, rf: float | None = None) -> dict:
     """Ajoute au titre : scores auto, DCF, raisons bilingues, résumé, score radar."""
     m["_sector"] = u.get("sector") if u.get("sector") not in (None, "Autre") else m.get("sectorAuto")
     sc = investor_scores(m)
     if sc:
         m["scoresAuto"] = sc
         m["consensusAuto"] = round(avg(list(sc.values())), 1)
-    fair = dcf_value(m)
+    fair = dcf_value(m, t, rf)
     if fair:
         m["fairValueAuto"] = fair
+    else:
+        m.pop("fairValueAuto", None)
     p, c = reasons(m, fair)
     if p["fr"] or c["fr"]:
         m["autoPros"], m["autoCons"] = p, c
@@ -348,7 +494,7 @@ def to_radar_symbol(y: str) -> str:
     return y.replace("-", ".")
 
 
-def discover(universe: dict, fetch_one, sector_fr: dict, limit=12):
+def discover(universe: dict, fetch_one, sector_fr: dict, limit=12, mk: dict | None = None, rf: float | None = None):
     import yfinance as yf
 
     members = {k: v for k, v in index_members().items() if _SYM.fullmatch(str(k))}
@@ -379,7 +525,11 @@ def discover(universe: dict, fetch_one, sector_fr: dict, limit=12):
             if not m:
                 continue
             u = {"name": m.get("name") or members[s].get("name"), "sector": m.get("sectorAuto")}
-            enrich(s, m, u)
+            enrich(s, m, u, rf)
+            if mk:
+                sec = u["sector"]
+                m["snow"] = snow_one(m, u, mk, (mk.get("_sec_pe") or {}).get(sec), (mk.get("_sec_last") or {}).get(sec), sec)
+                m["radarScore"] = radar_score(m, m.get("consensusAuto"), m["snow"])
             res.append({"t": to_radar_symbol(s), "name": u["name"], "sector": u["sector"], "region": m.get("regionAuto"), "cur": m.get("cur"), "web": m.get("web"),
                         "index": members[s]["idx"], "price": m.get("price"), "chg": m.get("chg"), "pe": m.get("pe"), "target": m.get("target"),
                         "hi52": m.get("hi52"), "score": m.get("radarScore"), "verdict": verdict(m.get("radarScore", 0)),
@@ -459,13 +609,14 @@ def snowflake_all(stocks: dict, universe: dict):
         sec = sector(t, m)
         u = universe.get(t) or {}
         m["snow"] = snow_one(m, u, mk, sec_pe.get(sec), sec_last.get(sec), sec)
+    mk["_sec_pe"], mk["_sec_last"] = sec_pe, sec_last
     return mk
 
 
 def snow_one(m, u, mk, spe, slast, sec):
     price = m["price"]
     rx, fin, bs = m.get("rx") or {}, m.get("fin") or {}, m.get("bsx") or {}
-    fv = u.get("fairValue") or (m.get("fairValueAuto") or {}).get("value")
+    fv = (m.get("fairValueAuto") or {}).get("value") or u.get("fairValue")
     pe = m.get("pe") if m.get("pe") and m["pe"] > 0 else None
     B = lambda c: None if c is None else (1 if c else 0)
     fin_sector = sec == "Finance & Assurance"

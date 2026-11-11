@@ -195,45 +195,133 @@ def _domain(url):
     return h[4:] if h.startswith("www.") else h
 
 
-def update_logos(stocks: dict, discover: dict):
-    """Télécharge le logo de chaque entreprise une fois par mois (64 × 64 px, PNG)."""
+LOGO_V = 2  # version de la méthode : une nouvelle version relance les logos manquants
+# sites dont le domaine officiel ne donne pas le bon logo
+LOGO_DOMAIN = {"GOOGL": "google.com", "GOOG": "google.com", "XOM": "exxonmobil.com", "LULU": "lululemon.com", "HDB": "hdfcbank.com",
+               "QSR.TO": "rbi.com", "KHC": "kraftheinzcompany.com", "BRK.B": "berkshirehathaway.com", "TSM": "tsmc.com",
+               "BABA": "alibaba.com", "BYDDY": "byd.com", "CNR.TO": "cn.ca", "META": "meta.com"}
+# FNB : logo de l'émetteur
+FUND_DOMAIN = {"vanguard": "vanguard.com", "invesco": "invesco.com", "schwab": "schwab.com", "bmo": "bmo.com", "ishares": "ishares.com",
+               "blackrock": "ishares.com", "global x": "globalx.ca", "horizons": "globalx.ca", "spdr": "ssga.com", "state street": "ssga.com",
+               "fidelity": "fidelity.com", "td ": "td.com", "rbc": "rbcgam.com", "cibc": "cibc.com", "ark": "ark-funds.com", "jpmorgan": "jpmorgan.com"}
+ETF_DOMAIN = {"VOO": "vanguard.com", "VFV.TO": "vanguard.com", "VCN.TO": "vanguard.com", "VTI": "vanguard.com", "QQQ": "invesco.com",
+              "SCHD": "schwab.com", "ZEB.TO": "bmo.com", "CBIL.TO": "globalx.ca", "XEQT.TO": "ishares.com", "SPY": "ssga.com"}
+
+
+def _domain(url):
+    from urllib.parse import urlparse
+    h = urlparse(url if "://" in url else "https://" + url).hostname or ""
+    for p in ("www.", "corporate.", "investor.", "investors.", "ir."):
+        if h.startswith(p):
+            h = h[len(p):]
+    return h
+
+
+def _get_bytes(url, timeout=12, limit=2_000_000):
+    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "image/avif,image/webp,image/png,image/*,*/*;q=0.8"})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return r.read(limit)
+
+
+def _best_image(raw):
+    """Ouvre PNG, JPG, WEBP ou ICO (prend la plus grande image d'un .ico)."""
     from io import BytesIO
+    from PIL import Image
+    im = Image.open(BytesIO(raw))
+    if im.format == "ICO":
+        sizes = sorted(im.ico.sizes(), key=lambda s: s[0] * s[1])
+        if sizes:
+            im = im.ico.getimage(sizes[-1])
+    return im.convert("RGBA")
+
+
+def _icon_links(dom):
+    """Icônes déclarées dans la page d'accueil (apple-touch-icon, icon avec sizes), de la plus grande à la plus petite."""
+    from urllib.parse import urljoin
+    try:
+        html = _get_bytes(f"https://{dom}/", timeout=12, limit=400_000).decode("utf-8", "replace")
+    except Exception:
+        return []
+    out = []
+    for tag in re.findall(r"<link\b[^>]*>", html, re.I):
+        rel = (re.search(r'rel=["\']([^"\']+)', tag, re.I) or [None, ""])[1].lower()
+        href = (re.search(r'href=["\']([^"\']+)', tag, re.I) or [None, ""])[1]
+        if not href or "icon" not in rel or href.lower().endswith(".svg") or href.startswith("data:"):
+            continue
+        sz = re.search(r'sizes=["\'](\d+)x\d+', tag, re.I)
+        n = int(sz.group(1)) if sz else (180 if "apple-touch" in rel else 32)
+        out.append((n, urljoin(f"https://{dom}/", href)))
+    return [u for _, u in sorted(out, reverse=True)[:4]]
+
+
+def fetch_logo(dom):
+    """Essaie plusieurs sources ; renvoie une image RGBA d'au moins 32 px (idéalement 48 px et plus)."""
+    from urllib.parse import quote
+    tries = [(f"https://www.google.com/s2/favicons?domain={quote(dom)}&sz=128", 48),
+             (f"https://{dom}/apple-touch-icon.png", 60), (f"https://{dom}/apple-touch-icon-precomposed.png", 60)]
+    tries += [(u, 48) for u in _icon_links(dom)]
+    tries += [(f"https://icons.duckduckgo.com/ip3/{quote(dom)}.ico", 32), (f"https://www.google.com/s2/favicons?domain={quote(dom)}&sz=64", 32)]
+    best = None
+    for url, need in tries:
+        try:
+            im = _best_image(_get_bytes(url))
+        except Exception:
+            continue
+        if min(im.size) >= need:
+            return im
+        if min(im.size) >= 32 and (best is None or min(im.size) > min(best.size)):
+            best = im
+    return best
+
+
+def update_logos(stocks: dict, discover: dict):
+    """Logo de chaque entreprise (64 × 64 px, PNG) : plusieurs sources, rafraîchi chaque mois, réessayé chaque semaine s'il manque."""
     from PIL import Image
     LOGOS.mkdir(exist_ok=True)
     idx = jload(DATA / "logos.json", {})
     today = dt.date.today()
-    webs = {t: m.get("web") for t, m in stocks.items() if m and m.get("web")}
+    doms = {}
+    for t, m in stocks.items():
+        if not m:
+            continue
+        d = LOGO_DOMAIN.get(t) or ETF_DOMAIN.get(t)
+        if not d and m.get("etf"):
+            fam = (m.get("fundFamily") or "").lower()
+            d = next((v for k, v in FUND_DOMAIN.items() if k in fam), None)
+        if not d and m.get("web"):
+            d = _domain(m["web"])
+        if d:
+            doms[t] = d
     for it in (discover or {}).get("items", []):
-        if it.get("web"):
-            webs.setdefault(it["t"], it["web"])
-    n = 0
-    for t, web in webs.items():
-        fid = t.replace(".", "_")
+        if it.get("web") and it["t"] not in doms:
+            doms[it["t"]] = LOGO_DOMAIN.get(it["t"]) or _domain(it["web"])
+    n = miss = 0
+    for t, dom in doms.items():
         rec = idx.get(t)
-        if rec and (today - dt.date.fromisoformat(rec["d"])).days < 30:
+        if rec:
+            age = (today - dt.date.fromisoformat(rec["d"])).days
+            if (rec.get("ok") and age < 30) or (not rec.get("ok") and age < 7 and rec.get("v") == LOGO_V):
+                continue
+        if not re.fullmatch(r"[a-z0-9.-]+\.[a-z]{2,}", dom):
             continue
-        dom = _domain(web)
-        if not dom or not re.fullmatch(r"[a-z0-9.-]+", dom):
-            continue
+        im = fetch_logo(dom)
         ok = False
-        try:
-            req = urllib.request.Request(f"https://www.google.com/s2/favicons?domain={dom}&sz=128", headers={"User-Agent": UA})
-            with urllib.request.urlopen(req, timeout=15) as r:
-                im = Image.open(BytesIO(r.read())).convert("RGBA")
-            if min(im.size) >= 48:  # le service renvoie un petit globe générique quand il n'a pas de logo
-                im.thumbnail((64, 64), Image.LANCZOS)
-                canvas = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
-                canvas.paste(im, ((64 - im.width) // 2, (64 - im.height) // 2))
-                canvas.save(LOGOS / f"{fid}.png", optimize=True)
-                ok = True
-                n += 1
-        except Exception:
-            pass
-        idx[t] = {"d": today.isoformat(), "ok": ok}
+        if im is not None:
+            bbox = im.getbbox()  # retire les marges transparentes
+            if bbox:
+                im = im.crop(bbox)
+            im.thumbnail((64, 64), Image.LANCZOS)
+            canvas = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
+            canvas.paste(im, ((64 - im.width) // 2, (64 - im.height) // 2))
+            canvas.save(LOGOS / f"{t.replace('.', '_')}.png", optimize=True)
+            ok = True
+            n += 1
+        else:
+            miss += 1
+        idx[t] = {"d": today.isoformat(), "ok": ok, "v": LOGO_V, "dom": dom}
         time.sleep(0.2)
     jdump(DATA / "logos.json", idx)
-    if n:
-        log(f"{n} logo(s) mis à jour.")
+    log(f"Logos : {n} ajouté(s) ou rafraîchi(s), {miss} introuvable(s), {sum(1 for r in idx.values() if r.get('ok'))} au total.")
 
 
 def balance_extras(y) -> dict:
@@ -352,6 +440,10 @@ def fetch_one(t: str, prev: dict, want_fin: bool, ysym_override: str | None = No
         out["mcap"] = num(info.get("marketCap"))
         out["beta"] = num(info.get("beta"), 3)
         out["target"] = num(info.get("targetMeanPrice"), 2)
+        if info.get("fundFamily"):
+            out["fundFamily"] = str(info["fundFamily"])[:60]
+        if info.get("industry"):
+            out["industry"] = str(info["industry"])[:80]
         if info.get("website"):
             out["web"] = str(info["website"])[:120]
         # ratios bruts pour les critères du profil (valeur, futur, passé, santé, dividende)
@@ -733,12 +825,22 @@ def main():
             log(f"{i + 1}/{len(universe)} titres")
         time.sleep(0.4)
 
-    # scores automatiques, DCF, raisons bilingues, score radar
+    # taux sans risque du jour (obligation américaine 10 ans) pour actualiser les flux de trésorerie
     import smart
+    rf = None
+    try:
+        q = fetch_quick("^TNX")
+        if q and 0.5 < q["v"] < 10:
+            rf = round(q["v"] / 100, 4)
+    except Exception:
+        pass
+    rf = rf or prev.get("rf") or smart.RF_DEFAULT
+    log(f"Taux sans risque : {rf * 100:.2f} %")
+    # scores automatiques, valeur estimée, raisons bilingues
     for t, m in out.items():
         try:
             if m:
-                smart.enrich(t, m, universe.get(t, {}))
+                smart.enrich(t, m, universe.get(t, {}), rf)
         except Exception as e:
             log("  enrichissement impossible", t, e)
     # logos des entreprises (hébergés dans le dépôt : la page ne contacte aucun service externe)
@@ -747,10 +849,18 @@ def main():
     except Exception:
         traceback.print_exc()
     # profil en 5 axes : 30 critères comparés au marché et au secteur
+    mk = None
     try:
-        smart.snowflake_all(out, universe)
+        mk = smart.snowflake_all(out, universe)
     except Exception:
         traceback.print_exc()
+    # score radar final : profil 30 critères + modèles d'investisseurs + ajustements de risque
+    for t, m in out.items():
+        if m:
+            try:
+                m["radarScore"] = smart.radar_score(m, m.get("consensusAuto", (universe.get(t) or {}).get("consensus")), m.get("snow"))
+            except Exception as e:
+                log("  score impossible", t, e)
     # historique des scores (pour les tendances et les changements de verdict)
     sh = jload(DATA / "scores.json", {})
     dkey = TODAY.isoformat()
@@ -773,7 +883,7 @@ def main():
     new_disc = []
     if monday or not disc.get("items") or os.environ.get("FORCE_DISCOVER"):
         try:
-            items = smart.discover(universe, fetch_one, SECTOR_FR)
+            items = smart.discover(universe, fetch_one, SECTOR_FR, mk=mk, rf=rf)
             if items:
                 old = {i["t"] for i in disc.get("items", [])}
                 new_disc = [i["t"] for i in items if i["t"] not in old][:3]
@@ -797,7 +907,7 @@ def main():
         for d, r in m.get("splitEvents", []):
             if d > SINCE:
                 pub_splits.append({"t": t, "date": d, "ratio": round(1 / r if r < 1 else r, 4), "reverse": r < 1})
-    market = {"generatedAt": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "fx": {"USDCAD": round(fx, 5), "asOf": TODAY.isoformat()},
+    market = {"generatedAt": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "fx": {"USDCAD": round(fx, 5), "asOf": TODAY.isoformat()}, "rf": rf,
               "day": {"date": day, "indices": indices}, "splits": pub_splits, "fails": fails, "stocks": out}
 
     # données privées

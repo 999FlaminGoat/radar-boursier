@@ -156,7 +156,7 @@ function portfolio() {
 const T = (fr, en) => (state.lang || 'fr') === 'en' ? en : fr;
 function analyze(s, pf) {
   const pros = [], cons = [];
-  let pts = 50;
+  let pts = 50, cl = 0; // cl : ajustements calculés seulement dans la page (ton portefeuille, grands investisseurs)
   const price = s.price, hi = s.hi52, lo = s.lo52;
   const disc = price && hi ? 1 - price / hi : null;
   const pos = price && hi && lo && hi > lo ? (price - lo) / (hi - lo) : null;
@@ -165,7 +165,7 @@ function analyze(s, pf) {
   if (s.etf) {
     pts += 10; pros.push(T('Fonds indiciel : diversification instantanée sur des dizaines ou centaines de titres', 'Index fund: instant diversification across dozens or hundreds of stocks'));
     const etfW = pf?.sect?.ETF ?? null, tgt = state.meta?.sectorTargets?.ETF;
-    if (etfW != null && tgt && etfW < tgt - 0.05) { pts += 10; pros.push(T(`Tes FNB pèsent ${pct(etfW, 0, false)} du portefeuille pour une cible de ${pct(tgt, 0, false)}`, `Your ETFs are ${pct(etfW, 0, false)} of the portfolio vs a ${pct(tgt, 0, false)} target`)); }
+    if (etfW != null && tgt && etfW < tgt - 0.05) { pts += 10; cl += 10; pros.push(T(`Tes FNB pèsent ${pct(etfW, 0, false)} du portefeuille pour une cible de ${pct(tgt, 0, false)}`, `Your ETFs are ${pct(etfW, 0, false)} of the portfolio vs a ${pct(tgt, 0, false)} target`)); }
   } else {
     if (pe == null || pe <= 0) { pts -= 12; cons.push(T('Pas de bénéfice positif (P/E nul ou négatif) : le prix repose sur des promesses', 'No positive earnings (P/E negative or zero): the price rests on promises')); }
     else if (pe < 12) { pts += 14; pros.push(T(`Valorisation basse : P/E de ${nf(pe, 1)}, on paie peu pour chaque dollar de profit`, `Cheap valuation: P/E of ${nf(pe, 1)}, you pay little for each dollar of profit`)); }
@@ -194,33 +194,34 @@ function analyze(s, pf) {
   if (pf && !s.etf) {
     const sec = s.sector, w = pf.sect[sec] ?? 0, tgt = state.meta?.sectorTargets?.[sec];
     if (tgt != null) {
-      if (w > tgt + 0.05) { pts -= 6; cons.push(T(`Ton portefeuille a déjà ${pct(w, 0, false)} en ${sec} (cible ${pct(tgt, 0, false)})`, `Your portfolio already has ${pct(w, 0, false)} in ${sec} (target ${pct(tgt, 0, false)})`)); }
-      else if (w < tgt - 0.03) { pts += 5; pros.push(T(`Rééquilibre ton portefeuille : ${sec} à ${pct(w, 0, false)} pour une cible de ${pct(tgt, 0, false)}`, `Rebalances your portfolio: ${sec} at ${pct(w, 0, false)} vs a ${pct(tgt, 0, false)} target`)); }
-    } else if (!w) { pts += 4; pros.push(T(`Ajoute un secteur absent de ton portefeuille (${sec})`, `Adds a sector missing from your portfolio (${sec})`)); }
+      if (w > tgt + 0.05) { pts -= 6; cl -= 6; cons.push(T(`Ton portefeuille a déjà ${pct(w, 0, false)} en ${sec} (cible ${pct(tgt, 0, false)})`, `Your portfolio already has ${pct(w, 0, false)} in ${sec} (target ${pct(tgt, 0, false)})`)); }
+      else if (w < tgt - 0.03) { pts += 5; cl += 5; pros.push(T(`Rééquilibre ton portefeuille : ${sec} à ${pct(w, 0, false)} pour une cible de ${pct(tgt, 0, false)}`, `Rebalances your portfolio: ${sec} at ${pct(w, 0, false)} vs a ${pct(tgt, 0, false)} target`)); }
+    } else if (!w) { pts += 4; cl += 4; pros.push(T(`Ajoute un secteur absent de ton portefeuille (${sec})`, `Adds a sector missing from your portfolio (${sec})`)); }
   }
   if (pf && !s.owned) {
     const g = regionOf(s);
     const us = pf.rows.reduce((acc, r) => acc + (regionOf(r.s) === 'États-Unis' ? r.w : 0), 0);
-    if (g !== 'États-Unis' && us > 0.8) { pts += 4; pros.push(T(`Diversifie hors des États-Unis (${s.region && g === 'International' ? s.region : g}) : ${pct(us, 0, false)} de ton portefeuille y est`, `Diversifies outside the US (${s.region && g === 'International' ? s.region : g}): ${pct(us, 0, false)} of your portfolio is there`)); }
+    if (g !== 'États-Unis' && us > 0.8) { pts += 4; cl += 4; pros.push(T(`Diversifie hors des États-Unis (${s.region && g === 'International' ? s.region : g}) : ${pct(us, 0, false)} de ton portefeuille y est`, `Diversifies outside the US (${s.region && g === 'International' ? s.region : g}): ${pct(us, 0, false)} of your portfolio is there`)); }
   }
   if (pf && s.owned) {
     const r = pf.rows.find(r => r.t === s.ticker);
-    if (r && r.w > 0.06) { pts -= 4; cons.push(T(`Déjà ${pct(r.w, 1, false)} de ton portefeuille : attention à la concentration`, `Already ${pct(r.w, 1, false)} of your portfolio: watch concentration`)); }
+    if (r && r.w > 0.06) { pts -= 4; cl -= 4; cons.push(T(`Déjà ${pct(r.w, 1, false)} de ton portefeuille : attention à la concentration`, `Already ${pct(r.w, 1, false)} of your portfolio: watch concentration`)); }
   }
   // what the great investors do with it
   const byInv = investorMap()[s.ticker] || [];
   const longs = byInv.filter(x => !x.short), shorts = byInv.filter(x => x.short);
   if (longs.length) {
-    pts += Math.min(8, 3 * longs.length);
+    pts += Math.min(8, 3 * longs.length); cl += Math.min(6, 2 * longs.length);
     pros.push(T('Détenu par ', 'Held by ') + longs.map(x => x.name + (x.w ? ` (${nf(x.w, 1)} %)` : '') + (x.chg ? ` · ${x.chg.toLowerCase()}` : '')).join(', '));
   }
-  shorts.forEach(x => { pts -= 4; cons.push(T(`${x.name} a parié contre ce titre (options de vente)`, `${x.name} bet against this stock (put options)`)); });
+  shorts.forEach(x => { pts -= 4; cl -= 4; cons.push(T(`${x.name} a parié contre ce titre (options de vente)`, `${x.name} bet against this stock (put options)`)); });
   // flags from the workbook that the rules don't already cover
   const skip = /P\/E|β|Décote|creux|capitalisation|Méga/i;
   if ((state.lang || 'fr') === 'fr') { (s.green || []).filter(x => !skip.test(x)).forEach(x => pros.push(x)); (s.red || []).filter(x => !skip.test(x)).forEach(x => cons.push(x)); }
   const rule = Math.max(0, Math.min(100, pts));
-  const score = Math.round(s.consensus != null ? 0.5 * s.consensus + 0.5 * rule : rule);
-  return { score, rule, disc, pos, up, pros: [...(s.pros || []), ...pros], cons: [...(s.cons || []), ...cons], verdict: verdictOf(score) };
+  const base = s.radarScore != null ? s.radarScore : Math.round(s.consensus != null ? 0.5 * s.consensus + 0.5 * rule : rule);
+  const score = Math.round(Math.max(0, Math.min(100, base + cl)));
+  return { score, base, cl, rule, disc, pos, up, pros: [...(s.pros || []), ...pros], cons: [...(s.cons || []), ...cons], verdict: verdictOf(score) };
 }
 let invCache = null, invKey = null;
 function investorMap() {
@@ -730,7 +731,7 @@ function renderDrawer(t, focus) {
       <div class="num" style="font-size:20px;margin-top:4px">${nf(s.price)} <span style="font-size:14px" class="${s.chg >= 0 ? 'up' : 'down'}">${s.chg >= 0 ? '▲' : '▼'} ${pct(s.chg, 2)} aujourd'hui</span></div><div style="margin-top:4px">${badges(s)}</div></div>
       <button class="close" id="xClose" aria-label="Fermer">×</button></div>
     ${(() => { const x = splitList().find(z => z.t === s.ticker); return x ? `<div class="alert"><b>${esc(splitTxt(x))} · ${esc(x.date)}${x.recorded ? '' : ' (à confirmer)'}</b><span class="note">Après un fractionnement, tu as plus d'actions à un prix plus bas : la valeur de ta position ne change pas.${x.recorded ? ' Les prix passés du graphique sont ajustés.' : ''}</span></div>` : ''; })()}
-    <div class="box" style="flex-direction:row;align-items:center;gap:14px">${ring(a.score, a.verdict.col)}<div><span class="pill ${a.verdict.c}">${a.verdict.h}</span><div class="note" style="margin-top:4px">${s.consensus != null ? `Qualité (modèles investisseurs${s.scoresAuto ? ', recalculés automatiquement' : ''}) ${Math.round(s.consensus)} · ` : ''}règles marché ${a.rule}/100${(() => { const tr = trend(s); return tr ? ` · tendance ${tr.d >= 0 ? '+' : ''}${tr.d} sur ${tr.days} j` : ''; })()}</div></div></div>
+    <div class="box" style="flex-direction:row;align-items:center;gap:14px">${ring(a.score, a.verdict.col)}<div><span class="pill ${a.verdict.c}">${a.verdict.h}</span><div class="note" style="margin-top:4px">${s.radarScore != null ? `${s.snow ? T('Profil 30 critères', '30-check profile') + ' (75 %) + ' : ''}${T('modèles investisseurs', 'investor models')} (${s.snow ? '25 %' : '50 %'}) : ${s.radarScore}${a.cl ? ` · ${T('ajusté pour ton portefeuille', 'adjusted for your portfolio')} ${a.cl > 0 ? '+' : ''}${a.cl}` : ''}` : `${T('règles marché', 'market rules')} ${a.rule}/100`}${(() => { const tr = trend(s); return tr ? ` · tendance ${tr.d >= 0 ? '+' : ''}${tr.d} sur ${tr.days} j` : ''; })()}</div></div></div>
     <div class="box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><span class="lbl"><svg class="i" aria-hidden="true"><use href="#i-chart"/></svg> Évolution de l'action</span>
       <div class="seg" role="group" aria-label="Période" id="pRange">${[['3m', '3 mois'], ['6m', '6 mois'], ['1y', '1 an'], ['all', 'Tout']].map(([k, l]) => `<button type="button" data-r="${k}" aria-pressed="${state.range === k}">${l}</button>`).join('')}</div></div>
       <div id="pStats" class="note"></div>
@@ -885,18 +886,27 @@ function fundBox(s) {
   if (s.etf) return '';
   const f = s.fin; const ax = snow(s); const tot = avgOf(ax.map(a => a[1]));
   const colTok = tot == null ? '--muted' : tot >= 60 ? '--good' : tot >= 42 ? '--warn' : '--bad';
-  const fv = s.fairValue, price = s.price;
+  const fv = s.fairValue, price = s.price, F = s.fair;
   let fvHtml = '';
   const ref = fv || s.target;
   if (ref && price) {
     const diff = 1 - price / ref; // >0 : price below value
     const pos = v => clamp(50 + (v / ref - 1) * 125, 2, 98); // ref at 50 %, ±40 % of ref spans the bar
-    fvHtml = `<div><span class="lbl">Prix vs ${fv ? 'valeur estimée' : 'cible des analystes'}</span>
-      <div style="margin:6px 0;font-weight:600" class="${diff >= 0 ? 'up' : 'down'}">${diff >= 0.2 ? 'Sous-évalué' : diff >= -0.2 ? 'Prix à peu près juste' : 'Surévalué'} · ${nf(Math.abs(diff) * 100, 1)} % ${diff >= 0 ? 'sous' : 'au-dessus de'} cette valeur</div>
-      <div class="fv"><span class="z1"></span><span class="z2"></span><span class="z3"></span>
-        <span class="mk${pos(price) > 70 ? ' flip' : ''}" style="left:${pos(price)}%"><b>Prix ${nf(price)}</b></span><span class="mk fair" style="left:50%"><b>${fv ? 'Valeur' : 'Cible'} ${nf(ref)}</b></span></div>
-      <div class="fvl"><span>20 % sous-évalué</span><span>Juste</span><span>20 % surévalué</span></div>
-      <p class="note" style="margin:4px 0 0">${fv ? 'Valeur selon un modèle de flux de trésorerie actualisés (DCF). Source : ' + esc(s.fairValueSource || 'non précisée') + '.' : 'Aucune valeur DCF disponible pour l\'instant : comparaison avec la cible moyenne des analystes.'}</p></div>`;
+    const band = F && F.low && F.high ? `<span class="band" style="left:${pos(F.low)}%;width:${Math.max(1, pos(F.high) - pos(F.low))}%" title="${T('Fourchette', 'Range')} ${nf(F.low)} – ${nf(F.high)}"></span>` : '';
+    const how = F ? (F.method === 'bank'
+      ? T(`Banque ou assureur : valeur comptable × (rendement des capitaux propres ${pct(F.roe, 1, false)} − croissance ${pct(F.terminal, 1, false)}) ÷ (taux ${pct(F.rate, 1, false)} − croissance).`,
+          `Bank or insurer: book value × (ROE ${pct(F.roe, 1, false)} − growth ${pct(F.terminal, 1, false)}) ÷ (rate ${pct(F.rate, 1, false)} − growth).`)
+      : T(`Modèle du Radar : ${F.method === 'fcf+earn' ? 'moyenne de deux méthodes, les flux de trésorerie disponibles et les bénéfices du propriétaire' : F.method === 'fcf' ? 'flux de trésorerie disponibles' : 'bénéfices du propriétaire'}, normalisés sur plusieurs années pour ne pas extrapoler un sommet ou un creux. Croissance de départ ${pct(F.growth, 1, false)} (${F.gsrc}) qui ralentit jusqu'à ${pct(F.terminal, 1, false)} en 10 ans. Actualisés à ${pct(F.rate, 1, false)} : taux sans risque ${pct(F.rf, 1, false)} + bêta ajusté ${nf(F.beta, 2)} × prime de risque 4,5 %.`,
+          `Radar model: ${F.method === 'fcf+earn' ? 'average of two methods, free cash flow and owner earnings' : F.method === 'fcf' ? 'free cash flow' : 'owner earnings'}, normalised over several years so a peak or trough is not extrapolated. Starting growth ${pct(F.growth, 1, false)} fading to ${pct(F.terminal, 1, false)} over 10 years. Discounted at ${pct(F.rate, 1, false)}: risk-free ${pct(F.rf, 1, false)} + adjusted beta ${nf(F.beta, 2)} × 4.5 % risk premium.`))
+      + (F.peak ? T(' Profits au sommet d\'un cycle : ramenés vers leur moyenne.', ' Earnings at a cyclical peak: pulled back toward their average.') : '')
+      : fv ? T('Valeur selon un modèle de flux de trésorerie actualisés. Source : ', 'Value from a discounted cash flow model. Source: ') + esc(s.fairValueSource || '–') + '.' : T('Aucune valeur estimée fiable pour ce profil : comparaison avec la cible moyenne des analystes.', 'No reliable estimate for this profile: compared with the average analyst target.');
+    fvHtml = `<div><span class="lbl">${T('Prix vs', 'Price vs')} ${fv ? T('valeur estimée', 'estimated value') : T('cible des analystes', 'analyst target')}</span>
+      <div style="margin:6px 0;font-weight:600" class="${diff >= 0 ? 'up' : 'down'}">${diff >= 0.2 ? T('Sous-évalué', 'Undervalued') : diff >= -0.2 ? T('Prix à peu près juste', 'About fairly priced') : T('Surévalué', 'Overvalued')} · ${nf(Math.abs(diff) * 100, 1)} % ${diff >= 0 ? T('sous', 'below') : T('au-dessus de', 'above')} ${T('cette valeur', 'this value')}</div>
+      <div class="fv"><span class="z1"></span><span class="z2"></span><span class="z3"></span>${band}
+        <span class="mk${pos(price) > 70 ? ' flip' : ''}" style="left:${pos(price)}%"><b>${T('Prix', 'Price')} ${nf(price)}</b></span><span class="mk fair" style="left:50%"><b>${fv ? T('Valeur', 'Value') : T('Cible', 'Target')} ${nf(ref)}</b></span></div>
+      <div class="fvl"><span>${T('20 % sous-évalué', '20 % undervalued')}</span><span>${T('Juste', 'Fair')}</span><span>${T('20 % surévalué', '20 % overvalued')}</span></div>
+      ${F && F.low ? `<p class="note" style="margin:6px 0 0"><b>${T('Fourchette', 'Range')} : ${nf(F.low)} – ${nf(F.high)}</b> ${T('(taux d\'actualisation ± 1 point)', '(discount rate ± 1 point)')}${s.target ? ` · ${T('cible des analystes', 'analyst target')} ${nf(s.target)}` : ''}${s.fairExt ? ` · ${T('autre estimation', 'other estimate')} ${nf(s.fairExt.v)} (${esc(String(s.fairExt.src || '').split(' (')[0])})` : ''}</p>` : ''}
+      <p class="note" style="margin:4px 0 0">${how}</p></div>`;
   }
   const ratios = [];
   if (s.pe) ratios.push(['P/E', nf(s.pe, 1) + 'x']);
@@ -1497,7 +1507,9 @@ function merge(t, u, m) {
   s.cons = L === 'fr' ? [...(claudeFresh ? (u.cons || []) : []), ...ac] : ac;
   s.summary = L === 'fr' ? (u.summary || m.autoSummary?.fr || null) : (m.about || m.autoSummary?.en || null);
   if (m.scoresAuto) { s.scoresExcel = u.scores; s.scores = { ...(u.scores || {}), ...m.scoresAuto }; s.consensus = m.consensusAuto ?? u.consensus; s.scoresAuto = true; }
-  if (!u.fairValue && m.fairValueAuto) { s.fairValue = m.fairValueAuto.value; s.fairValueSource = `estimation prudente du Radar : flux de trésorerie actualisés à ${Math.round(m.fairValueAuto.rate * 1000) / 10} %, croissance de ${Math.round(m.fairValueAuto.growth * 100)} % les 5 premières années puis ${Math.round(m.fairValueAuto.terminal * 1000) / 10} % à long terme`; }
+  s.fairExt = u.fairValue ? { v: u.fairValue, src: u.fairValueSource } : null;
+  if (m.fairValueAuto) { s.fairValue = m.fairValueAuto.value; s.fair = m.fairValueAuto; s.fairValueSource = null; }
+  else { s.fair = null; s.fairValue = u.fairValue || null; s.fairValueSource = u.fairValueSource || null; }
   s.radarScore = m.radarScore;
   s.scoreHist = (Store.scores || {})[t] || [];
   s.updatedAt = m.updatedAt || u.updatedAt;

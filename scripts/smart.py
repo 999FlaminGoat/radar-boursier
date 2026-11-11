@@ -117,7 +117,7 @@ def investor_scores(m: dict) -> dict | None:
 #  Taux d'actualisation = taux sans risque (obligation 10 ans) + bêta ajusté × prime de risque de 4,5 %.
 #  Banques et assureurs : modèle valeur comptable × (ROE − g) / (r − g).
 ERP, GT = 0.045, 0.025
-RF_DEFAULT = 0.042
+RF_DEFAULT = 0.040
 FIN_SECT = ("Finance & Assurance",)
 DCF = {"r": None, "g_term": GT, "years": 10}
 _NOT_BANK = ("V", "MA", "PYPL", "COIN", "HOOD", "AXP", "BLK", "BN", "SPGI", "ICE", "MCO", "MSCI", "CME", "NDAQ")

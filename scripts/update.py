@@ -195,7 +195,7 @@ def _domain(url):
     return h[4:] if h.startswith("www.") else h
 
 
-LOGO_V = 2  # version de la méthode : une nouvelle version relance les logos manquants
+LOGO_V = 3  # version de la méthode : une nouvelle version relance les logos manquants
 # sites dont le domaine officiel ne donne pas le bon logo
 LOGO_DOMAIN = {"GOOGL": "google.com", "GOOG": "google.com", "XOM": "exxonmobil.com", "LULU": "lululemon.com", "HDB": "hdfcbank.com",
                "QSR.TO": "rbi.com", "KHC": "kraftheinzcompany.com", "BRK.B": "berkshirehathaway.com", "TSM": "tsmc.com",
@@ -254,12 +254,15 @@ def _icon_links(dom):
     return [u for _, u in sorted(out, reverse=True)[:4]]
 
 
-def fetch_logo(dom):
+def fetch_logo(dom, t=None):
     """Essaie plusieurs sources ; renvoie une image RGBA d'au moins 32 px (idéalement 48 px et plus)."""
     from urllib.parse import quote
     tries = [(f"https://www.google.com/s2/favicons?domain={quote(dom)}&sz=128", 48),
              (f"https://{dom}/apple-touch-icon.png", 60), (f"https://{dom}/apple-touch-icon-precomposed.png", 60)]
     tries += [(u, 48) for u in _icon_links(dom)]
+    if t:
+        fmp = t.replace(".B", "-B") if not t.endswith((".TO", ".V")) else t
+        tries.append((f"https://financialmodelingprep.com/image-stock/{quote(fmp)}.png", 48))
     tries += [(f"https://icons.duckduckgo.com/ip3/{quote(dom)}.ico", 32), (f"https://www.google.com/s2/favicons?domain={quote(dom)}&sz=64", 32)]
     best = None
     for url, need in tries:
@@ -304,7 +307,7 @@ def update_logos(stocks: dict, discover: dict):
                 continue
         if not re.fullmatch(r"[a-z0-9.-]+\.[a-z]{2,}", dom):
             continue
-        im = fetch_logo(dom)
+        im = fetch_logo(dom, t if not (stocks.get(t) or {}).get("etf") else None)
         ok = False
         if im is not None:
             bbox = im.getbbox()  # retire les marges transparentes
@@ -829,13 +832,14 @@ def main():
     import smart
     rf = None
     try:
-        q = fetch_quick("^TNX")
-        if q and 0.5 < q["v"] < 10:
-            rf = round(q["v"] / 100, 4)
+        import yfinance as yf
+        c = yf.Ticker("^TNX").history(period="5y", interval="1wk")["Close"].dropna()
+        if len(c) > 100 and 0.5 < float(c.mean()) < 10:
+            rf = round(float(c.mean()) / 100, 4)
     except Exception:
         pass
     rf = rf or prev.get("rf") or smart.RF_DEFAULT
-    log(f"Taux sans risque : {rf * 100:.2f} %")
+    log(f"Taux sans risque (moyenne 5 ans du 10 ans américain) : {rf * 100:.2f} %")
     # scores automatiques, valeur estimée, raisons bilingues
     for t, m in out.items():
         try:
@@ -843,11 +847,6 @@ def main():
                 smart.enrich(t, m, universe.get(t, {}), rf)
         except Exception as e:
             log("  enrichissement impossible", t, e)
-    # logos des entreprises (hébergés dans le dépôt : la page ne contacte aucun service externe)
-    try:
-        update_logos(out, jload(DATA / "discover.json", {}))
-    except Exception:
-        traceback.print_exc()
     # profil en 5 axes : 30 critères comparés au marché et au secteur
     mk = None
     try:
@@ -892,6 +891,11 @@ def main():
         except Exception:
             traceback.print_exc()
 
+    # logos des entreprises (hébergés dans le dépôt : la page ne contacte aucun service externe)
+    try:
+        update_logos(out, jload(DATA / "discover.json", {}))
+    except Exception:
+        traceback.print_exc()
     fx = (fetch_quick("CAD=X") or {}).get("v") or prev.get("fx", {}).get("USDCAD") or 1.39
     indices = []
     for n, s in (("S&P 500", "^GSPC"), ("Nasdaq", "^IXIC"), ("TSX", "^GSPTSE")):

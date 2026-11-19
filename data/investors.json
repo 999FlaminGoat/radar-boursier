@@ -78,12 +78,13 @@
   "name": "David Tepper",
   "note": "Valeurs en dollars : seules les positions modifiées au T2 sont connues ici.",
   "order": 6,
-  "period": "Dernière déclaration",
+  "period": "T3 2026 (30 sept. 2026)",
   "positions": 24,
   "source": "Déclaration 13F, copiée par Dataroma (mise à jour automatique)",
   "style": "Opportuniste · rebonds",
-  "updatedAt": "2026-11-19T19:05:46Z",
-  "id": "appaloosa"
+  "updatedAt": "2026-11-19T19:10:00Z",
+  "id": "appaloosa",
+  "periodKey": "Q3 2026"
  },
  {
   "aum": 12900000000,
@@ -244,12 +245,13 @@
   "name": "Warren Buffett",
   "note": "Buffett est président du conseil; Greg Abel dirige Berkshire depuis janvier 2026.",
   "order": 1,
-  "period": "Dernière déclaration",
+  "period": "T3 2026 (30 sept. 2026)",
   "positions": 30,
   "source": "Déclaration 13F, copiée par Dataroma (mise à jour automatique)",
   "style": "Valeur · long terme",
-  "updatedAt": "2026-11-19T19:05:50Z",
-  "id": "berkshire"
+  "updatedAt": "2026-11-19T19:10:03Z",
+  "id": "berkshire",
+  "periodKey": "Q3 2026"
  },
  {
   "aum": 4350000000,
@@ -403,12 +405,13 @@
   "name": "Bill Ackman",
   "note": "Poids du T1 2026; mouvements du T2 2026.",
   "order": 3,
-  "period": "Dernière déclaration",
+  "period": "T3 2026 (30 sept. 2026)",
   "positions": 16,
   "source": "Déclaration 13F, copiée par Dataroma (mise à jour automatique)",
   "style": "Concentré · qualité",
-  "updatedAt": "2026-11-19T19:05:52Z",
-  "id": "pershing"
+  "updatedAt": "2026-11-19T19:10:05Z",
+  "id": "pershing",
+  "periodKey": "Q3 2026"
  },
  {
   "aum": 68140000,

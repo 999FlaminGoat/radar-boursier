@@ -1,231 +1,263 @@
 [
  {
-  "aum": null,
-  "filed": "2026-08-14",
+  "aum": 7559631000,
+  "filed": "2026-11-19",
   "firm": "Appaloosa Management",
   "holdings": [
    {
-    "chg": "Augmenté",
-    "n": "Amazon",
-    "t": "AMZN",
-    "v": 1190000000
-   },
-   {
-    "chg": "Réduit",
-    "n": "Micron",
     "t": "MU",
-    "v": 1130000000
+    "n": "Micron Technology Inc.",
+    "w": 17.61,
+    "chg": "Augmenté"
    },
    {
-    "chg": "Augmenté",
-    "n": "TSMC",
+    "t": "AMZN",
+    "n": "Amazon.com Inc.",
+    "w": 14.75,
+    "chg": "Réduit"
+   },
+   {
     "t": "TSM",
-    "v": 788000000
+    "n": "Taiwan Semiconductor S.A.",
+    "w": 9.5,
+    "chg": "Réduit"
    },
    {
-    "chg": "Augmenté",
-    "n": "Alphabet",
-    "t": "GOOGL",
-    "v": 654000000
+    "t": "SPCX",
+    "n": "Space Exploration Technologi",
+    "w": 7.36,
+    "chg": "Augmenté"
    },
    {
-    "chg": "Augmenté",
-    "n": "Uber",
     "t": "UBER",
-    "v": 555000000
+    "n": "Uber Technologies Inc.",
+    "w": 6.63,
+    "chg": "Réduit"
    },
    {
-    "chg": "Augmenté",
-    "n": "Meta",
-    "t": "META",
-    "v": 380000000
-   },
-   {
-    "n": "Nvidia",
     "t": "NVDA",
-    "v": 305000000
+    "n": "NVIDIA Corp.",
+    "w": 6.04,
+    "chg": "Augmenté"
    },
    {
-    "chg": "Nouveau",
-    "n": "Boeing",
-    "t": "BA",
-    "v": 173000000
+    "t": "EWY",
+    "n": "iShares MSCI South Korea ETF",
+    "w": 5.09,
+    "chg": "Réduit"
+   },
+   {
+    "t": "META",
+    "n": "Meta Platforms Inc.",
+    "w": 5.04,
+    "chg": "Réduit"
+   },
+   {
+    "t": "GOOG",
+    "n": "Alphabet Inc. CL C",
+    "w": 4.51,
+    "chg": "Réduit"
+   },
+   {
+    "t": "VST",
+    "n": "Vistra Corp.",
+    "w": 3.87,
+    "chg": "Réduit"
+   },
+   {
+    "t": "LRCX",
+    "n": "Lam Research",
+    "w": 2.72,
+    "chg": "Augmenté"
    }
   ],
   "moves": [
-   "Nouvelles positions : Boeing, American Airlines, Broadcom",
-   "A vendu Microsoft, UnitedHealth, Lyft, PDD et JD.com",
-   "Micron réduit de 41 % après une forte hausse"
+   "Augmentées : Micron Technology Inc., Space Exploration Technologi, NVIDIA Corp., Lam Research",
+   "Réduites : Amazon.com Inc., Taiwan Semiconductor S.A., Uber Technologies Inc., iShares MSCI South Korea ETF"
   ],
   "name": "David Tepper",
   "note": "Valeurs en dollars : seules les positions modifiées au T2 sont connues ici.",
   "order": 6,
-  "period": "T2 2026 (30 juin)",
-  "positions": null,
-  "source": "Déclaration 13F via insiderset.com",
+  "period": "Dernière déclaration",
+  "positions": 24,
+  "source": "Déclaration 13F, copiée par Dataroma (mise à jour automatique)",
   "style": "Opportuniste · rebonds",
-  "updatedAt": "2026-11-03T23:30:00-05:00",
-  "id": "appaloosa"
+  "updatedAt": "2026-11-19T19:05:46Z",
+  "id": "appaloosa",
+  "periodKey": ""
  },
  {
-  "aum": 12900000000,
-  "filed": "2026-05-12",
+  "aum": 76774724000,
+  "filed": "2026-11-19",
   "firm": "ARK Invest",
   "holdings": [
    {
-    "n": "Tesla",
-    "t": "TSLA",
-    "w": 8.18
+    "t": "CRM",
+    "n": "Salesforce.com",
+    "w": 4.54,
+    "chg": "Réduit"
    },
    {
-    "chg": "Augmenté",
-    "n": "AMD",
-    "t": "AMD",
-    "w": 4.29
+    "t": "IQV",
+    "n": "IQVIA Holdings Inc.",
+    "w": 3.66,
+    "chg": "Réduit"
    },
    {
-    "n": "CRISPR Therapeutics",
-    "t": "CRSP",
-    "w": 4.19
+    "t": "ICE",
+    "n": "Intercontinental Exchange In",
+    "w": 3.57,
+    "chg": "Réduit"
    },
    {
-    "n": "Shopify",
-    "t": "SHOP",
-    "w": 3.85
+    "t": "ABNB",
+    "n": "Airbnb Inc.",
+    "w": 3.48,
+    "chg": "Réduit"
    },
    {
-    "n": "Palantir",
-    "t": "PLTR",
-    "w": 3.54
+    "t": "KDP",
+    "n": "Keurig Dr Pepper Inc.",
+    "w": 3.19,
+    "chg": "Réduit"
    },
    {
-    "chg": "Augmenté",
-    "n": "Tempus AI",
-    "t": "TEM",
-    "w": 3.38
+    "t": "SCHW",
+    "n": "Charles Schwab Corp.",
+    "w": 2.97,
+    "chg": "Réduit"
    },
    {
-    "n": "Circle",
-    "t": "CRCL",
-    "w": 3.35
+    "t": "COF",
+    "n": "Capital One Financial",
+    "w": 2.84,
+    "chg": "Réduit"
    },
    {
-    "chg": "Augmenté",
-    "n": "Robinhood",
-    "t": "HOOD",
-    "w": 3.24
+    "t": "COP",
+    "n": "ConocoPhillips",
+    "w": 2.44,
+    "chg": "Réduit"
    },
    {
-    "n": "Coinbase",
-    "t": "COIN",
-    "w": 3.22
+    "t": "ELV",
+    "n": "Elevance Health Inc.",
+    "w": 2.42,
+    "chg": "Réduit"
    },
    {
-    "chg": "Réduit",
-    "n": "Teradyne",
-    "t": "TER",
-    "w": 2.87
+    "t": "MRSH",
+    "n": "Marsh",
+    "w": 2.4,
+    "chg": "Augmenté"
    },
    {
-    "chg": "Augmenté",
-    "n": "Roblox",
-    "t": "RBLX",
-    "w": 2.59
+    "t": "FCNCA",
+    "n": "First Citizens Bancshares",
+    "w": 2.39,
+    "chg": "Réduit"
    }
   ],
   "moves": [
-   "Renforce Tempus AI (+27 %), Robinhood (+25 %) et Roblox (+22 %)",
-   "Réduit Teradyne (−47 %) et Roku (−35 %)",
-   "Tesla reste la première position"
+   "Augmentées : Marsh",
+   "Réduites : Salesforce.com, IQVIA Holdings Inc., Intercontinental Exchange In, Airbnb Inc."
   ],
   "name": "Cathie Wood",
   "note": null,
   "order": 5,
-  "period": "T1 2026 (31 mars)",
-  "positions": 210,
-  "source": "13F via 13foresight.com",
+  "period": "Dernière déclaration",
+  "positions": 176,
+  "source": "Déclaration 13F, copiée par Dataroma (mise à jour automatique)",
   "style": "Innovation disruptive",
-  "updatedAt": "2026-11-03T23:30:00-05:00",
-  "id": "ark"
+  "updatedAt": "2026-11-19T19:05:49Z",
+  "id": "ark",
+  "periodKey": ""
  },
  {
-  "aum": 299250000000,
-  "filed": "2026-08-14",
+  "aum": 304196589000,
+  "filed": "2026-11-19",
   "firm": "Berkshire Hathaway",
   "holdings": [
    {
-    "n": "Apple",
     "t": "AAPL",
-    "w": 22.04
+    "n": "Apple Inc.",
+    "w": 24.95,
+    "chg": null
    },
    {
-    "n": "American Express",
     "t": "AXP",
-    "w": 17.14
+    "n": "American Express",
+    "w": 15.16,
+    "chg": null
    },
    {
-    "chg": "Augmenté",
-    "n": "Alphabet (A + C)",
-    "t": "GOOGL",
-    "w": 12.62
-   },
-   {
-    "n": "Coca-Cola",
     "t": "KO",
-    "w": 10.86
+    "n": "Coca Cola Co.",
+    "w": 11.32,
+    "chg": null
    },
    {
-    "chg": "Réduit",
-    "n": "Bank of America",
+    "t": "GOOGL",
+    "n": "Alphabet Inc.",
+    "w": 8.91,
+    "chg": null
+   },
+   {
     "t": "BAC",
-    "w": 9.2
+    "n": "Bank of America Corp.",
+    "w": 8.16,
+    "chg": "Réduit"
    },
    {
-    "n": "Chevron",
     "t": "CVX",
-    "w": 4.67
+    "n": "Chevron Corp.",
+    "w": 5.66,
+    "chg": null
    },
    {
-    "n": "Occidental",
     "t": "OXY",
-    "w": 4.3
+    "n": "Occidental Petroleum",
+    "w": 4.82,
+    "chg": null
    },
    {
-    "n": "Chubb",
-    "t": "CB",
-    "w": 3.9
-   },
-   {
-    "n": "Moody's",
     "t": "MCO",
-    "w": 3.73
+    "n": "Moody's Corp.",
+    "w": 3.68,
+    "chg": null
    },
    {
-    "n": "Kraft Heinz",
+    "t": "CB",
+    "n": "Chubb Limited",
+    "w": 3.66,
+    "chg": null
+   },
+   {
+    "t": "GOOG",
+    "n": "Alphabet Inc. CL C",
+    "w": 3.05,
+    "chg": null
+   },
+   {
     "t": "KHC",
-    "w": 2.57
-   },
-   {
-    "chg": "Réduit",
-    "n": "DaVita",
-    "t": "DVA",
-    "w": 2.15
+    "n": "Kraft Heinz Co.",
+    "w": 2.43,
+    "chg": null
    }
   ],
   "moves": [
-   "Alphabet : grosse hausse (+45 % en A, +658 % en C)",
-   "Delta Air Lines +44 %, Lennar +30 %, New York Times en hausse",
-   "Réduit Kroger (−22 %), Capital One (−58 %) et Nucor (−52 %); a vendu Constellation Brands"
+   "Réduites : Bank of America Corp."
   ],
   "name": "Warren Buffett",
   "note": "Buffett est président du conseil; Greg Abel dirige Berkshire depuis janvier 2026.",
   "order": 1,
-  "period": "T2 2026 (30 juin)",
-  "positions": 27,
-  "source": "Déclaration 13F via insiderset.com",
+  "period": "Dernière déclaration",
+  "positions": 30,
+  "source": "Déclaration 13F, copiée par Dataroma (mise à jour automatique)",
   "style": "Valeur · long terme",
-  "updatedAt": "2026-11-03T23:30:00-05:00",
-  "id": "berkshire"
+  "updatedAt": "2026-11-19T19:05:50Z",
+  "id": "berkshire",
+  "periodKey": ""
  },
  {
   "aum": 4350000000,
@@ -301,62 +333,91 @@
   "id": "duquesne"
  },
  {
-  "aum": 13700000000,
-  "filed": "2026-08-14",
+  "aum": 30796551000,
+  "filed": "2026-11-19",
   "firm": "Pershing Square",
   "holdings": [
    {
-    "n": "Brookfield",
-    "t": "BN",
-    "w": 17.6
+    "t": "PS",
+    "n": "Pershing Square Inc.",
+    "w": 33.48,
+    "chg": null
    },
    {
-    "chg": "Réduit",
-    "n": "Amazon",
-    "t": "AMZN",
-    "w": 17.4
-   },
-   {
-    "n": "Uber",
     "t": "UBER",
-    "w": 15.7
+    "n": "Uber Technologies Inc.",
+    "w": 7.62,
+    "chg": "Réduit"
    },
    {
-    "chg": "Augmenté",
-    "n": "Microsoft",
+    "t": "AMZN",
+    "n": "Amazon.com Inc.",
+    "w": 6.88,
+    "chg": "Réduit"
+   },
+   {
     "t": "MSFT",
-    "w": 15.3
+    "n": "Microsoft Corp.",
+    "w": 6.77,
+    "chg": "Réduit"
    },
    {
-    "n": "Restaurant Brands",
-    "t": "QSR.TO",
-    "w": 12.2
-   },
-   {
-    "n": "Meta",
     "t": "META",
-    "w": 11.1
+    "n": "Meta Platforms Inc.",
+    "w": 6.67,
+    "chg": "Réduit"
    },
    {
-    "n": "Howard Hughes",
     "t": "HHH",
-    "w": 8.7
+    "n": "Howard Hughes Holdings Inc.",
+    "w": 6.66,
+    "chg": null
+   },
+   {
+    "t": "BN",
+    "n": "Brookfield Corp.",
+    "w": 6.08,
+    "chg": "Réduit"
+   },
+   {
+    "t": "QSR.TO",
+    "n": "Restaurant Brands Internatio",
+    "w": 5.08,
+    "chg": "Réduit"
+   },
+   {
+    "t": "NFLX",
+    "n": "Netflix Inc.",
+    "w": 3.48,
+    "chg": "Augmenté"
+   },
+   {
+    "t": "MA",
+    "n": "Mastercard Inc.",
+    "w": 3.38,
+    "chg": "Réduit"
+   },
+   {
+    "t": "V",
+    "n": "Visa Inc.",
+    "w": 3.35,
+    "chg": "Réduit"
    }
   ],
   "moves": [
-   "Nouvelles positions au T2 2026 : Visa, Mastercard, Netflix, S&P Global, Intercontinental Exchange, Alcon",
-   "A vendu Alphabet et Universal Music",
-   "Amazon réduit de plus de 25 %, Microsoft augmenté"
+   "Augmentées : Netflix Inc.",
+   "Réduites : Uber Technologies Inc., Amazon.com Inc., Microsoft Corp., Meta Platforms Inc."
   ],
   "name": "Bill Ackman",
   "note": "Poids du T1 2026; mouvements du T2 2026.",
   "order": 3,
-  "period": "T1–T2 2026",
-  "positions": null,
-  "source": "13F via arkolith.com et investorlens.capital",
+  "period": "Dernière déclaration",
+  "positions": 16,
+  "source": "Déclaration 13F, copiée par Dataroma (mise à jour automatique)",
   "style": "Concentré · qualité",
-  "updatedAt": "2026-11-03T23:30:00-05:00",
-  "id": "pershing"
+  "updatedAt": "2026-11-19T19:05:52Z",
+  "id": "pershing",
+  "periodKey": ""
  },
  {
   "aum": 68140000,

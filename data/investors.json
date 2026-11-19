@@ -83,95 +83,88 @@
   "source": "Déclaration 13F, copiée par Dataroma (mise à jour automatique)",
   "style": "Opportuniste · rebonds",
   "updatedAt": "2026-11-19T19:05:46Z",
-  "id": "appaloosa",
-  "periodKey": ""
+  "id": "appaloosa"
  },
  {
-  "aum": 76774724000,
-  "filed": "2026-11-19",
+  "aum": 12900000000,
+  "filed": "2026-05-12",
   "firm": "ARK Invest",
   "holdings": [
    {
-    "t": "CRM",
-    "n": "Salesforce.com",
-    "w": 4.54,
-    "chg": "Réduit"
+    "n": "Tesla",
+    "t": "TSLA",
+    "w": 8.18
    },
    {
-    "t": "IQV",
-    "n": "IQVIA Holdings Inc.",
-    "w": 3.66,
-    "chg": "Réduit"
+    "chg": "Augmenté",
+    "n": "AMD",
+    "t": "AMD",
+    "w": 4.29
    },
    {
-    "t": "ICE",
-    "n": "Intercontinental Exchange In",
-    "w": 3.57,
-    "chg": "Réduit"
+    "n": "CRISPR Therapeutics",
+    "t": "CRSP",
+    "w": 4.19
    },
    {
-    "t": "ABNB",
-    "n": "Airbnb Inc.",
-    "w": 3.48,
-    "chg": "Réduit"
+    "n": "Shopify",
+    "t": "SHOP",
+    "w": 3.85
    },
    {
-    "t": "KDP",
-    "n": "Keurig Dr Pepper Inc.",
-    "w": 3.19,
-    "chg": "Réduit"
+    "n": "Palantir",
+    "t": "PLTR",
+    "w": 3.54
    },
    {
-    "t": "SCHW",
-    "n": "Charles Schwab Corp.",
-    "w": 2.97,
-    "chg": "Réduit"
+    "chg": "Augmenté",
+    "n": "Tempus AI",
+    "t": "TEM",
+    "w": 3.38
    },
    {
-    "t": "COF",
-    "n": "Capital One Financial",
-    "w": 2.84,
-    "chg": "Réduit"
+    "n": "Circle",
+    "t": "CRCL",
+    "w": 3.35
    },
    {
-    "t": "COP",
-    "n": "ConocoPhillips",
-    "w": 2.44,
-    "chg": "Réduit"
+    "chg": "Augmenté",
+    "n": "Robinhood",
+    "t": "HOOD",
+    "w": 3.24
    },
    {
-    "t": "ELV",
-    "n": "Elevance Health Inc.",
-    "w": 2.42,
-    "chg": "Réduit"
+    "n": "Coinbase",
+    "t": "COIN",
+    "w": 3.22
    },
    {
-    "t": "MRSH",
-    "n": "Marsh",
-    "w": 2.4,
-    "chg": "Augmenté"
+    "chg": "Réduit",
+    "n": "Teradyne",
+    "t": "TER",
+    "w": 2.87
    },
    {
-    "t": "FCNCA",
-    "n": "First Citizens Bancshares",
-    "w": 2.39,
-    "chg": "Réduit"
+    "chg": "Augmenté",
+    "n": "Roblox",
+    "t": "RBLX",
+    "w": 2.59
    }
   ],
   "moves": [
-   "Augmentées : Marsh",
-   "Réduites : Salesforce.com, IQVIA Holdings Inc., Intercontinental Exchange In, Airbnb Inc."
+   "Renforce Tempus AI (+27 %), Robinhood (+25 %) et Roblox (+22 %)",
+   "Réduit Teradyne (−47 %) et Roku (−35 %)",
+   "Tesla reste la première position"
   ],
   "name": "Cathie Wood",
   "note": null,
   "order": 5,
-  "period": "Dernière déclaration",
-  "positions": 176,
-  "source": "Déclaration 13F, copiée par Dataroma (mise à jour automatique)",
+  "period": "T1 2026 (31 mars)",
+  "positions": 210,
+  "source": "13F via 13foresight.com",
   "style": "Innovation disruptive",
-  "updatedAt": "2026-11-19T19:05:49Z",
-  "id": "ark",
-  "periodKey": ""
+  "updatedAt": "2026-11-03T23:30:00-05:00",
+  "id": "ark"
  },
  {
   "aum": 304196589000,
@@ -256,8 +249,7 @@
   "source": "Déclaration 13F, copiée par Dataroma (mise à jour automatique)",
   "style": "Valeur · long terme",
   "updatedAt": "2026-11-19T19:05:50Z",
-  "id": "berkshire",
-  "periodKey": ""
+  "id": "berkshire"
  },
  {
   "aum": 4350000000,
@@ -416,8 +408,7 @@
   "source": "Déclaration 13F, copiée par Dataroma (mise à jour automatique)",
   "style": "Concentré · qualité",
   "updatedAt": "2026-11-19T19:05:52Z",
-  "id": "pershing",
-  "periodKey": ""
+  "id": "pershing"
  },
  {
   "aum": 68140000,

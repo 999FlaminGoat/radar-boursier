@@ -644,8 +644,8 @@ def holdings_13f(cik, acc):
 
 
 # ---- source de secours : Dataroma republie les déclarations 13F des grands gestionnaires
-DATAROMA = {"berkshire": ("BRK", "Berkshire"), "pershing": ("psc", "Pershing"), "appaloosa": ("AM", "Appaloosa"),
-            "duquesne": (None, "Duquesne"), "ark": (None, "ARK"), "scion": (None, "Scion")}
+DATAROMA = {"berkshire": ("BRK", r"Warren Buffett"), "pershing": ("psc", r"Bill Ackman"), "appaloosa": ("AM", r"David Tepper"),
+            "duquesne": (None, r"Druckenmiller|Duquesne"), "ark": (None, r"Cathie Wood|\bARK Invest"), "scion": (None, r"Michael Burry|\bScion\b")}
 _DR_CODES = {}
 
 
@@ -661,7 +661,7 @@ def _dr_code(iid):
         html = http_text("https://www.dataroma.com/m/managers.php")
         for c, label in re.findall(r'holdings\.php\?m=([A-Za-z0-9]+)[^>]*>(.*?)</a>', html, re.S):
             _DR_CODES.setdefault(_strip(label), c)
-    return next((c for lab, c in _DR_CODES.items() if key.lower() in lab.lower()), None)
+    return next((c for lab, c in _DR_CODES.items() if re.search(key, lab)), None)  # nom exact du gestionnaire
 
 
 def dataroma_holdings(iid, universe):
@@ -669,8 +669,9 @@ def dataroma_holdings(iid, universe):
     if not code:
         return None
     html = http_text(f"https://www.dataroma.com/m/holdings.php?m={code}")
-    per = re.search(r"Period:\s*([^<]+)<", html)
-    pdate = re.search(r"Portfolio date:\s*([^<]+)<", html)
+    txt = _strip(html)
+    per = re.search(r"Period:\s*(Q[1-4]\s+\d{4})", txt)
+    pdate = re.search(r"Portfolio date:\s*(\d{1,2}\s+[A-Z][a-z]{2}\s+\d{4})", txt)
     val = re.search(r"Portfolio value:\s*\$?\s*([\d,]+)", _strip(html))
     nst = re.search(r"No\. of stocks:\s*(\d+)", _strip(html))
     rows = []

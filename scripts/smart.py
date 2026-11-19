@@ -581,7 +581,7 @@ def _fwd(m):
     return g, r, ("f" if est.get("eg") is not None else "r"), ("f" if est.get("rg") is not None else "r")
 
 
-def snowflake_all(stocks: dict, universe: dict):
+def snowflake_all(stocks: dict, universe: dict, rf: float | None = None):
     """Calcule pour chaque titre 30 critères (6 par axe) inspirés des profils « flocon ».
     Chaque critère : [id, réussi (1/0/None si non applicable), valeur a, valeur b]."""
     def sector(t, m):
@@ -594,7 +594,7 @@ def snowflake_all(stocks: dict, universe: dict):
     r1 = {t: _fwd(m)[1] for t, m in live.items()}
     last = {t: _ni_growth(m)[0] for t, m in live.items()}
     yld = [m["divAnnual"] / m["price"] for m in live.values() if m.get("divAnnual")]
-    mk = {"pe": _med(pe.values()), "g": _med(g1.values()), "r": _med(r1.values()), "y25": _q(yld, .25), "y75": _q(yld, .75)}
+    mk = {"rf": rf if rf is not None else RF_DEFAULT, "pe": _med(pe.values()), "g": _med(g1.values()), "r": _med(r1.values()), "y25": _q(yld, .25), "y75": _q(yld, .75)}
     bysec = {}
     for t, m in live.items():
         bysec.setdefault(sector(t, m), []).append(t)
@@ -636,7 +636,7 @@ def snow_one(m, u, mk, spe, slast, sec):
     # 2. FUTUR
     feps, teps = rx.get("feps"), rx.get("teps")
     future = [
-        ["f1", B(g > 0.03) if g is not None else None, _r(g), gs],
+        ["f1", B(g > mk.get("rf", 0.03)) if g is not None else None, _r(g), gs, _r(mk.get("rf", 0.03))],
         ["f2", B(g > mk["g"]) if g is not None and mk["g"] is not None else None, _r(g), _r(mk["g"])],
         ["f3", B(g > 0.20) if g is not None else None, _r(g), gs],
         ["f4", B(r > mk["r"]) if r is not None and mk["r"] is not None else None, _r(r), _r(mk["r"])],

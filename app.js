@@ -316,6 +316,7 @@ function renderInvestors() {
     return `<article class="ic">
       <div class="who"><div><h3>${esc(i.name)}</h3><div class="note">${esc(i.firm)} · ${esc(i.period)}</div></div><span class="pill v-con">${esc(i.style)}</span></div>
       <div class="note">${i.aum ? `Portefeuille déclaré ${big(i.aum)}` : ''}${i.positions ? ` · ${i.positions} positions` : ''}${i.filed ? ` · déposé le ${esc(new Date(i.filed + 'T12:00').toLocaleDateString('fr-CA', { day: 'numeric', month: 'short', year: 'numeric' }))}` : ''}</div>
+      ${i.filed && (Date.now() - new Date(i.filed + 'T12:00')) / 864e5 > 200 ? `<p class="note" style="color:var(--warn);margin:4px 0 0">${T(`Aucune nouvelle déclaration depuis ${Math.round((Date.now() - new Date(i.filed + 'T12:00')) / 2.63e9)} mois : ces positions sont peut-être dépassées.`, `No new filing for ${Math.round((Date.now() - new Date(i.filed + 'T12:00')) / 2.63e9)} months: these holdings may be outdated.`)}</p>` : ''}
       <div class="hl">${hs.map(h => { const v = h.w ?? h.v ?? 0; const mine = !!held[h.t]; const can = !!state.stocks[h.t];
         return `<div class="hr ${mine ? 'mine' : ''} ${can ? 'click' : ''}" ${can ? `data-t="${esc(h.t)}" tabindex="0"` : ''}><span class="nm2"><span class="tk">${esc(h.t)}</span> ${esc(h.n)}${tag(h.chg)}${mine ? '<span class="tag me priv">tu l\'as</span>' : ''}</span><span class="t"><i style="width:${max ? v / max * 100 : 0}%"></i></span><span class="val">${h.w != null ? nf(h.w, 1) + ' %' : big(h.v)}</span></div>`; }).join('')}</div>
       ${opts ? `<ul class="reasons">${opts}</ul>` : ''}
@@ -400,6 +401,7 @@ function trend(s) {
 function trendTag(s) { const tr = trend(s); if (!tr || Math.abs(tr.d) < 3) return ''; return `<span class="trend ${tr.d > 0 ? 'up' : 'down'}" title="Variation du score radar sur ${tr.days} jours">${tr.d > 0 ? '▲' : '▼'}${Math.abs(tr.d)}</span>`; }
 function badges(s) {
   const out = [];
+  if (s.failDays >= 2) out.push(`<span class="badge warn" title="${T(`Aucune nouvelle cote depuis le ${s.failSince} : rachat, fusion ou retrait de la cote possible`, `No new quote since ${s.failSince}: possible buyout, merger or delisting`)}"><svg class="i" aria-hidden="true"><use href="#i-alert"/></svg> ${T('ne répond plus', 'no quote')}</span>`);
   const tt = trendTag(s); if (tt) out.push(tt);
   const e = daysTo(s.nextEarnings); if (e != null && e >= 0 && e <= 7) out.push(`<span class="badge hot" title="Prochains résultats le ${esc(s.nextEarnings)}"><svg class="i" aria-hidden="true"><use href="#i-megaphone"/></svg> Résultats ${e === 0 ? 'aujourd\'hui' : 'dans ' + e + ' j'}</span>`);
   const x = daysTo(s.lastDiv?.exDate); if (s.owned && !state.priv && x != null && x >= 0 && x <= 10) out.push(`<span class="badge ok" title="Pour recevoir le dividende, il faut détenir le titre avant cette date"><svg class="i" aria-hidden="true"><use href="#i-banknote"/></svg> Ex-div. ${x === 0 ? 'aujourd\'hui' : 'dans ' + x + ' j'}</span>`);
@@ -547,8 +549,8 @@ function renderCharts(pf, items) {
         scales: { x: { grid: { color: th.line }, ticks: { callback: v => v + ' %' } }, y: { grid: { display: false } } } } });
     const over = keys.filter(k => tg[k] != null && (pf.sect[k] || 0) > tg[k] + 0.05), under = keys.filter(k => tg[k] != null && (pf.sect[k] || 0) < tg[k] - 0.05);
     $('#sectNote').textContent = (over.length ? `Surpondéré : ${over.join(', ')}. ` : '') + (under.length ? `Sous la cible : ${under.join(', ')}.` : 'Proche des cibles de ta feuille Analyse.');
-    const h = (state.meta.history || []).filter(p => p.d < '2026-11-03');
     const today = new Date().toISOString().slice(0, 10);
+    const h = histSeries().filter(p => p.d < today);
     h.push({ d: today, wallet: Math.round(pf.total), live: true });
     upsert('cHist', { type: 'line', data: { labels: h.map(p => new Date(p.d + 'T12:00').toLocaleDateString('fr-CA', { day: 'numeric', month: 'short' })), datasets: [
       { label: 'Valeur', data: h.map(p => p.wallet), borderColor: th.accent, backgroundColor: th.accent + '22', fill: true, tension: .3, pointRadius: 3 },
@@ -588,6 +590,12 @@ const crosshair = {
 if (window.Chart) Chart.register(crosshair);
 
 function freshDate(s) { return s.chgDate || (s.hist && s.hist.length ? s.hist[s.hist.length - 1].d : null); }
+// une valeur par jour, triée ; les points automatiques du soir prennent le relais de ceux de ton fichier
+function histSeries() {
+  const by = new Map();
+  (state.meta.history || []).forEach(p => { if (p && p.d && p.wallet > 0 && (!by.has(p.d) || p.auto)) by.set(p.d, p); });
+  return [...by.values()].sort((a, b) => a.d < b.d ? -1 : 1);
+}
 function renderHero(pf, items) {
   const el = $('#hero'); if (!el) return;
   const all = Object.values(state.stocks);
@@ -599,10 +607,12 @@ function renderHero(pf, items) {
   const ch = v => `<span class="${v >= 0 ? 'up' : 'down'}">${v >= 0 ? '+' : '−'}${nf(Math.abs(v) * 100, 1)} %</span>`;
   const list = xs => xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + T(' et ', ' and ') + xs[xs.length - 1];
   const when = d0?.date ? new Date(d0.date + 'T12:00').toLocaleDateString(state.lang === 'en' ? 'en-CA' : 'fr-CA', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
+  const closed = Store.market?.sessions && !Store.market.sessions.us && !Store.market.sessions.ca;
   const idx = (d0?.indices || []).map(i => `${esc(i.n)} ${ch(i.chg)}`);
   // les indices dits en phrase : « le S&P 500 recule de 0,4 %, le Nasdaq de 0,7 % et le TSX gagne 0,2 % »
   const said = (() => {
-    const xs = d0?.indices || []; if (!xs.length) return '';
+    const all0 = d0?.indices || []; const dmax = all0.reduce((m, i) => (i.d || '') > m ? (i.d || '') : m, '');
+    const xs = all0.filter(i => !i.d || i.d === dmax); if (!xs.length || closed) return ''; // un indice fermé (jour férié d'un seul pays) est omis
     const v = c => `<span class="${c >= 0 ? 'up' : 'down'}">${nf(Math.abs(c) * 100, 1)} %</span>`;
     let prev = null;
     const parts = xs.map((i, k) => { const sgn = i.chg >= 0; const verb = state.lang === 'en' ? (sgn ? 'gains ' : 'falls ') : (sgn ? 'gagne ' : 'recule de '); const same = prev === sgn; prev = sgn;
@@ -610,12 +620,12 @@ function renderHero(pf, items) {
     return list(parts) + '.';
   })();
   const avgIdx = avgOf((d0?.indices || []).map(i => i.chg));
-  const mood = avgIdx == null ? '' : avgIdx >= 0.012 ? T('Belle journée.', 'A good day.') : avgIdx >= 0.003 ? T('Journée positive.', 'A positive day.') : avgIdx > -0.003 ? T('Journée tranquille.', 'A quiet day.') : avgIdx > -0.012 ? T('Journée dans le rouge.', 'A red day.') : T('Grosse journée de baisse.', 'A rough day.');
+  const mood = closed ? T('Les bourses étaient fermées aujourd\'hui.', 'Markets were closed today.') : avgIdx == null ? '' : avgIdx >= 0.012 ? T('Belle journée.', 'A good day.') : avgIdx >= 0.003 ? T('Journée positive.', 'A positive day.') : avgIdx > -0.003 ? T('Journée tranquille.', 'A quiet day.') : avgIdx > -0.012 ? T('Journée dans le rouge.', 'A red day.') : T('Grosse journée de baisse.', 'A rough day.');
   let left;
   if (pf && !state.priv) {
     let dv = 0, base = 0; pf.rows.forEach(r => { const s = r.s; if (!s || s.chg == null) return; const prev = r.value / (1 + s.chg); dv += r.value - prev; base += prev; });
     const gain = pf.total - pf.cost;
-    const hist = (state.meta.history || []).filter(p => p && p.d < '2026-11-03' && p.wallet > 0).slice(-120).map(p => p.wallet);
+    const hist = histSeries().filter(p => p.d < new Date().toISOString().slice(0, 10)).slice(-120).map(p => p.wallet);
     hist.push(pf.total);
     const W = 300, H = 60, path = hist.length > 4 ? sparkPath(hist, W, H) : '';
     left = `<p class="when">${esc(when)}</p>
@@ -851,7 +861,8 @@ const CK = {
 };
 function ckText(c) {
   const [id, ok, a, b] = c; const def = CK[id]; if (!def) return ['', ''];
-  const name = T(def[0][0], def[0][1]);
+  let name = T(def[0][0], def[0][1]);
+  if (id === 'f1' && c[4] != null) name = T(`Profits qui battent l'épargne sans risque (${pct(c[4], 1, false)})`, `Earnings beat the risk-free rate (${pct(c[4], 1, false)})`);
   if (b === 'fin') return [name, T('Non pertinent pour une banque ou un assureur', 'Not relevant for a bank or insurer')];
   if (b === 'none') return [name, T('Ne verse pas de dividende', 'Pays no dividend')];
   if (ok == null && a == null) return [name, NOD()];
@@ -1508,6 +1519,7 @@ function merge(t, u, m) {
   for (const k of NUMF) if (m[k] !== undefined && m[k] !== null) s[k] = m[k];
   s.ticker = t;
   if (m.snow) s.snow = m.snow;
+  s.failDays = m.failDays || 0; s.failSince = m.failSince || null;
   if (!s.name || s.name === t) s.name = m.name || t;
   if (m.etf) s.etf = true;
   if (!s.sector || s.sector === 'Autre') s.sector = s.etf ? 'ETF' : (m.sectorAuto || 'Autre');
@@ -1659,8 +1671,8 @@ function renderWelcome() {
   w.innerHTML = `<button class="close wx" id="wClose" aria-label="${T('Fermer', 'Close')}">×</button>
     <h2>${T('Salut, bienvenue sur mon radar', 'Hi, welcome to my radar')}</h2>
     <div class="letter">
-      <p>${T('C\'est l\'outil que je me suis bâti pour suivre la bourse. Chaque soir de semaine, il va chercher les prix et les états financiers d\'environ 130 entreprises, les compare entre elles et donne une note sur 100 à chacune.',
-        'This is the tool I built to follow the stock market. Every weekday evening it pulls prices and financial statements for about 130 companies, compares them and gives each one a score out of 100.')}</p>
+      <p>${T('C\'est l\'outil que je me suis bâti pour suivre la bourse. Chaque soir de semaine, il va chercher les prix et les états financiers d\'environ ${Math.round(Object.keys(state.stocks).length / 10) * 10 || 130} entreprises, les compare entre elles et donne une note sur 100 à chacune.',
+        'This is the tool I built to follow the stock market. Every weekday evening it pulls prices and financial statements for about ${Math.round(Object.keys(state.stocks).length / 10) * 10 || 130} companies, compares them and gives each one a score out of 100.')}</p>
       <p>${T('Clique sur n\'importe quelle entreprise pour voir pourquoi elle a sa note : son graphique, sa valeur estimée et les 30 critères de son profil. Mon propre portefeuille reste privé, il n\'apparaît pas ici.',
         'Click any company to see why it got its score: its chart, its estimated value and the 30 checks of its profile. My own portfolio stays private and does not show up here.')}</p>
       <p>${T('Ce n\'est pas un conseil financier, juste un projet perso pour apprendre.', 'This is not financial advice, just a personal project to learn.')}</p>

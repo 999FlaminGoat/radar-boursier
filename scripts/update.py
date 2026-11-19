@@ -58,10 +58,11 @@ def num(x, nd=None):
 
 
 ALIAS = {"GRA.V": "GRA.TO"}  # NanoXplore est passée de la Bourse de croissance au TSX
+LEARNED = {}  # alias trouvés automatiquement (data/aliases.json)
 
 
 def ysym(t: str) -> str:
-    t = ALIAS.get(t, t)
+    t = LEARNED.get(t) or ALIAS.get(t, t)
     return t.replace(".B", "-B") if t.endswith(".B") else t
 
 
@@ -393,6 +394,14 @@ def estimates(y) -> dict:
     except Exception:
         pass
     return out
+
+
+def alt_symbols(t: str) -> list:
+    """Autres places possibles quand un titre ne répond plus (passage à une autre bourse canadienne, etc.)."""
+    base, _, suf = t.rpartition(".") if "." in t and t.rsplit(".", 1)[1] in ("TO", "V", "NE", "CN") else (t, "", "")
+    if not suf:
+        return []
+    return [f"{base}.{x}" for x in ("TO", "V", "NE", "CN") if x != suf]
 
 
 def fetch_one(t: str, prev: dict, want_fin: bool, ysym_override: str | None = None) -> dict | None:
@@ -810,17 +819,36 @@ def main():
     out = {}
     fails = []
     monday = TODAY.weekday() == 0
+    LEARNED.update(jload(DATA / "aliases.json", {}))
+    learned_before = dict(LEARNED)
     for i, t in enumerate(sorted(universe)):
         if only and t not in only:
             out[t] = pstocks.get(t, {})
             continue
         old = pstocks.get(t, {})
-        want_fin = monday or not old.get("fin") or not old.get("finAt") or ("bsx" not in old and not old.get("etf"))
+        # dernier dévoilement de résultats : la date prévue est passée
+        last_earn = old.get("lastEarn")
+        if old.get("nextEarnings") and old["nextEarnings"] <= TODAY.isoformat():
+            last_earn = old["nextEarnings"]
+        # états financiers relus le lundi, et chaque jour pendant les 12 jours qui suivent des résultats
+        # (Yahoo met quelques jours à publier le nouveau trimestre)
+        after_earn = bool(last_earn) and 0 <= (TODAY - dt.date.fromisoformat(last_earn)).days <= 12
+        want_fin = monday or after_earn or not old.get("fin") or not old.get("finAt") or ("bsx" not in old and not old.get("etf"))
         for attempt in range(3):
             try:
                 m = fetch_one(t, old, want_fin)
+                if m is None and attempt == 1:
+                    # le titre a peut-être changé de bourse : essayer les autres places et retenir celle qui marche
+                    for alt in alt_symbols(t):
+                        m = fetch_one(t, old, want_fin, ysym_override=alt)
+                        if m is not None:
+                            LEARNED[t] = alt
+                            log(f"  {t} répond maintenant sous {alt} : retenu automatiquement")
+                            break
                 if m is None:
                     raise RuntimeError("aucune donnée")
+                if last_earn:
+                    m["lastEarn"] = last_earn
                 if not want_fin:
                     for k in ("fin", "finHist", "finAt", "bsx", "est"):
                         if k in old:
@@ -833,13 +861,16 @@ def main():
                     fails.append(t)
                     log("ÉCHEC", t, e)
                     if old:
-                        out[t] = old
+                        # on garde les dernières données, en comptant les jours sans réponse
+                        out[t] = {**old, "failDays": int(old.get("failDays") or 0) + 1, "failSince": old.get("failSince") or TODAY.isoformat()}
                 else:
                     time.sleep(3 * (attempt + 1))
         if i % 10 == 9:
             log(f"{i + 1}/{len(universe)} titres")
         time.sleep(0.4)
 
+    if LEARNED != learned_before:
+        jdump(DATA / "aliases.json", LEARNED)
     # taux sans risque du jour (obligation américaine 10 ans) pour actualiser les flux de trésorerie
     import smart
     rf = None
@@ -862,7 +893,7 @@ def main():
     # profil en 5 axes : 30 critères comparés au marché et au secteur
     mk = None
     try:
-        mk = smart.snowflake_all(out, universe)
+        mk = smart.snowflake_all(out, universe, rf)
     except Exception:
         traceback.print_exc()
     # score radar final : profil 30 critères + modèles d'investisseurs + ajustements de risque
@@ -918,13 +949,20 @@ def main():
         except Exception:
             pass
     day = max((m.get("chgDate", "") for m in out.values()), default="")
+    is_ca = lambda t: t.endswith((".TO", ".V", ".NE", ".CN"))
+    today_s = TODAY.isoformat()
+    sessions = {"date": today_s,
+                "us": any(m.get("chgDate") == today_s for t, m in out.items() if m and not is_ca(t)),
+                "ca": any(m.get("chgDate") == today_s for t, m in out.items() if m and is_ca(t))}
+    if not (sessions["us"] or sessions["ca"]):
+        log("Marchés fermés aujourd'hui (fin de semaine ou jour férié) : aucune nouvelle cote.")
     pub_splits = []
     for t, m in out.items():
         for d, r in m.get("splitEvents", []):
             if d > SINCE:
                 pub_splits.append({"t": t, "date": d, "ratio": round(1 / r if r < 1 else r, 4), "reverse": r < 1})
     market = {"generatedAt": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "fx": {"USDCAD": round(fx, 5), "asOf": TODAY.isoformat()}, "rf": rf,
-              "day": {"date": day, "indices": indices}, "splits": pub_splits, "fails": fails, "stocks": out}
+              "day": {"date": day, "indices": indices}, "sessions": sessions, "splits": pub_splits, "fails": fails, "stocks": out}
 
     # données privées
     pw = os.environ.get("RADAR_PASSWORD")
@@ -966,13 +1004,17 @@ def main():
     if n.get("splits"): lines.append(f"✂️ {n['splits']} fractionnement(s) d'actions appliqué(s) à tes positions")
     if upgrades: lines.append("🚀 Passent à « Achat intéressant » : " + ", ".join(upgrades[:6]))
     if new_disc: lines.append("🆕 Nouvelles découvertes de la semaine : " + ", ".join(new_disc))
+    if not (sessions["us"] or sessions["ca"]):
+        # marchés fermés : les prix n'ont pas bougé, on ne renvoie pas les mêmes alertes ; seuls les dividendes et fractionnements comptent
+        lines = [l for l in lines if "dividende" in l or "fractionnement" in l]
     note_file = ROOT / ".notify.md"
     if lines:
         note_file.write_text("\n".join(f"- {l}" for l in lines), encoding="utf-8")
     elif note_file.exists():
         note_file.unlink()
 
-    if monday or not (DATA / "investors.json").exists() or os.environ.get("FORCE_13F"):
+    filing_window = TODAY.month in (2, 5, 8, 11) and 10 <= TODAY.day <= 25
+    if monday or filing_window or not (DATA / "investors.json").exists() or os.environ.get("FORCE_13F"):
         try:
             update_investors(universe)
         except Exception:

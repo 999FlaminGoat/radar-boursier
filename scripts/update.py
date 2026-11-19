@@ -404,10 +404,12 @@ def fetch_one(t: str, prev: dict, want_fin: bool, ysym_override: str | None = No
     if h is None or h.empty:
         return None
     close = h["Close"].dropna()
-    if len(close) < 2:
+    if len(close) < 1:
         return None
     out: dict = {}
-    last, prevc = float(close.iloc[-1]), float(close.iloc[-2])
+    last = float(close.iloc[-1])
+    # nouvelle entrée en bourse : un seul jour de cours, la variation se mesure depuis l'ouverture
+    prevc = float(close.iloc[-2]) if len(close) >= 2 else float(h["Open"].dropna().iloc[-1] or last)
     out["price"] = round(last, 4)
     out["chg"] = round(last / prevc - 1, 6)
     out["chgDate"] = ds(close.index[-1])

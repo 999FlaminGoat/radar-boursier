@@ -3,7 +3,7 @@ name: Mise à jour du Radar
 on:
   schedule:
     # 22 h 20 UTC du lundi au vendredi = 17 h 20 à Montréal (heure normale), 18 h 20 l'été.
-    - cron: '20 22 * * 1-5'
+    - cron: '33 21 * * 1-5'   # 16 h 33 à Toronto en hiver ; GitHub ajoute souvent du retard
   workflow_dispatch:
     inputs:
       symbols:
@@ -62,7 +62,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh label create radar --color 1f4fd1 --description "Notifications du Radar" 2>/dev/null || true
-          for n in $(gh issue list --label radar --state open --json number -q '.[].number'); do gh issue close "$n"; done
+          JOUR=$(TZ=America/Toronto date +%Y-%m-%d)
           {
             echo "@999FlaminGoat, voici ce qui a changé aujourd'hui :"
             echo
@@ -72,4 +72,12 @@ jobs:
             echo
             echo "_Le détail reste dans ta page, déverrouillée avec ton mot de passe._"
           } > body.md
-          gh issue create --title "Radar du $(date +%Y-%m-%d)" --body-file body.md --label radar
+          # une seule notification par jour : on complète celle du jour au lieu d'en créer une nouvelle
+          DEJA=$(gh issue list --label radar --state open --search "Radar du $JOUR in:title" --json number -q '.[0].number')
+          if [ -n "$DEJA" ]; then
+            gh issue view "$DEJA" --json body -q .body > old.md
+            if ! diff -q old.md body.md >/dev/null; then gh issue edit "$DEJA" --body-file body.md; fi
+          else
+            for n in $(gh issue list --label radar --state open --json number -q '.[].number'); do gh issue close "$n"; done
+            gh issue create --title "Radar du $JOUR" --body-file body.md --label radar
+          fi

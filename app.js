@@ -629,8 +629,8 @@ function renderHero(pf, items) {
     hist.push(pf.total);
     const W = 300, H = 60, path = hist.length > 4 ? sparkPath(hist, W, H) : '';
     left = `<p class="when">${esc(when)}</p>
-      <h2 class="say">Mon portefeuille vaut <span class="big" data-count="${Math.round(pf.total)}" data-suffix=" $">${money(pf.total)}</span>.</h2>
-      <p class="say-sub">${base ? `${dv >= 0 ? 'Il a pris' : 'Il a perdu'} <b class="${dv >= 0 ? 'up' : 'down'}">${money(Math.abs(dv))}</b> aujourd'hui (${ch(dv / base)}), ` : ''}et ${gain >= 0 ? 'il est en hausse de' : 'il est en baisse de'} <b class="${gain >= 0 ? 'up' : 'down'}">${money(Math.abs(gain))}</b> par rapport à ce que j'ai payé (${ch(gain / pf.cost)}).</p>
+      <h2 class="say">${T('Mon portefeuille vaut', 'My portfolio is worth')} <span class="big" data-count="${Math.round(pf.total)}" data-suffix=" $">${money(pf.total)}</span>.</h2>
+      <p class="say-sub">${base ? `${dv >= 0 ? T('Il a pris', 'It gained') : T('Il a perdu', 'It lost')} <b class="${dv >= 0 ? 'up' : 'down'}">${money(Math.abs(dv))}</b> ${T('aujourd\'hui', 'today')} (${ch(dv / base)}), ` : ''}${T('et', 'and')} ${gain >= 0 ? T('il est en hausse de', 'it is up') : T('il est en baisse de', 'it is down')} <b class="${gain >= 0 ? 'up' : 'down'}">${money(Math.abs(gain))}</b> ${T('par rapport à ce que j\'ai payé', 'versus what I paid')} (${ch(gain / pf.cost)}).</p>
       ${path ? `<div class="hspark spark ${hist[hist.length - 1] >= hist[0] ? 'up' : 'down'}"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path class="a" d="${path}L${W},${H}L0,${H}Z"/><path d="${path}"/></svg></div>` : ''}
       <p class="say-note">${said ? `${esc(mood)} ${said}` : ''}</p>`;
   } else {
@@ -763,7 +763,7 @@ function renderDrawer(t, focus) {
       <div class="seg" role="group" aria-label="Période" id="pRange">${[['3m', '3 mois'], ['6m', '6 mois'], ['1y', '1 an'], ['all', 'Tout']].map(([k, l]) => `<button type="button" data-r="${k}" aria-pressed="${state.range === k}">${l}</button>`).join('')}</div></div>
       <div id="pStats" class="note"></div>
       <div class="read" id="pRead"></div>
-      ${(s.hist || []).length > 1 ? '<div class="chartbox sm"><canvas id="cPrice" aria-label="Évolution du prix de l\'action"></canvas></div>' : '<span class="note">L\'historique sur un an est en train d\'être chargé par la mise à jour automatique. Il apparaîtra ici d\'ici quelques jours.</span>'}
+      ${(s.hist || []).length > 1 ? '<div class="chartbox sm"><canvas id="cPrice" aria-label="Évolution du prix de l\'action"></canvas></div>' : ((s.hist || []).length === 1 ? `<span class="note">${T(`Entrée en Bourse récente : un seul jour de cotation pour l'instant (${esc(s.hist[0].d)}). Le graphique se construira jour après jour.`, `Newly listed: only one trading day so far (${esc(s.hist[0].d)}). The chart will build up day by day.`)}</span>` : '<span class="note">L\'historique sur un an est en train d\'être chargé par la mise à jour automatique. Il apparaîtra ici d\'ici quelques jours.</span>')}
     </div>
     ${fundBox(s)}
     ${s.summary ? `<div class="box"><span class="lbl">En bref</span><p style="margin:0">${esc(s.summary)}</p></div>` : ''}

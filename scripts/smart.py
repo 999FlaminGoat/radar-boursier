@@ -196,12 +196,15 @@ def dcf_value(m: dict, t: str | None = None, rf: float | None = None) -> dict | 
     res = {"rate": round(r, 4), "rf": round(rf, 4), "beta": round(badj, 2), "growth": round(g1, 4), "gsrc": gsrc, "terminal": GT}
     if is_bank(m, m.get("_sector"), t):
         pb, roe = rx.get("pb"), rx.get("roe")
-        if not pb or not roe or roe <= 0:
+        eq, mcap = (m.get("bsx") or {}).get("eq"), m.get("mcap")
+        # valeur comptable par action tirée du bilan (fiable pour toutes les catégories d'actions, ex. BRK.B)
+        bvps = eq / (mcap / price) if eq and eq > 0 and mcap else (price / pb if pb else None)
+        if not bvps or not roe or roe <= 0:
             return None
-        bvps, roe_n = price / pb, clamp(roe, 0.04, 0.25)
+        roe_n = clamp(roe, 0.04, 0.25)
         f = lambda rr: bvps * (roe_n - GT) / (rr - GT)
         v = f(r) if roe_n > GT else bvps * 0.8
-        res.update(value=v, low=f(r + 0.01), high=f(max(r - 0.01, GT + 0.02)), method="bank", roe=round(roe_n, 4))
+        res.update(value=v, low=f(r + 0.01), high=f(max(r - 0.01, GT + 0.02)), method="bank", roe=round(roe_n, 4), bvps=round(bvps, 2))
     else:
         ps = _periods(m)
         if not ps:

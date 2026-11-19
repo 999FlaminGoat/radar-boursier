@@ -27,7 +27,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
-TODAY = dt.date.today()
+# date de la Bourse (heure de Toronto) : la mise à jour du soir part souvent après minuit en heure universelle
+from zoneinfo import ZoneInfo
+TODAY = dt.datetime.now(ZoneInfo("America/Toronto")).date()
 SINCE = "2026-11-03"  # positions importées de Wallet.xlsm à cette date
 
 # ---------------------------------------------------------------- utilitaires

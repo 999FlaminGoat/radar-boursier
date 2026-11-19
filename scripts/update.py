@@ -643,9 +643,75 @@ def holdings_13f(cik, acc):
     return agg, opts
 
 
+# ---- source de secours : Dataroma republie les déclarations 13F des grands gestionnaires
+DATAROMA = {"berkshire": ("BRK", "Berkshire"), "pershing": ("psc", "Pershing"), "appaloosa": ("AM", "Appaloosa"),
+            "duquesne": (None, "Duquesne"), "ark": (None, "ARK"), "scion": (None, "Scion")}
+_DR_CODES = {}
+
+
+def _strip(h):
+    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", h or "")).replace("&amp;", "&").replace("&nbsp;", " ").strip()
+
+
+def _dr_code(iid):
+    code, key = DATAROMA.get(iid, (None, None))
+    if code or not key:
+        return code
+    if not _DR_CODES:
+        html = http_text("https://www.dataroma.com/m/managers.php")
+        for c, label in re.findall(r'holdings\.php\?m=([A-Za-z0-9]+)[^>]*>(.*?)</a>', html, re.S):
+            _DR_CODES.setdefault(_strip(label), c)
+    return next((c for lab, c in _DR_CODES.items() if key.lower() in lab.lower()), None)
+
+
+def dataroma_holdings(iid, universe):
+    code = _dr_code(iid)
+    if not code:
+        return None
+    html = http_text(f"https://www.dataroma.com/m/holdings.php?m={code}")
+    per = re.search(r"Period:\s*([^<]+)<", html)
+    pdate = re.search(r"Portfolio date:\s*([^<]+)<", html)
+    val = re.search(r"Portfolio value:\s*\$?\s*([\d,]+)", _strip(html))
+    nst = re.search(r"No\. of stocks:\s*(\d+)", _strip(html))
+    rows = []
+    for tr in re.findall(r"<tr[^>]*>(.*?)</tr>", html, re.S):
+        cells = [_strip(c) for c in re.findall(r"<td[^>]*>(.*?)</td>", tr, re.S)]
+        k = next((i for i, c in enumerate(cells) if re.match(r"^[A-Z][A-Z0-9.\-]{0,9} - \S", c)), None)
+        if k is None or len(cells) < k + 3:
+            continue
+        sym, name = cells[k].split(" - ", 1)
+        try:
+            w = float(cells[k + 1].replace(",", "."))
+        except ValueError:
+            continue
+        act = cells[k + 2]
+        ch = "Nouveau" if act.startswith("Buy") else "Augmenté" if act.startswith("Add") else "Réduit" if act.startswith("Reduce") else None
+        t = sym if sym in universe else (sym + ".TO" if sym + ".TO" in universe else sym)
+        rows.append({"t": t, "n": name.strip()[:28], "w": round(w, 2), "chg": ch, "_act": act})
+    if not rows:
+        return None
+    rows.sort(key=lambda r: -r["w"])
+    top = rows[:11]
+    new = [r["n"] for r in top if r["chg"] == "Nouveau"]; up = [r["n"] for r in top if r["chg"] == "Augmenté"]; down = [r["n"] for r in top if r["chg"] == "Réduit"]
+    moves = []
+    if new: moves.append("Nouvelles positions parmi les plus grosses : " + ", ".join(new[:4]))
+    if up: moves.append("Augmentées : " + ", ".join(up[:4]))
+    if down: moves.append("Réduites : " + ", ".join(down[:4]))
+    MOIS = {"Jan": "janv.", "Feb": "févr.", "Mar": "mars", "Apr": "avr.", "May": "mai", "Jun": "juin", "Jul": "juill.", "Aug": "août",
+            "Sep": "sept.", "Oct": "oct.", "Nov": "nov.", "Dec": "déc."}
+    pd_fr = re.sub(r"\b(" + "|".join(MOIS) + r")\b", lambda m: MOIS[m.group(1)], pdate.group(1).strip()) if pdate else ""
+    period = (re.sub(r"^Q(\d)", r"T\1", per.group(1).strip()) if per else "") + (f" ({pd_fr})" if pd_fr else "")
+    return {"holdings": [{k: v for k, v in r.items() if k != "_act"} for r in top],
+            "moves": moves or ["Peu de changements parmi les plus grosses positions."],
+            "period": period or "Dernière déclaration", "periodKey": per.group(1).strip() if per else None,
+            "aum": int(val.group(1).replace(",", "")) if val else None, "positions": int(nst.group(1)) if nst else len(rows),
+            "source": "Déclaration 13F, copiée par Dataroma (mise à jour automatique)"}
+
+
 def update_investors(universe):
     invs = jload(DATA / "investors.json", [])
     by_id = {i.get("id"): i for i in invs}
+    sec_ok = set()
     for iid, (cik, must) in CIKS.items():
         try:
             sub = http_json(f"https://data.sec.gov/submissions/CIK{cik}.json")
@@ -693,10 +759,29 @@ def update_investors(universe):
                    "source": "Déclaration 13F, SEC EDGAR (mise à jour automatique)", "updatedAt": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
             if inv:
                 inv.update(upd)
+            sec_ok.add(iid)
             log("  13F mis à jour:", iid, r["filingDate"][k0])
             time.sleep(0.5)
         except Exception as e:
-            log("  13F indisponible pour", iid, ":", e)
+            log("  13F indisponible à la SEC pour", iid, ":", e)
+    # secours : si la SEC refuse (elle bloque souvent les serveurs de GitHub), on lit la copie publiée par Dataroma
+    for inv in invs:
+        iid = inv.get("id")
+        if iid in sec_ok or iid not in DATAROMA:
+            continue
+        try:
+            d = dataroma_holdings(iid, universe)
+            if not d:
+                log("  13F (Dataroma) introuvable pour", iid)
+                continue
+            if d.get("periodKey") and d["periodKey"] == inv.get("periodKey"):
+                continue  # même trimestre : rien de nouveau
+            inv.update({k: v for k, v in d.items() if v is not None})
+            inv["filed"] = TODAY.isoformat()  # date à laquelle le radar a vu la nouvelle déclaration
+            inv["updatedAt"] = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+            log("  13F mis à jour via Dataroma :", iid, d.get("period"))
+        except Exception as e:
+            log("  13F (Dataroma) indisponible pour", iid, ":", e)
     jdump(DATA / "investors.json", invs, compact=False)
 
 
